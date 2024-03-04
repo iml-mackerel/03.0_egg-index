@@ -1,0 +1,9 @@
+taxonomic_name	stage	molt_number	sex	size	CODE 1	Taxa_Code2	Taxa_Code3	Taxa_Code4
+Scomber scombrus	egg	STAGE I	UNASSIGNED			maq_eggs_stage1	maq_eggs_stage1_5	maq_eggs
+Scomber scombrus	egg	STAGE II	UNASSIGNED			maq_eggs_stage2		maq_eggs
+Scomber scombrus	egg	STAGE III	UNASSIGNED			maq_eggs_stage3		maq_eggs
+Scomber scombrus	egg	STAGE IV	UNASSIGNED			maq_eggs_stage4		maq_eggs
+Scomber scombrus	egg	STAGE V	UNASSIGNED			maq_eggs_stage5	maq_eggs_stage1_5	maq_eggs
+Scomber scombrus	larvae		UNASSIGNED			maq_larvae		
+Scomber scombrus	egg	total						maq_eggs
+Scomber scombrus	egg	n_15					maq_eggs_stage1_5	
