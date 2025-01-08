@@ -1,0 +1,16 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+bdOracle.Rprofile
+bdOracle.R
+Mackerel_bio_data_2011.txt
+NL_bio_samples.txt
+fig_oeufs1.png
+fig_oeufs2.png
+data
+results
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto

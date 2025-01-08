@@ -1,0 +1,205 @@
+---
+title: "5.0_Exploration_field"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: hide
+    number_sections: TRUE
+---
+    # SET-UP
+```{r markdwon, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
+options(width = 200)
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+my.year=2024
+year_to_plot= (my.year-5) : my.year
+
+```    
+
+```{r code=readLines(paste0('0.0_settings.R'))}
+
+```
+  
+```{r settings2}
+new=F
+pdir = "../../"
+
+load(file=paste0(pdir,"data/",my.year,"/DEP.RData"))
+load(file=paste0(pdir,"data/",my.year,"/eggt1.RData"))
+dat=eggt1
+
+```
+# Eggs stages
+
+```{r eggs, fig.width=10, fig.height=10}
+datpie<- dat %>%  dplyr::select(latitude, longitude, year,maq_eggs_stage1, maq_eggs_stage2, maq_eggs_stage3, maq_eggs_stage4, maq_eggs_stage5, maq_larvae, DEP) %>%  group_by(year) %>%  mutate(maxDEP=max(DEP), radius=DEP/maxDEP) %>%  filter(year> 2010)
+  
+library(scatterpie)
+
+world <- map_data('world')
+p <- ggplot(world, aes(long, lat)) +
+    geom_map(map=world, aes(map_id=region), fill=NA, color="black") +
+    coord_quickmap(xlim=c(-66.5,-60), ylim=c(45.5,49.5))
+p + geom_scatterpie(aes(x=longitude, y=latitude, r=0.2),
+                    data=datpie, cols=c("maq_eggs_stage1", "maq_eggs_stage2", "maq_eggs_stage3", "maq_eggs_stage4", "maq_eggs_stage5", "maq_larvae"), color=NA,alpha=.8) +
+    #geom_scatterpie_legend(datpie$radius, x=-60, y=45) +
+  scale_fill_viridis_d(name="", option="turbo") +facet_wrap(~year)+theme(legend.position = "bottom")
+```
+
+```{r eggs2, fig.width=10, fig.height=10}
+datbar<- dat %>%  dplyr::select(station, year,maq_eggs_stage1, maq_eggs_stage2, maq_eggs_stage3, maq_eggs_stage4, maq_eggs_stage5, maq_larvae, DEP) %>%  pivot_longer(maq_eggs_stage1:maq_larvae) %>%  group_by(year) %>%  mutate(maxDEP=max(DEP), radius=DEP/maxDEP) %>%  filter(year> 2010)
+  
+
+ggplot(datbar, aes(x=station, y=value)) +
+    geom_bar(aes(fill=name), position="stack", stat="identity")+
+    scale_fill_viridis_d(name="", option="turbo") +facet_wrap(~year, scales="free_y")+theme(legend.position = "bottom")
+
+ggplot(datbar, aes(x=year, y=value, group=year)) +
+    geom_bar(aes(fill=name), position="stack", stat="identity")+ scale_x_continuous(breaks=seq(1970,my.year,5))+
+    scale_fill_viridis_d(name="", option="turbo") +facet_wrap(~station)+theme(legend.position = "bottom")
+
+```
+
+
+# temperatures
+
+```{r temp, fig.width=10, fig.height=10}
+basemap2 + 
+  geom_point(data = dat %>%  filter(year > 2010), aes(x = longitude, y = latitude, color = temperature0_10), shape = 19, size=4) + 
+    facet_wrap(~year) + 
+  scale_color_viridis_c(option="turbo", limits=c(4,18))+
+  theme_few()+ theme(legend.position="bottom")
+
+min(dat[which(dat$year<2010), "temperature0_10"])
+
+max(dat[which(dat$year<2010), "temperature0_10"])
+```
+
+```{r temp2, fig.width=4, fig.height=4}
+filey= paste0(pdir,"data/CTD_casts_0_10m/IML2024012_Moyenne_Bionet_10m_surface.dat")
+temp <- read.delim(filey, header = FALSE, sep=",",skip = 1, col.names = c("file","station","date","latitude", "longitude", "prof.max", "temperature0_10","salinity","sigma_t"))
+
+basemap2 + 
+  geom_point(data = temp, aes(x = longitude, y = latitude, color = temperature0_10), shape = 19, size=4) + 
+  scale_color_viridis_c(option="turbo", limits=c(4,18)) + 
+  theme_few()+ theme(legend.position="bottom")
+
+mean(temp$temperature0_10)
+
+```
+
+# temperature ~ spawning timing
+
+```{r temp rela, fig.width=6, fig.height=5}
+eplo<- list(dat %>%  group_by(year) %>%  summarize(t010 = mean(temperature0_10)),
+dat %>%  group_by(year) %>%  tally(),
+dat %>%  group_by(year) %>%  filter(temperature0_10 > 7 & temperature0_10 < 15 ) %>%  tally() %>%  rename(nspaw=n)) %>% 
+  purrr::reduce(full_join) %>%  mutate(prop_spaw= nspaw/n) # proportion of station with favorable conditions # not used
+
+load(paste0(pdir,"results/",my.year,"/spawning/predicted_propspawn_doy", my.year, ".RData"))
+  
+  tabAR<- read.delim(paste0(pdir,"results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>% 
+     dplyr::select(year, date.med)
+ #filter trajet si year==2022
+  prop<- left_join(tabAR , nlme.fixpredsAR1)  %>%  dplyr::filter(doy < date.med)%>%  dplyr::group_by(year) %>%  dplyr::summarize(prop=sum(prob))
+  
+  eplo<- left_join(eplo, prop)
+  
+  
+  my.formula <- y ~ x
+
+  eplo<-  eplo %>%  mutate(for_fill= ifelse(year %in% c(1999, 1991), "fit", 
+                            ifelse(year %in% c(2006, 2017,2019), "timing", 
+                                   ifelse(year %in% c(2022), "uncertain", "OK"))))
+  
+ library(mgcv)
+  gam1 <-  gam(prop ~ t010, data=eplo[2:39,], family=betar)
+  plot(gam1, all.terms=T)
+
+  pdata<- data.frame(t010=5:18)
+  pdatafit<- predict(gam1, newdata=pdata, type="link", se=T) %>%  as_tibble()
+  
+  inv.logit  = function (x) 1/(1+exp(-x)) 
+  
+  pdatafit<- bind_cols(pdata, 
+                       pdatafit %>%  mutate(uci = inv.logit(fit + (3.291 * se.fit)),
+                       lci=inv.logit(fit - (3.291 *se.fit))))
+  
+  
+  pdatafit %>%  ggplot(aes(x=t010, y=inv.logit(fit)))  + geom_line() +geom_ribbon(aes(ymin=lci, ymax=uci), alpha=0.3)+
+    geom_label(data=eplo,aes(x=t010, y=prop,label=year, fill=for_fill)) + 
+     scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none")+
+   ylab("Proportion of spawning before median date") +xlab("Mean temperature 0-10m during the survey")
+  
+ 
+  
+
+```
+
+
+
+
+```{r temp rela2, fig.width=10, fig.height=6, include=F}
+
+
+ 
+  eplo %>%  ggplot(aes(x=t010, y=prop))+geom_label(aes(label=year, fill=for_fill)) + 
+     scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none")+
+    stat_poly_eq(formula = my.formula, 
+               aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = "~~~")), 
+               parse = TRUE, vstep=0.08) +geom_smooth(method="lm") +theme_bw() +ylab("Proportion of spawning before median date") +xlab("Mean temperature 0-10m during the survey")
+  
+  
+ eplo %>%  ggplot(aes(x=prop_spaw, y=prop))+geom_label(aes(label=year, fill=for_fill)) + 
+    scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none")+
+   stat_poly_eq(formula = my.formula, 
+               aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = "~~~")), 
+               parse = TRUE, vstep=0.08) +geom_smooth(method="lm") +theme_bw() +ylab("Proportion of spawning before median date") +xlab("Porportion of temperature 8-14")
+  
+
+  
+
+```
+
+
+
+```{r plancton, fig.width=6, fig.height=4}
+eggs<- readRDS(paste0(pdir,"data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_",my.year,".RDS"))  %>% 
+ filter(year %in% 2022:2023) %>%  mutate(mission_name=substring(mission_name, 1,11),
+                                         mission_name=gsub(mission_name, pattern="IML-20", replacement="IML-"),
+                                         mission_name=gsub(mission_name, pattern="IML20", replacement="IML"))
+
+zi <- read.csv2("S:/Zooplancton/8. ZooImage/ZIRes/Zooimage3_results.csv", dec=".")
+zi <- zi %>%  filter(Project=="Mackerel survey",Year >2021, GearType=="Bongo")  %>%  
+  dplyr::select(Cruise, Year,Station, T_Ch4.6_m3,T_Cf.Cg4.6_m3, T_Pcal.Micro.Scol_m3, T_Tem.Eury_m3,
+                T_Ch4.6_m2,T_Cf.Cg4.6_m2, T_Pcal.Micro.Scol_m2, T_Tem.Eury_m2) %>%  
+  dplyr::rename(mission_name=Cruise, year=Year, station=Station) %>% 
+  mutate(station=gsub(station, pattern="-", replacement="_"),
+          mission_name=gsub(mission_name, pattern="IML-20", replacement="IML-"),
+          mission_name=gsub(mission_name, pattern="IML20", replacement="IML-"))
+
+eggs_cal<- left_join(eggs,zi) %>%  
+  mutate(Region= if_else(grepl(station, pattern="4R")|
+                           grepl(station, pattern="3P")|
+                         grepl(station, pattern="SP"), "NL", "sGSL"))
+
+
+library(ggsci)
+bp<- eggs_cal %>% ungroup() %>%  dplyr::select(year,Region, station,T_Cf.Cg4.6_m2, T_Ch4.6_m2,maq_eggs_stage1_5, maq_larvae) %>%   pivot_longer(4:7) %>% 
+  mutate(#value=if_else(!grepl(name, pattern="egg"), value/1000, value),
+         name=recode_factor(name, T_Cf.Cg4.6_m2 = "C.finmarchicus", T_Ch4.6_m2= "C. hyperboreus",maq_eggs_stage1_5 = "Mackerel eggs", maq_larvae= "Mackerel larvae")
+         ) %>% 
+ggplot(aes(y=value, x=as.factor(year), fill=name)) + labs(x="", y="N/m²", fill="", col="")+ facet_wrap(~Region)+
+ geom_boxplot(outlier.stroke=0.02, outlier.shape=21)  +  scale_fill_jco() + theme(legend.position="bottom", legend.background = element_blank())
+bp +scale_y_continuous(trans="log10p1",breaks=c(0,10,100,1000, 5000)) 
+
+```
+
+
+

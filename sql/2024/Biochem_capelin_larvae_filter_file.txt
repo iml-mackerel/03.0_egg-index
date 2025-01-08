@@ -1,0 +1,2 @@
+taxonomic_name	stage	molt_number	sex	size	CODE 1	Taxa_Code2	Taxa_Code3	Taxa_Code4
+Mallotus villosus	larvae					capelin_larvae_nm2		

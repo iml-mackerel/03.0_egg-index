@@ -1,0 +1,528 @@
+---
+title: "Spawning"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+
+    # SET-UP
+```{r markdwon, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
+options(width = 200)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+my.year <- 2024 # maximum year to extract data
+year_to_plot= (my.year-5) : my.year
+
+```    
+
+```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+
+```
+  
+
+```{r settings}
+new=F
+N=100
+load(file=paste0("data/",my.year,"/DEP.RData"))
+load(file=paste0("data/",my.year,"/eggt1.RData"))
+dat=eggt1
+
+```
+
+# Read 
+
+```{r read spawn, message = F}
+#prop_spawn(year,year=year, dat = egg, cv = T) # dat is used to calculate median date and in split with trajet.
+
+date.med <- eggt1 %>%  filter(year !=1979) %>%
+  ungroup() %>%
+  group_by(year) %>%
+  dplyr::summarize(
+    date.med = round(median(doy, na.rm = T)),
+    mindoy = min(doy, na.rm = T),
+    maxdoy = max(doy, na.rm = T)
+  )
+
+date.med <- date.med %>% mutate(date.med = ifelse(year == 1979, 166, date.med)) # from Ouellet et al. 1987
+date.med <- as.data.frame(date.med)
+
+bio <- get.bio(species = "maquereau", user = my.env$bio.username, password = my.env$bio.password)
+bio.backup <- bio
+    
+      bio <- bio %>% mutate(doy = as.numeric(format(as.Date(paste(year, month, day, sep = "/"), format = "%Y/%m/%d"), format = "%j"))) %>%
+        dplyr::filter(
+          !is.na(weight), !is.na(wgonad), !is.na(doy),
+          weight > 0, weight > wgonad, matur != 0, nafo %in% c("4T", "4V", "4W")
+        ) 
+    
+      
+bio %<>% mutate(gsi = (wgonad / weight) * 100)
+
+#remove outliers
+df <- bio %>%
+  dplyr::filter(!is.na(gsi), matur > 4, year > 1978, !(gsi > 5 & doy > 250), !(gsi > 10 & doy > 200 & year %in% c(1994, 1999, 2018, 2019, 2020)), !(year == 1999 & matur > 6 & nafo == "4V"), !(nafo!="4T" & matur > 6), !(nafo!="4T" & matur>6 & month >7), length.frozen > 0.2, weight > 0.03, gsi < 40)  %>%  
+  group_by(agef) %>% filter(weight>quantile(weight,0.001), weight<quantile(weight,0.999), gsi < quantile(gsi, 0.999))
+#removing gsi > 40 is jsutified because it does not concur with stages. Stage 1 and 8 at > 40% is unlikely. Maybe a 0 missing in weight. 
+
+df <- df %>%
+  arrange(year) %>%
+  mutate(year = as.numeric(as.character(year))) %>%  filter(!is.na(gsi), !is.na(doy), !is.na(year)) %>% mutate(maturcat = ifelse(!is.na(matur) & matur == 6, "6",                                                                                                                                 ifelse(is.na(matur), "other", "other"))) %>%  ungroup()
+
+
+bio.backup %<>% mutate(gsi = (wgonad / weight) * 100)
+
+bio.backup %>% filter(gsi < 50,  matur %in% 5:6) %>%   ggplot(aes(x=as.factor(month), y=gsi, fill=as.factor(matur)))+
+  geom_boxplot() + facet_wrap(~prov) + theme(legend.position="inside", legend.position.inside=c(0.8, 0.2))+
+  labs(x=, y= "Mois | Month", fill="")
+
+```
+
+## CHECKS {.tabset} 
+
+### Check for outliers
+```{r check outliers, message = F}
+df %>% filter(year %in% year_to_plot) %>% ggplot(aes(x=doy, y=gsi)) +geom_point(aes(col=maturcat)) + facet_wrap(~year) + scale_color_manual(values = c("green3", "grey")) 
+
+```
+
+### Check data
+```{r samples, message = F}
+table_prov<- df %>%  group_by(year, nafo) %>%  tally() %>%  pivot_wider(names_from=nafo, values_from=n) %>%  mutate(total=sum(`4T`,`4W`,`4V`, na.rm=T),
+                                                                                                                    prop4T=round(`4T`/total,3),
+                                                                                                                    prop4W=round(`4W`/total,3),
+                                                                                                                    prop4V=round(`4V`/total, 3))
+
+write.table(table_prov, paste0("results/",my.year,"/spawning/table_provenance_ech.txt"), row.names=F, sep="\t", dec=".")
+
+
+ns<- table_prov %>% dplyr::select(-total) %>%  pivot_longer(2:7) %>%  mutate(type=ifelse(grepl(name, pattern="prop"), "Proportion", "n"),
+                                                                        region=ifelse(grepl(name, pattern="4T"), "4T",
+                                                                                      ifelse(grepl(name, pattern="4V"), "4V",
+                                                                                             ifelse(grepl(name, pattern="4W"), "4W", NA)))) %>% dplyr::select(-name) %>% 
+  pivot_wider(names_from=type, values_from = value) %>% 
+ggplot(aes(x=year, y=n))+geom_bar( stat="identity", aes(fill=region)) + theme_few() + scale_fill_viridis_d(name="", direction=-1)+
+  theme(legend.position=c(0.85, 0.85)) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+
+ ns + ylab("Nombre de poissons | Number of fish") + scale_x_continuous(name="Année | Year", breaks=seq(1980, max(df$year), 5))
+ggsave(paste0("img/",my.year,"/spawning/NsamplesBI.png"), width=6, height=5, dpi=600, units="in")
+
+
+ns2<- df %>%  group_by(year, matur) %>%  tally() %>%  pivot_wider(names_from=matur, values_from=n) %>% 
+  pivot_longer(`5` :`8`) %>% 
+  ggplot(aes(x=year, y=value))+geom_bar( stat="identity", aes(fill=name)) + theme_few() + scale_fill_viridis_d(name="",direction=-1)+
+  theme(legend.position=c(0.85, 0.85),
+        legend.background = element_blank()) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+ ns2 + ylab("Nombre de poissons | Number of fish") + scale_x_continuous(name="Année | Year", breaks=seq(1980, max(df$year), 5))
+ggsave(paste0("img/",my.year,"/spawning/Nsamples_stagesBI.png"), width=6, height=5, dpi=600, units="in")
+
+
+
+propdoy<- left_join(left_join(df %>%  group_by(year,doy, matur) %>%  tally() %>%  pivot_wider(names_from=matur, values_from=n, values_fill=0),
+df %>%  group_by(year,doy) %>%  tally()) %>%  mutate(prop_stage6= `6` /n),
+df %>%  group_by(year, doy) %>%  filter(matur=="6") %>%  summarize(mgsi=mean(gsi, na.rm=T)))
+
+write.table(propdoy, paste0("results/",my.year,"/spawning/proportion_stages_doy.txt"), row.names=F, sep="\t", dec=".")
+
+
+nsy<- df %>%  group_by(doy, year, matur) %>%  tally() %>% 
+  ggplot(aes(x=doy, y=n))+facet_wrap(~year) +geom_bar(linewidth=0.1,stat="identity", aes(fill=as.factor(matur),col=as.factor(matur)))+ theme_few() + scale_fill_viridis_d(name="",direction=-1)+ scale_color_viridis_d(name="",direction=-1)+
+  theme(legend.position=c(0.4, 0.05),legend.direction="horizontal",
+        legend.background = element_blank()) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+
+nsyEN <-  nsy + ylab("Number of fish") + xlab("Day of year")
+#ggsave(paste0("img/",year,"/spawning/Nsamples_stages",nameincl4X,"_yearEN.png"), width=10, height=6, dpi=600, units="in")
+
+nsyFR <-  nsy + ylab("Nombre de poissons") + xlab("Jour de l'ann\u00E9e")
+#ggsave(paste0("img/",year,"/spawning/Nsamples_stages",nameincl4X,"_yearFR.png"), width=10, height=6, dpi=600, units="in")
+
+
+mdoy6<- df %>%  group_by(year) %>% filter(matur==6) %>%  summarize(mdoy_stage6=mean(doy),
+                                                                      sddoy_stage6=sd(doy)) 
+
+```
+
+
+### Model {.tabset}
+```{r spawn2, message = F}
+
+#evaluate starting values
+
+if(new){
+start.val <- nls.multstart::nls_multstart(gsi ~ SSlogis(doy, Asym, xmid, scal),
+                                          data = df,
+                                          start_lower = c(Asym = min(df %>% filter(matur == 5) %>% dplyr::select(gsi)), xmid = min(df$doy), scal = -100),
+                                          start_upper = c(Asym = max(df$gsi), xmid = max(df$doy), scal = 100),
+                                          iter = 500,
+                                          supp_errors = "Y"
+)
+
+
+
+nlme.fixAR <- nlme(gsi ~ SSlogis(doy, Asym, xmid, scal),
+  data = df,
+  fixed = Asym + xmid + scal ~ 1,
+  start = coefficients(start.val),
+  correlation = corAR1(),
+  random = Asym + xmid + scal ~ 1 | year
+)
+
+#df<- df %>%  mutate(year=as.factor(year), group=as.numeric(year))
+#test<- glm(gsi/100 ~ doy |year, family="binomial", data=df, correlation=corAR1())
+#library(glmmTMB)
+#tmb1<- glmmTMB(gsi/100 ~ doy + ar1(year + 0 | group), data=df, family=beta_family(link="logit"))
+#plot(residuals(tmb1, type="pearson") ~ fitted(tmb1))
+#library(DHARMa)
+#plot(simulateResiduals(tmb1))
+
+#newdata=data.frame(doy=seq(100,300, 5))
+#newdata$pred<- predict(test,newdata)
+
+nlme_coefAR = as_tibble(coef(nlme.fixAR), rownames = 'year')
+
+#keep starting values in case of needed for update
+save(nlme.fixAR,start.val,df, nlme_coefAR, file = paste0("results/", my.year,"/spawning/nlmeAR", my.year,".RData"))
+} else{load(paste0("results/", my.year,"/spawning/nlmeAR", my.year,".RData"))}
+
+predtimes <- expand_grid(year = unique(df$year), doy = seq(0.5, 364.5)) # doy aligned to calculate probability at doy
+
+
+nlme.fixpredsAR1 <- predtimes %>%
+  mutate(fitted =predict(nlme.fixAR, newdata = predtimes,interval = 'confidence')) %>%
+  group_by(year) %>%
+  mutate(
+    slope = c(diff(fitted, lag = 1), NA),
+    prob = slope / sum(slope, na.rm = T)
+  ) %>%
+  filter(!is.na(prob)) %>%
+  mutate(
+    probcum0025 = cumsum(prob),
+    #probcum9725 = rev(cumsum(rev(prob))),
+    doy = ceiling(doy)
+  ) # get back the real doy
+
+```
+ 
+
+
+ 
+#### Check
+```{r spawvalid1, message = F}
+valid<- data.frame(resid=residuals(nlme.fixAR , type="normalized"), mu=fitted(nlme.fixAR), obs=df$gsi, year=df$year)
+
+h<- ggplot(valid, aes(x=mu, y=resid))+geom_point(col="grey35", size=0.5, alpha=0.3) +theme_few() + geom_hline(yintercept=0, col="red", lty=2)+ geom_smooth()
+f<- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col="grey35", size=0.5, alpha=0.3)+theme_few() +geom_abline(slope=1, intercept=0, col="red", lty=2)+ geom_smooth(method="lm")
+
+hEN <-  h+ ylab("Résidus de Pearson | Pearson's residuals") + xlab("Valeurs calibrées | Fitted values")
+
+fEN <-  f+ ylab("Valeurs calibrées | Fitted values") + xlab("Valeurs observées | Observed values")
+
+ggarrange(hEN, fEN, ncol=2)
+
+
+h<- ggplot(valid, aes(x=mu, y=resid))+geom_point(col="grey35", size=0.5) +theme_few() + facet_wrap( ~ year) +geom_hline(yintercept=0, col="red", lty=2)
+f<- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col="grey35", size=0.5)+theme_few() + facet_wrap( ~ year) +geom_abline(slope=1, intercept=0, col="red", lty=2)+ geom_smooth(method="lm")
+
+hEN <-  h+ ylab("Résidus de Pearson | Pearson's residuals") + xlab("Valeurs calibrées | Fitted values")
+
+ggarrange(hEN, fEN, ncol=2)
+```
+
+#### Confidence intervals
+```{r spawvalid2, message = F}
+if(new){
+start<- Sys.time()
+yvals2 <- replicate(n=N, nlme_boot(fitted=nlme.fixAR, data=df, newframe=nlme.fixpredsAR1)) # temporary fix for problem in data length. save df inside Rdata to avoid.   # ncluster cannot be larger than 2, because mremory is exceeded. 
+#started at 14:44 for 100 iterations
+end<- Sys.time()
+end-start
+
+yout<-as.data.frame(apply(yvals2,MARGIN=c(1, 2) ,FUN=function(x) unlist(x))) 
+
+gsi_pred<- bind_cols(yout[,seq(1,N*2, 2)],nlme.fixpredsAR1) %>%  pivot_longer(1:N) %>%  group_by(year, doy) 
+
+#figure pour la prsésentation
+fp<- ggplot(gsi_pred %>%  filter(year==1999)) + geom_line(aes(x=doy, y=value, group=name)) +geom_line(aes(x=doy, y=fitted),lwd=1.5, col="blue")   + geom_vline(xintercept = 10, lty=2, col="red") +ggtitle("1999")
+
+fpEN<- fp + xlab("Day of year") +ylab("Gonadosomatic index")
+
+#is already grouped bu year and doy
+gsi_pred<- gsi_pred %>%  summarize(gsiIClwr=quantile(value,0.025), gsiICupr=quantile(value, 0.975)) %>% mutate(doy = ceiling(doy))
+prob_pred<- bind_cols(yout[,seq(2,N*2, 2)],nlme.fixpredsAR1) %>%  pivot_longer(1:N) %>%  filter(!is.na(value)) %>%  group_by(year, doy) %>%  summarize(propIClwr=quantile(value,0.025), propICupr=quantile(value, 0.975),
+                                                                                                                                                       propsd=sd(value)) %>% mutate(doy = ceiling(doy))
+
+nlme.fixpredsAR1<- list(nlme.fixpredsAR1, gsi_pred, prob_pred) %>%  purrr::reduce(full_join)
+
+save(nlme.fixpredsAR1, file = paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
+} else{load(file = paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
+}
+
+```
+
+#### Export
+
+```{r export, message = F}
+###########tables for resdoc#############
+
+tabl1 <- left_join(nlme_coefAR %>% mutate(year = as.numeric(year)), full_join(
+  nlme.fixpredsAR1 %>% group_by(year) %>% slice(which.max(prob)) %>% rename(doytop = doy) %>% dplyr::select(year, doytop),
+  list(
+    nlme.fixpredsAR1 %>% group_by(year) %>% filter(probcum0025 > 0.025 & probcum0025 < 0.975) %>% slice(which.min(doy)) %>% rename(doymin = doy) %>% dplyr::select(year, doymin),
+    nlme.fixpredsAR1 %>% group_by(year) %>% filter(probcum0025 > 0.025 & probcum0025 <  0.975) %>% slice(which.max(doy)) %>% rename(doymax = doy) %>% dplyr::select(year, doymax),
+    nlme.fixpredsAR1 %>% group_by(year) %>% filter(probcum0025 > 0.15 & probcum0025 <  0.85) %>% slice(which.min(doy)) %>% rename(doymin70 = doy) %>% dplyr::select(year, doymin70),
+    nlme.fixpredsAR1 %>% group_by(year) %>% filter(probcum0025 > 0.15 & probcum0025 <  0.85) %>% slice(which.max(doy)) %>% rename(doymax70 = doy) %>% dplyr::select(year, doymax70)
+    
+  ) %>%  purrr::reduce(full_join), 
+) %>%
+  mutate(duration = doymax - doymin))
+
+
+
+tabl2 <- left_join(date.med, nlme.fixpredsAR1) %>%
+  filter(date.med == doy) %>%
+  mutate(prob_at_med = prob) %>%
+  dplyr::select(year, date.med, prob_at_med, propIClwr,propICupr, propsd)
+
+tabl_out <- left_join(tabl1, tabl2) %>%  mutate(survey_date= ifelse(date.med < doymin70, "Early survey",
+                                                                    ifelse(date.med > doymax70, "Late survey", "During 70 % of spawning")))
+
+write.table(tabl_out, paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt"), row.names = F, sep = "\t", dec = ".")
+
+
+nlme.fixpredsAR <- full_join(df, nlme.fixpredsAR1) 
+
+kable(tabl_out)
+
+``` 
+
+
+### Results {.tabset}
+
+#### Spawning season
+```{r spawn season, message = F}
+##########plots of fit with proportion###########
+scaling.factor <- 4 # for second axis
+
+sp3 <- ggplot(nlme.fixpredsAR %>% filter(year >= my.year-5)) +
+  theme_few() + theme(legend.position = "none", axis.text.x = element_text(angle = 90)) + 
+  coord_cartesian(xlim=c(100, 300))+
+  geom_point(aes(x = doy, y = gsi, col = maturcat), size = 0.3) +
+  scale_color_manual(values = c("green3", "grey")) +
+  geom_line(aes(x = doy, y = fitted), size = 0.5) +
+  #geom_ribbon(aes(ymin=gsiIClwr, ymax=gsiICupr, x=doy), alpha=0.5, col="black", fill="black")+
+  geom_line(aes(x = doy, y = prob * 100 * scaling.factor), col = "red", size = 0.5) +
+ #geom_ribbon(aes(ymin=propIClwr* 100 * scaling.factor, ymax=propICupr* 100 * scaling.factor, x=doy), alpha=0.5, col = "red", fill="red")+
+  geom_vline(data=date.med %>%filter(year >= my.year-5), aes(xintercept=date.med), lty=2) +
+  facet_wrap(~year, ncol = 3) 
+
+
+spEN3 <-  sp3 +
+  scale_y_continuous(
+    name = "Gonadosomatic index",
+    sec.axis = sec_axis(~ . / scaling.factor, name = "Percentage of eggs spawned daily")
+  ) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
+  xlab("Day of year")
+ggsave(paste0("img/",my.year,"/spawning/nlme_spawning_proportion_", my.year,"EN3.png"), width = 8, height = 6, dpi = 600, units = "in")
+spEN3
+
+spBI3<- sp3 + scale_y_continuous(
+  name = "Indice gonado-somatique\nGonadosomatic index",
+  sec.axis = sec_axis(~ . / scaling.factor, name = "Percentage of eggs spawned daily\nPourcentage quotidien d'oeufs pondus")
+) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
+  xlab("Jour de l'ann\u00E9e\nDay of year")
+
+ggsave(paste0("img/",my.year,"/spawning/nlme_spawning_proportion_", my.year, "BI3.png"), width = 8, height = 6, dpi = 600, units = "in")
+
+```
+
+
+
+
+#### Spawning season and survey timing
+```{r spawn season.survey, message = F}
+date.medfig<- date.med  %>% mutate(mindoy=ifelse(year==1979, date.med, mindoy), maxdoy=ifelse(year==1979, date.med,maxdoy)) %>%  dplyr::rename(doytop=date.med)
+tabl_outfig <-  unique( tabl_out %>%  dplyr::select(year, doymin, doymax,doytop, doymin70, doymax70))
+
+
+pt2 <-    ggplot(data=tabl_outfig, aes(y = doytop, x = year)) +
+       geom_line()+
+       geom_ribbon(aes(ymin=doymin70, ymax=doymax70), col="goldenrod2", fill="goldenrod2", alpha=0.3) +
+      geom_ribbon(aes(ymin=doymin, ymax=doymax), col="gold", fill="gold", alpha=0.3) +
+  geom_point(data=date.medfig ,aes(y=doytop,x=year)) +
+       geom_errorbar(data=date.medfig,aes(ymin = mindoy, ymax = maxdoy, y=doytop,x=year)) +
+       scale_x_continuous(breaks=seq(1975, my.year, 5))+
+       #scale_y_continuous(limits = c(150, 200)) +
+       theme_few()+
+       theme(legend.position="bottom",
+           legend.key.width = unit(30, "pt"))
+
+pt2EN <-  pt2+ylab("Day of year") + xlab("Year") 
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "EN.png"), width = 7, height = 5, dpi = 600, units = "in")
+
+pt2FR <-  pt2+ylab("Jour de l'ann\u00E9e") + xlab("Ann\u00E9e") 
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "FR.png"), width = 7, height = 5, dpi = 600, units = "in")
+
+pt2BI <-  pt2+ylab("Jour de l'ann\u00E9e / Day of year") + xlab("Ann\u00E9e / Year")
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year,"BI.png"), width = 7, height = 5, dpi = 600, units = "in")
+
+
+y <- c(100,110,120,140,160,180,200,220,240)
+Sys.setlocale("LC_ALL", "English")
+pt2dayEN <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%B-%d')) +ylab("Day of year") + xlab("Year")
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "EN2.png"), width = 7, height = 5, dpi = 600, units = "in")
+pt2dayBI <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%B-%d')) +ylab("Jour de l'ann\u00E9e | Day of year") + xlab("Ann\u00E9e | Year")
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "BI2.png"), width = 7, height = 5, dpi = 600, units = "in")
+
+Sys.setlocale("LC_ALL", "French_Canada.utf8")
+pt2dayFR <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%d-%B')) +ylab("Jour de l'ann\u00E9e") + xlab("Ann\u00E9e")
+ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "FR2.png"), width = 7, height = 5, dpi = 600, units = "in")
+
+pt2dayEN
+```
+
+
+
+### Bias indicators {.tabset}
+#### Proportion of stage 6
+```{r spawn bias1, message = F}
+  PESd<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_",my.year,".txt"))  %>% dplyr::select(year, xmid)
+  
+  propstages<- read.delim(paste0("results/",my.year,"/spawning/proportion_stages_doy.txt"))
+  
+ 
+ # propstages<- read.delim(paste0("results/",year,"/spawning/proportion_stages_doy.txt")) %>%  dplyr::select(-n, -prop_stage6) %>%  pivot_longer(X5:X8, names_to="stages", values_to="n") %>% 
+ #    mutate(stages=recode_factor(stages, X5 = "5",X6 = "6",X7 = "7",X8 = "8"))
+  
+  
+  #2. proportion of stages weighted for all n for a year
+
+newprop <- left_join(propstages %>%  dplyr::select(-n),
+  propstages %>%  group_by(year) %>%  tally(n)) %>%  
+  mutate(prop_stage6 = X6/n) %>% ungroup() %>% dplyr::filter(prop_stage6>0.05)
+
+
+newprop <- propstages %>% ungroup() %>% dplyr::filter(prop_stage6>0.05)
+
+
+#weighted average of date, weight = proportion or N?
+wa<- list(newprop %>% group_by(year) %>%  summarize(maxstage6 =weighted.mean(doy, w=prop_stage6))  ,
+     newprop %>%  group_by(year) %>%  summarize(start6=min(doy, na.rm=T), end6=max(doy, na.rm=T)),
+     PESd %>%  group_by(year)) %>% purrr::reduce(left_join) %>% 
+  mutate(for_fill= ifelse(year %in% c(1999, 1991), "fit", 
+                      ifelse(year %in% c(2006, 2017,2019), "timing", 
+                          ifelse(year %in% c(2022), "uncertain", "OK"))))
+
+sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstage6, na.rm=T) )
+ bias<-  ggplot(data=wa,aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col="red", lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
+    scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none") +theme_few()
+  
+ 
+ biasEN<- bias + ylab("Day of year of maximum proportion of stage 6") + xlab("Day of year of peak spawning (xmid)")
+ ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_EN.png"), width=6, height=5, dpi=600, units="in")
+ biasEN
+ 
+ biasFR <- bias + ylab("Jour de l'année de la proportion maximale de stade 6") + xlab("Jour de l'année du pic de ponte (xmid)")
+ ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_FR.png"), width=6, height=5, dpi=600, units="in")
+
+ 
+  biasBI<- bias + ylab("Jour de l'année de la proportion maximale de stade 6\nDay of year of maximum proportion of stage 6") + xlab("Jour de l'année du pic de ponte (xmid)\nDay of year of peak spawning (xmid)")
+ ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_BI.png"), width=6, height=5, dpi=600, units="in")
+ 
+``` 
+ 
+  
+#### Proportion of larvae
+```{r spawn larvae, message = F}
+  load(paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year, ".RData"))
+  
+  tabAR<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::select(year, date.med)
+  
+  prop<- left_join(tabAR, nlme.fixpredsAR1) %>%  group_by(year) %>%  filter(doy < date.med) %>%  summarize(prop=sum(prob))
+  
+  
+  df_prop_larvae<- full_join(prop, eggt1 %>%  mutate(prop_larvae =maq_larvae /(maq_eggs_stage1_5 +maq_larvae)) %>%  
+                               group_by(year) %>%  summarize(mean_prop_larvae=mean(prop_larvae, na.rm=T),
+                                                                     sd_prop_larvae = sd(prop_larvae, na.rm=T))) %>% 
+    mutate(for_fill= ifelse(year %in% c(1999, 1991), "fit", 
+                            ifelse(year %in% c(2006, 2017,2019), "timing", 
+                                   ifelse(year %in% c(2022), "uncertain", "OK"))))
+  
+  pl2<- ggplot(data=df_prop_larvae, aes(x=prop, y=mean_prop_larvae))+geom_label(aes(label=year, fill=for_fill),alpha=0.5)  + theme_few() +
+      scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none")+
+    theme(legend.title=element_blank())
+  
+  pl1 <- ggplot(df_prop_larvae  , aes(x=year, y=mean_prop_larvae)) +geom_point()+geom_errorbar(aes(ymin=ifelse(mean_prop_larvae-sd_prop_larvae <0, 0,mean_prop_larvae-sd_prop_larvae),
+                                                                                                                                                                             ymax=mean_prop_larvae+sd_prop_larvae)) +theme_few() + theme(legend.title=element_blank())
+  
+  pl1EN<- pl1 + scale_x_continuous(name="Year", breaks=seq(1980, my.year, 5)) + ylab("Proportion of larvae")
+  pl2EN<- pl2 + scale_x_continuous(name="Proportion of spawning before median date") + ylab("Proportion of larvae")
+  
+  ggarrange(pl1EN, pl2EN, common.legend=T, legend="bottom", ncol=1)
+  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesEN.png"), width=9, height=8)
+  
+  
+  pl1FR<- pl1 + scale_x_continuous(name="Année", breaks=seq(1980, my.year, 5)) + ylab("Proportion de larves")
+  pl2FR<- pl2 + scale_x_continuous(name="Proportion de ponte avant la date m\u00E9diane") + ylab("Proportion de larves")
+  
+  ggFR<- ggarrange(pl1FR, pl2FR, common.legend = T, legend="bottom", ncol=1)
+  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesFR.png"), width=9, height=8)
+  
+  
+   pl1BI<- pl1 + scale_x_continuous(name="Année | Year", breaks=seq(1980, my.year, 5)) + ylab("Proportion de larves | Proportion of larvae")
+  pl2BI<- pl2 + scale_x_continuous(name="Proportion de ponte avant la date m\u00E9diane\nProportion of spawning before median date") + ylab("Proportion de larves | Proportion of larvae")
+  
+  ggBI<- ggarrange(pl1BI, pl2BI, common.legend = T, legend="bottom", ncol=1)
+   ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesBI.png"), width=9, height=8)
+  pl2BI
+  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesBI2.png"), width=6, height=5)
+
+  
+  
+   dur<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::filter(!year %in% c(1980:1982,1991, 1999,2020))
+  
+  my.formula <- y ~ x # for smooth in ggplot
+  
+  pdu<-   ggplot(dur, aes(x=year, y=duration))+geom_point() + geom_smooth(method="lm")+
+    stat_poly_eq(
+      formula = my.formula,
+      aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = "~~~")),
+      parse = TRUE, label.x="right"
+    ) +theme_few()
+  
+  lmdur<- lm(duration ~ year, data=dur)
+  par(mfcol=c(2,2));plot(lmdur)
+  
+  pduEN<- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name="Year")+ ylab("Spawning duration (days)") 
+  ggsave(paste0("img/",my.year,"/spawning/durationEN.png"), width=7, height=4, dpi=600, units="in")
+  pduFR<- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name="Ann\u00E9e")+ ylab("Durée de la ponte (jours)") 
+  ggsave(paste0("img/",my.year,"/spawning/durationFR.png"), width=7, height=4, dpi=600, units="in")
+ 
+  ####median date
+  date.med <- eggt1 %>% filter(year > 1982) %>% 
+    ungroup() %>%
+    group_by(year) %>% mutate(date=as.Date(paste(year, month, day, sep="-"))) %>% 
+    dplyr::summarize(
+      doy.med = round(median(doy, na.rm = T)),
+      mindoy = min(doy, na.rm = T),
+      maxdoy = max(doy, na.rm = T),
+      date.med =paste0("'",substring(median(date, na.rm = T), 6,10)), #' for excel compatibiltiy
+      mindate=paste0("'",substring(min(date), 6,10)),
+  maxdate=paste0("'",substring(max(date), 6,10))
+    )
+  
+  write.table(date.med, paste0("results/",my.year,"/Survey_dates.txt"), row.names=F, sep="\t", dec=".")
+```
+  
+  

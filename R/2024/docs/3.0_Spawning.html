@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2024-12-12" />
+
+<title>Spawning</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel Egg production</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fa fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Read</a>
+</li>
+<li>
+  <a href="2.0_DEP.html">DEP</a>
+</li>
+<li>
+  <a href="3.0_Spawning.html">Spawning</a>
+</li>
+<li>
+  <a href="4.0_TEP.html">TEP</a>
+</li>
+<li>
+  <a href="5.0_Exploration.html">Exploration</a>
+</li>
+<li>
+  <a href="6.0_NL.html">NL</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Spawning</h1>
+<h4 class="date">2024-12-12</h4>
+
+</div>
+
+
+<pre><code># SET-UP</code></pre>
+<pre class="r"><code>##### my packages ################################################################################
+## CRAN
+cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,
+                   &#39;fields&#39;, &#39;inlabru&#39;, &#39;sf&#39;, &#39;PresenceAbsence&#39;, &#39;verification&#39;, &#39;raster&#39;,
+                   &#39;scales&#39;, &#39;nlme&#39;,&#39;nls.multstart&#39;, &#39;stringr&#39;, &#39;ggforce&#39;,&quot;readxl&quot;, &quot;marmap&quot;)
+
+
+
+install.this &lt;- cran.packages[!(cran.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(length(install.this)&gt;=1) install.packages(install.this)
+dummy &lt;- lapply(cran.packages, require, character.only = TRUE)
+
+## github
+git.packages &lt;- c(&#39;catchR&#39;,&#39;DFOdata&#39;,&#39;CCAM&#39;, &#39;INLA&#39;)
+install.this &lt;- git.packages[!(git.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(&#39;catchR&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/catchR@eli_parallel&quot;)
+if(&#39;DFOdata&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/DFOdata&quot;)
+if(&#39;CCAM&#39; %in% install.this)  devtools::install_github(&quot;elisvb/CCAM&quot;)
+if(&#39;INLA&#39; %in% install.this)install.packages(&quot;INLA&quot;,repos=c(getOption(&quot;repos&quot;),INLA=&quot;https://inla.r-inla-download.org/R/stable&quot;), dep=TRUE)
+
+dummy &lt;- lapply(git.packages, require, character.only = TRUE)
+
+##### source R directory  ############################################################################
+#invisible(sapply(list.files(pattern=&quot;[.]R$&quot;, path=&quot;R/&quot;, full.names=TRUE), source))
+
+##### my ggplot theme ################################################################################
+theme_set(theme_mackerel())             # theme_mackerel from catchR
+update_geom_defaults(&quot;line&quot;, list(size = 1))  # no idea why somethimes I get fat lines otherwise
+
+##### passwords databases #############################################################################
+source(&quot;bdOracle.R&quot;)
+
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/spatial_projections.R&quot;))#
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_biochem.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_T0_10.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/Mesh.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/utils/nlme_boot.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations.R&quot;))
+source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations_CV.R&quot;))
+
+
+
+source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSpatialFieldCL.R&#39;))
+source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSmoother.R&#39;))
+source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/model_validation.R&#39;))
+source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/get_prediction_grid.R&#39;))
+source(paste0(&#39;R/biochem/PL_Get_SampleID_Batch.R&#39;))
+source(paste0(&#39;R/biochem/PL_Get_Counts_Batch.R&#39;))
+source(paste0(&#39;R/biochem/PL_Read_Filter.R&#39;))
+source(paste0(&#39;R/biochem/PL_Taxonomic_Grouping.R&#39;))
+
+
+log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
+
+#source(paste0(&quot;R/&quot;,year_to_report,&quot;/INLA/getvar.R&quot;)) # needs to be retought</code></pre>
+<pre class="r"><code>new=F
+N=100
+load(file=paste0(&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
+load(file=paste0(&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
+dat=eggt1
+</code></pre>
+<div id="read" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Read</h1>
+<pre class="r"><code>#prop_spawn(year,year=year, dat = egg, cv = T) # dat is used to calculate median date and in split with trajet.
+
+date.med &lt;- eggt1 %&gt;%  filter(year !=1979) %&gt;%
+  ungroup() %&gt;%
+  group_by(year) %&gt;%
+  dplyr::summarize(
+    date.med = round(median(doy, na.rm = T)),
+    mindoy = min(doy, na.rm = T),
+    maxdoy = max(doy, na.rm = T)
+  )
+
+date.med &lt;- date.med %&gt;% mutate(date.med = ifelse(year == 1979, 166, date.med)) # from Ouellet et al. 1987
+date.med &lt;- as.data.frame(date.med)
+
+bio &lt;- get.bio(species = &quot;maquereau&quot;, user = my.env$bio.username, password = my.env$bio.password)
+bio.backup &lt;- bio
+    
+      bio &lt;- bio %&gt;% mutate(doy = as.numeric(format(as.Date(paste(year, month, day, sep = &quot;/&quot;), format = &quot;%Y/%m/%d&quot;), format = &quot;%j&quot;))) %&gt;%
+        dplyr::filter(
+          !is.na(weight), !is.na(wgonad), !is.na(doy),
+          weight &gt; 0, weight &gt; wgonad, matur != 0, nafo %in% c(&quot;4T&quot;, &quot;4V&quot;, &quot;4W&quot;)
+        ) 
+    
+      
+bio %&lt;&gt;% mutate(gsi = (wgonad / weight) * 100)
+
+#remove outliers
+df &lt;- bio %&gt;%
+  dplyr::filter(!is.na(gsi), matur &gt; 4, year &gt; 1978, !(gsi &gt; 5 &amp; doy &gt; 250), !(gsi &gt; 10 &amp; doy &gt; 200 &amp; year %in% c(1994, 1999, 2018, 2019, 2020)), !(year == 1999 &amp; matur &gt; 6 &amp; nafo == &quot;4V&quot;), !(nafo!=&quot;4T&quot; &amp; matur &gt; 6), !(nafo!=&quot;4T&quot; &amp; matur&gt;6 &amp; month &gt;7), length.frozen &gt; 0.2, weight &gt; 0.03, gsi &lt; 40)  %&gt;%  
+  group_by(agef) %&gt;% filter(weight&gt;quantile(weight,0.001), weight&lt;quantile(weight,0.999))%&gt;% 
+  arrange(year)
+#removing gsi &gt; 40 is jsutified because it does not concur with stages. Stage 1 and 8 at &gt; 40% is unlikely. Maybe a 0 missing in weight. 
+
+df &lt;- df %&gt;%
+  arrange(year) %&gt;%
+  mutate(year = as.numeric(as.character(year))) %&gt;%  filter(!is.na(gsi), !is.na(doy), !is.na(year)) %&gt;% mutate(maturcat = ifelse(!is.na(matur) &amp; matur == 6, &quot;6&quot;,                                                                                                                                 ifelse(is.na(matur), &quot;other&quot;, &quot;other&quot;))) %&gt;%  ungroup()
+
+
+bio.backup %&lt;&gt;% mutate(gsi = (wgonad / weight) * 100)
+
+bio.backup %&gt;% filter(gsi &lt; 50,  matur %in% 5:6) %&gt;%   ggplot(aes(x=as.factor(month), y=gsi, fill=as.factor(matur)))+
+  geom_boxplot() + facet_wrap(~prov) + theme(legend.position=&quot;inside&quot;, legend.position.inside=c(0.8, 0.2))+
+  labs(x= &quot;Mois | Month&quot;)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/read%20spawn-1.png" width="864" style="display: block; margin: auto;" /></p>
+<div id="checks" class="section level2 tabset" number="1.1">
+<h2 class="tabset"><span class="header-section-number">1.1</span>
+CHECKS</h2>
+<div id="check-for-outliers" class="section level3" number="1.1.1">
+<h3><span class="header-section-number">1.1.1</span> Check for
+outliers</h3>
+<pre class="r"><code>df %&gt;% filter(year %in% year_to_plot) %&gt;% ggplot(aes(x=doy, y=gsi)) +geom_point(aes(col=maturcat)) + facet_wrap(~year) + scale_color_manual(values = c(&quot;green3&quot;, &quot;grey&quot;)) </code></pre>
+<p><img src="3.0_Spawning_files/figure-html/check%20outliers-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="check-data" class="section level3" number="1.1.2">
+<h3><span class="header-section-number">1.1.2</span> Check data</h3>
+<pre class="r"><code>table_prov&lt;- df %&gt;%  group_by(year, nafo) %&gt;%  tally() %&gt;%  pivot_wider(names_from=nafo, values_from=n) %&gt;%  mutate(total=sum(`4T`,`4W`,`4V`, na.rm=T),
+                                                                                                                    prop4T=round(`4T`/total,3),
+                                                                                                                    prop4W=round(`4W`/total,3),
+                                                                                                                    prop4V=round(`4V`/total, 3))
+
+write.table(table_prov, paste0(&quot;results/&quot;,my.year,&quot;/spawning/table_provenance_ech.txt&quot;), row.names=F, sep=&quot;\t&quot;, dec=&quot;.&quot;)
+
+
+ns&lt;- table_prov %&gt;% dplyr::select(-total) %&gt;%  pivot_longer(2:7) %&gt;%  mutate(type=ifelse(grepl(name, pattern=&quot;prop&quot;), &quot;Proportion&quot;, &quot;n&quot;),
+                                                                        region=ifelse(grepl(name, pattern=&quot;4T&quot;), &quot;4T&quot;,
+                                                                                      ifelse(grepl(name, pattern=&quot;4V&quot;), &quot;4V&quot;,
+                                                                                             ifelse(grepl(name, pattern=&quot;4W&quot;), &quot;4W&quot;, NA)))) %&gt;% dplyr::select(-name) %&gt;% 
+  pivot_wider(names_from=type, values_from = value) %&gt;% 
+ggplot(aes(x=year, y=n))+geom_bar( stat=&quot;identity&quot;, aes(fill=region)) + theme_few() + scale_fill_viridis_d(name=&quot;&quot;, direction=-1)+
+  theme(legend.position=c(0.85, 0.85)) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+
+ ns + ylab(&quot;Nombre de poissons | Number of fish&quot;) + scale_x_continuous(name=&quot;Année | Year&quot;, breaks=seq(1980, max(df$year), 5))</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/samples-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/NsamplesBI.png&quot;), width=6, height=5, dpi=600, units=&quot;in&quot;)
+
+
+ns2&lt;- df %&gt;%  group_by(year, matur) %&gt;%  tally() %&gt;%  pivot_wider(names_from=matur, values_from=n) %&gt;% 
+  pivot_longer(`5` :`8`) %&gt;% 
+  ggplot(aes(x=year, y=value))+geom_bar( stat=&quot;identity&quot;, aes(fill=name)) + theme_few() + scale_fill_viridis_d(name=&quot;&quot;,direction=-1)+
+  theme(legend.position=c(0.85, 0.85),
+        legend.background = element_blank()) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+ ns2 + ylab(&quot;Nombre de poissons | Number of fish&quot;) + scale_x_continuous(name=&quot;Année | Year&quot;, breaks=seq(1980, max(df$year), 5))</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/samples-2.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/Nsamples_stagesBI.png&quot;), width=6, height=5, dpi=600, units=&quot;in&quot;)
+
+
+
+propdoy&lt;- left_join(left_join(df %&gt;%  group_by(year,doy, matur) %&gt;%  tally() %&gt;%  pivot_wider(names_from=matur, values_from=n, values_fill=0),
+df %&gt;%  group_by(year,doy) %&gt;%  tally()) %&gt;%  mutate(prop_stage6= `6` /n),
+df %&gt;%  group_by(year, doy) %&gt;%  filter(matur==&quot;6&quot;) %&gt;%  summarize(mgsi=mean(gsi, na.rm=T)))
+
+write.table(propdoy, paste0(&quot;results/&quot;,my.year,&quot;/spawning/proportion_stages_doy.txt&quot;), row.names=F, sep=&quot;\t&quot;, dec=&quot;.&quot;)
+
+
+nsy&lt;- df %&gt;%  group_by(doy, year, matur) %&gt;%  tally() %&gt;% 
+  ggplot(aes(x=doy, y=n))+facet_wrap(~year) +geom_bar(linewidth=0.1,stat=&quot;identity&quot;, aes(fill=as.factor(matur),col=as.factor(matur)))+ theme_few() + scale_fill_viridis_d(name=&quot;&quot;,direction=-1)+ scale_color_viridis_d(name=&quot;&quot;,direction=-1)+
+  theme(legend.position=c(0.4, 0.05),legend.direction=&quot;horizontal&quot;,
+        legend.background = element_blank()) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
+
+
+nsyEN &lt;-  nsy + ylab(&quot;Number of fish&quot;) + xlab(&quot;Day of year&quot;)
+#ggsave(paste0(&quot;img/&quot;,year,&quot;/spawning/Nsamples_stages&quot;,nameincl4X,&quot;_yearEN.png&quot;), width=10, height=6, dpi=600, units=&quot;in&quot;)
+
+nsyFR &lt;-  nsy + ylab(&quot;Nombre de poissons&quot;) + xlab(&quot;Jour de l&#39;ann\u00E9e&quot;)
+#ggsave(paste0(&quot;img/&quot;,year,&quot;/spawning/Nsamples_stages&quot;,nameincl4X,&quot;_yearFR.png&quot;), width=10, height=6, dpi=600, units=&quot;in&quot;)
+
+
+mdoy6&lt;- df %&gt;%  group_by(year) %&gt;% filter(matur==6) %&gt;%  summarize(mdoy_stage6=mean(doy),
+                                                                      sddoy_stage6=sd(doy)) 
+</code></pre>
+</div>
+<div id="model" class="section level3 tabset" number="1.1.3">
+<h3 class="tabset"><span class="header-section-number">1.1.3</span>
+Model</h3>
+<pre class="r"><code>
+#evaluate starting values
+
+if(new){
+start.val &lt;- nls.multstart::nls_multstart(gsi ~ SSlogis(doy, Asym, xmid, scal),
+                                          data = df,
+                                          start_lower = c(Asym = min(df %&gt;% filter(matur == 5) %&gt;% dplyr::select(gsi)), xmid = min(df$doy), scal = -100),
+                                          start_upper = c(Asym = max(df$gsi), xmid = max(df$doy), scal = 100),
+                                          iter = 500,
+                                          supp_errors = &quot;Y&quot;
+)
+
+
+
+nlme.fixAR &lt;- nlme(gsi ~ SSlogis(doy, Asym, xmid, scal),
+  data = df,
+  fixed = Asym + xmid + scal ~ 1,
+  start = coefficients(start.val),
+  correlation = corAR1(),
+  random = Asym + xmid + scal ~ 1 | year
+)
+
+#df&lt;- df %&gt;%  mutate(year=as.factor(year), group=as.numeric(year))
+#test&lt;- glm(gsi/100 ~ doy |year, family=&quot;binomial&quot;, data=df, correlation=corAR1())
+#library(glmmTMB)
+#tmb1&lt;- glmmTMB(gsi/100 ~ doy + ar1(year + 0 | group), data=df, family=beta_family(link=&quot;logit&quot;))
+#plot(residuals(tmb1, type=&quot;pearson&quot;) ~ fitted(tmb1))
+#library(DHARMa)
+#plot(simulateResiduals(tmb1))
+
+#newdata=data.frame(doy=seq(100,300, 5))
+#newdata$pred&lt;- predict(test,newdata)
+
+nlme_coefAR = as_tibble(coef(nlme.fixAR), rownames = &#39;year&#39;)
+
+#keep starting values in case of needed for update
+save(nlme.fixAR,start.val,df, nlme_coefAR, file = paste0(&quot;results/&quot;, my.year,&quot;/spawning/nlmeAR&quot;, my.year,&quot;.RData&quot;))
+} else{load(paste0(&quot;results/&quot;, my.year,&quot;/spawning/nlmeAR&quot;, my.year,&quot;.RData&quot;))}
+
+predtimes &lt;- expand_grid(year = unique(df$year), doy = seq(0.5, 364.5)) # doy aligned to calculate probability at doy
+
+
+nlme.fixpredsAR1 &lt;- predtimes %&gt;%
+  mutate(fitted =predict(nlme.fixAR, newdata = predtimes,interval = &#39;confidence&#39;)) %&gt;%
+  group_by(year) %&gt;%
+  mutate(
+    slope = c(diff(fitted, lag = 1), NA),
+    prob = slope / sum(slope, na.rm = T)
+  ) %&gt;%
+  filter(!is.na(prob)) %&gt;%
+  mutate(
+    probcum0025 = cumsum(prob),
+    #probcum9725 = rev(cumsum(rev(prob))),
+    doy = ceiling(doy)
+  ) # get back the real doy
+</code></pre>
+<div id="check" class="section level4" number="1.1.3.1">
+<h4><span class="header-section-number">1.1.3.1</span> Check</h4>
+<pre class="r"><code>valid&lt;- data.frame(resid=residuals(nlme.fixAR , type=&quot;normalized&quot;), mu=fitted(nlme.fixAR), obs=df$gsi, year=df$year)
+
+h&lt;- ggplot(valid, aes(x=mu, y=resid))+geom_point(col=&quot;grey35&quot;, size=0.5, alpha=0.3) +theme_few() + geom_hline(yintercept=0, col=&quot;red&quot;, lty=2)+ geom_smooth()
+f&lt;- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col=&quot;grey35&quot;, size=0.5, alpha=0.3)+theme_few() +geom_abline(slope=1, intercept=0, col=&quot;red&quot;, lty=2)+ geom_smooth(method=&quot;lm&quot;)
+
+hEN &lt;-  h+ ylab(&quot;Résidus de Pearson | Pearson&#39;s residuals&quot;) + xlab(&quot;Valeurs calibrées | Fitted values&quot;)
+
+fEN &lt;-  f+ ylab(&quot;Valeurs calibrées | Fitted values&quot;) + xlab(&quot;Valeurs observées | Observed values&quot;)
+
+ggarrange(hEN, fEN, ncol=2)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawvalid1-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+
+h&lt;- ggplot(valid, aes(x=mu, y=resid))+geom_point(col=&quot;grey35&quot;, size=0.5) +theme_few() + facet_wrap( ~ year) +geom_hline(yintercept=0, col=&quot;red&quot;, lty=2)
+f&lt;- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col=&quot;grey35&quot;, size=0.5)+theme_few() + facet_wrap( ~ year) +geom_abline(slope=1, intercept=0, col=&quot;red&quot;, lty=2)+ geom_smooth(method=&quot;lm&quot;)
+
+hEN &lt;-  h+ ylab(&quot;Résidus de Pearson | Pearson&#39;s residuals&quot;) + xlab(&quot;Valeurs calibrées | Fitted values&quot;)
+
+ggarrange(hEN, fEN, ncol=2)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawvalid1-2.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+ggplot(valid, aes(x=year, y=resid))+geom_point(col=&quot;grey35&quot;, size=0.5) +theme_few() +geom_hline(yintercept=0, col=&quot;red&quot;, lty=2) + ylab(&quot;Résidus de Pearson | Pearson&#39;s residuals&quot;) + xlab(&quot;Année | Year&quot;)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawvalid1-3.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="confidence-intervals" class="section level4" number="1.1.3.2">
+<h4><span class="header-section-number">1.1.3.2</span> Confidence
+intervals</h4>
+<pre class="r"><code>if(new){
+start&lt;- Sys.time()
+yvals2 &lt;- replicate(n=N, nlme_boot(fitted=nlme.fixAR, data=df, newframe=nlme.fixpredsAR1)) # temporary fix for problem in data length. save df inside Rdata to avoid.   # ncluster cannot be larger than 2, because mremory is exceeded. 
+#started at 14:44 for 100 iterations
+end&lt;- Sys.time()
+end-start
+
+yout&lt;-as.data.frame(apply(yvals2,MARGIN=c(1, 2) ,FUN=function(x) unlist(x))) 
+
+gsi_pred&lt;- bind_cols(yout[,seq(1,N*2, 2)],nlme.fixpredsAR1) %&gt;%  pivot_longer(1:N) %&gt;%  group_by(year, doy) 
+
+#figure pour la prsésentation
+fp&lt;- ggplot(gsi_pred %&gt;%  filter(year==1999)) + geom_line(aes(x=doy, y=value, group=name)) +geom_line(aes(x=doy, y=fitted),lwd=1.5, col=&quot;blue&quot;)   + geom_vline(xintercept = 10, lty=2, col=&quot;red&quot;) +ggtitle(&quot;1999&quot;)
+
+fpEN&lt;- fp + xlab(&quot;Day of year&quot;) +ylab(&quot;Gonadosomatic index&quot;)
+
+#is already grouped bu year and doy
+gsi_pred&lt;- gsi_pred %&gt;%  summarize(gsiIClwr=quantile(value,0.025, na.rm=T), gsiICupr=quantile(value, 0.975, na.rm=T)) %&gt;% mutate(doy = ceiling(doy))
+prob_pred&lt;- bind_cols(yout[,seq(2,N*2, 2)],nlme.fixpredsAR1) %&gt;%  pivot_longer(1:N) %&gt;%  filter(!is.na(value)) %&gt;%  group_by(year, doy) %&gt;%  summarize(propIClwr=quantile(value,0.025), propICupr=quantile(value, 0.975),
+                                                                                                                                                       propsd=sd(value)) %&gt;% mutate(doy = ceiling(doy))
+
+nlme.fixpredsAR1&lt;- list(nlme.fixpredsAR1, gsi_pred, prob_pred) %&gt;%  purrr::reduce(full_join)
+
+save(nlme.fixpredsAR1, file = paste0(&quot;results/&quot;,my.year,&quot;/spawning/predicted_propspawn_doy&quot;, my.year,&quot;.RData&quot;))
+} else{load(file = paste0(&quot;results/&quot;,my.year,&quot;/spawning/predicted_propspawn_doy&quot;, my.year,&quot;.RData&quot;))
+}
+</code></pre>
+</div>
+<div id="export" class="section level4" number="1.1.3.3">
+<h4><span class="header-section-number">1.1.3.3</span> Export</h4>
+<pre class="r"><code>###########tables for resdoc#############
+
+tabl1 &lt;- left_join(nlme_coefAR %&gt;% mutate(year = as.numeric(year)), full_join(
+  nlme.fixpredsAR1 %&gt;% group_by(year) %&gt;% slice(which.max(prob)) %&gt;% rename(doytop = doy) %&gt;% dplyr::select(year, doytop),
+  list(
+    nlme.fixpredsAR1 %&gt;% group_by(year) %&gt;% filter(probcum0025 &gt; 0.025 &amp; probcum0025 &lt; 0.975) %&gt;% slice(which.min(doy)) %&gt;% rename(doymin = doy) %&gt;% dplyr::select(year, doymin),
+    nlme.fixpredsAR1 %&gt;% group_by(year) %&gt;% filter(probcum0025 &gt; 0.025 &amp; probcum0025 &lt;  0.975) %&gt;% slice(which.max(doy)) %&gt;% rename(doymax = doy) %&gt;% dplyr::select(year, doymax),
+    nlme.fixpredsAR1 %&gt;% group_by(year) %&gt;% filter(probcum0025 &gt; 0.15 &amp; probcum0025 &lt;  0.85) %&gt;% slice(which.min(doy)) %&gt;% rename(doymin70 = doy) %&gt;% dplyr::select(year, doymin70),
+    nlme.fixpredsAR1 %&gt;% group_by(year) %&gt;% filter(probcum0025 &gt; 0.15 &amp; probcum0025 &lt;  0.85) %&gt;% slice(which.max(doy)) %&gt;% rename(doymax70 = doy) %&gt;% dplyr::select(year, doymax70)
+    
+  ) %&gt;%  purrr::reduce(full_join), 
+) %&gt;%
+  mutate(duration = doymax - doymin))
+
+
+
+tabl2 &lt;- left_join(date.med, nlme.fixpredsAR1) %&gt;%
+  filter(date.med == doy) %&gt;%
+  mutate(prob_at_med = prob) %&gt;%
+  dplyr::select(year, date.med, prob_at_med, propIClwr,propICupr, propsd)
+
+tabl_out &lt;- left_join(tabl1, tabl2) %&gt;%  mutate(survey_date= ifelse(date.med &lt; doymin70, &quot;Early survey&quot;,
+                                                                    ifelse(date.med &gt; doymax70, &quot;Late survey&quot;, &quot;During 70 % of spawning&quot;)))
+
+write.table(tabl_out, paste0(&quot;results/&quot;,my.year,&quot;/spawning/table_nlmeAR_&quot;, my.year, &quot;.txt&quot;), row.names = F, sep = &quot;\t&quot;, dec = &quot;.&quot;)
+
+
+nlme.fixpredsAR &lt;- full_join(df, nlme.fixpredsAR1) 
+
+kable(tabl_out)</code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="7%" />
+<col width="4%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="7%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">Asym</th>
+<th align="right">xmid</th>
+<th align="right">scal</th>
+<th align="right">doytop</th>
+<th align="right">doymin</th>
+<th align="right">doymax</th>
+<th align="right">doymin70</th>
+<th align="right">doymax70</th>
+<th align="right">duration</th>
+<th align="right">date.med</th>
+<th align="right">prob_at_med</th>
+<th align="right">propIClwr</th>
+<th align="right">propICupr</th>
+<th align="right">propsd</th>
+<th align="left">survey_date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">19.87848</td>
+<td align="right">168.6284</td>
+<td align="right">-12.428735</td>
+<td align="right">169</td>
+<td align="right">123</td>
+<td align="right">213</td>
+<td align="right">147</td>
+<td align="right">189</td>
+<td align="right">90</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1980</td>
+<td align="right">17.30217</td>
+<td align="right">176.9699</td>
+<td align="right">-12.980485</td>
+<td align="right">177</td>
+<td align="right">129</td>
+<td align="right">224</td>
+<td align="right">154</td>
+<td align="right">198</td>
+<td align="right">95</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">1981</td>
+<td align="right">13.17202</td>
+<td align="right">184.4091</td>
+<td align="right">-6.112210</td>
+<td align="right">184</td>
+<td align="right">162</td>
+<td align="right">206</td>
+<td align="right">174</td>
+<td align="right">194</td>
+<td align="right">44</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1982</td>
+<td align="right">17.44351</td>
+<td align="right">172.4362</td>
+<td align="right">-16.138419</td>
+<td align="right">172</td>
+<td align="right">113</td>
+<td align="right">231</td>
+<td align="right">144</td>
+<td align="right">199</td>
+<td align="right">118</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">1983</td>
+<td align="right">13.85065</td>
+<td align="right">173.9845</td>
+<td align="right">-5.173689</td>
+<td align="right">174</td>
+<td align="right">155</td>
+<td align="right">192</td>
+<td align="right">165</td>
+<td align="right">182</td>
+<td align="right">37</td>
+<td align="right">178</td>
+<td align="right">0.0416979</td>
+<td align="right">0.0366101</td>
+<td align="right">0.0429872</td>
+<td align="right">0.0016464</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1984</td>
+<td align="right">18.31483</td>
+<td align="right">169.0300</td>
+<td align="right">-14.359336</td>
+<td align="right">169</td>
+<td align="right">116</td>
+<td align="right">221</td>
+<td align="right">144</td>
+<td align="right">193</td>
+<td align="right">105</td>
+<td align="right">176</td>
+<td align="right">0.0164225</td>
+<td align="right">0.0143995</td>
+<td align="right">0.0165191</td>
+<td align="right">0.0004950</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="right">20.80333</td>
+<td align="right">165.4026</td>
+<td align="right">-14.935458</td>
+<td align="right">165</td>
+<td align="right">111</td>
+<td align="right">219</td>
+<td align="right">139</td>
+<td align="right">190</td>
+<td align="right">108</td>
+<td align="right">178</td>
+<td align="right">0.0140817</td>
+<td align="right">0.0125210</td>
+<td align="right">0.0144585</td>
+<td align="right">0.0005449</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1986</td>
+<td align="right">16.63232</td>
+<td align="right">171.2667</td>
+<td align="right">-13.557847</td>
+<td align="right">171</td>
+<td align="right">122</td>
+<td align="right">220</td>
+<td align="right">148</td>
+<td align="right">194</td>
+<td align="right">98</td>
+<td align="right">175</td>
+<td align="right">0.0180925</td>
+<td align="right">0.0162782</td>
+<td align="right">0.0185203</td>
+<td align="right">0.0005812</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1987</td>
+<td align="right">13.88174</td>
+<td align="right">171.9063</td>
+<td align="right">-11.601374</td>
+<td align="right">172</td>
+<td align="right">129</td>
+<td align="right">213</td>
+<td align="right">152</td>
+<td align="right">191</td>
+<td align="right">84</td>
+<td align="right">172</td>
+<td align="right">0.0215455</td>
+<td align="right">0.0197949</td>
+<td align="right">0.0222124</td>
+<td align="right">0.0006540</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1988</td>
+<td align="right">14.43570</td>
+<td align="right">174.2940</td>
+<td align="right">-6.875398</td>
+<td align="right">174</td>
+<td align="right">149</td>
+<td align="right">198</td>
+<td align="right">162</td>
+<td align="right">185</td>
+<td align="right">49</td>
+<td align="right">173</td>
+<td align="right">0.0360260</td>
+<td align="right">0.0335688</td>
+<td align="right">0.0382241</td>
+<td align="right">0.0012534</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">21.36459</td>
+<td align="right">162.3855</td>
+<td align="right">-14.954247</td>
+<td align="right">162</td>
+<td align="right">108</td>
+<td align="right">216</td>
+<td align="right">136</td>
+<td align="right">187</td>
+<td align="right">108</td>
+<td align="right">174</td>
+<td align="right">0.0144295</td>
+<td align="right">0.0125371</td>
+<td align="right">0.0149018</td>
+<td align="right">0.0006466</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1990</td>
+<td align="right">14.25675</td>
+<td align="right">175.7345</td>
+<td align="right">-9.834480</td>
+<td align="right">176</td>
+<td align="right">140</td>
+<td align="right">211</td>
+<td align="right">159</td>
+<td align="right">192</td>
+<td align="right">71</td>
+<td align="right">170</td>
+<td align="right">0.0233729</td>
+<td align="right">0.0224690</td>
+<td align="right">0.0241203</td>
+<td align="right">0.0004208</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="right">21.42552</td>
+<td align="right">163.2775</td>
+<td align="right">-17.845510</td>
+<td align="right">163</td>
+<td align="right">98</td>
+<td align="right">228</td>
+<td align="right">132</td>
+<td align="right">193</td>
+<td align="right">130</td>
+<td align="right">171</td>
+<td align="right">0.0133741</td>
+<td align="right">0.0118410</td>
+<td align="right">0.0149186</td>
+<td align="right">0.0008178</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1992</td>
+<td align="right">14.92318</td>
+<td align="right">175.2588</td>
+<td align="right">-11.795112</td>
+<td align="right">175</td>
+<td align="right">132</td>
+<td align="right">217</td>
+<td align="right">155</td>
+<td align="right">195</td>
+<td align="right">85</td>
+<td align="right">173</td>
+<td align="right">0.0209990</td>
+<td align="right">0.0188380</td>
+<td align="right">0.0219912</td>
+<td align="right">0.0008634</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="right">17.45477</td>
+<td align="right">173.1908</td>
+<td align="right">-13.877330</td>
+<td align="right">173</td>
+<td align="right">122</td>
+<td align="right">223</td>
+<td align="right">149</td>
+<td align="right">196</td>
+<td align="right">101</td>
+<td align="right">170</td>
+<td align="right">0.0177772</td>
+<td align="right">0.0165894</td>
+<td align="right">0.0183965</td>
+<td align="right">0.0005148</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">1994</td>
+<td align="right">13.68858</td>
+<td align="right">176.3580</td>
+<td align="right">-11.145021</td>
+<td align="right">176</td>
+<td align="right">136</td>
+<td align="right">216</td>
+<td align="right">157</td>
+<td align="right">195</td>
+<td align="right">80</td>
+<td align="right">168</td>
+<td align="right">0.0195493</td>
+<td align="right">0.0186761</td>
+<td align="right">0.0201950</td>
+<td align="right">0.0004423</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1995</td>
+<td align="right">13.98390</td>
+<td align="right">177.7990</td>
+<td align="right">-10.159952</td>
+<td align="right">178</td>
+<td align="right">141</td>
+<td align="right">214</td>
+<td align="right">160</td>
+<td align="right">194</td>
+<td align="right">73</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">17.66986</td>
+<td align="right">168.7081</td>
+<td align="right">-11.032983</td>
+<td align="right">169</td>
+<td align="right">128</td>
+<td align="right">208</td>
+<td align="right">150</td>
+<td align="right">187</td>
+<td align="right">80</td>
+<td align="right">173</td>
+<td align="right">0.0218199</td>
+<td align="right">0.0188876</td>
+<td align="right">0.0227590</td>
+<td align="right">0.0010580</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">15.44268</td>
+<td align="right">174.8676</td>
+<td align="right">-8.486577</td>
+<td align="right">175</td>
+<td align="right">144</td>
+<td align="right">205</td>
+<td align="right">160</td>
+<td align="right">189</td>
+<td align="right">61</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1998</td>
+<td align="right">16.76371</td>
+<td align="right">166.3245</td>
+<td align="right">-10.405210</td>
+<td align="right">166</td>
+<td align="right">128</td>
+<td align="right">203</td>
+<td align="right">148</td>
+<td align="right">183</td>
+<td align="right">75</td>
+<td align="right">167</td>
+<td align="right">0.0239965</td>
+<td align="right">0.0213047</td>
+<td align="right">0.0247563</td>
+<td align="right">0.0008326</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">1999</td>
+<td align="right">23.62881</td>
+<td align="right">145.9494</td>
+<td align="right">-15.273898</td>
+<td align="right">146</td>
+<td align="right">90</td>
+<td align="right">201</td>
+<td align="right">119</td>
+<td align="right">171</td>
+<td align="right">111</td>
+<td align="right">173</td>
+<td align="right">0.0081370</td>
+<td align="right">0.0072314</td>
+<td align="right">0.0095027</td>
+<td align="right">0.0005597</td>
+<td align="left">Late survey</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="right">15.27501</td>
+<td align="right">170.8239</td>
+<td align="right">-11.149828</td>
+<td align="right">171</td>
+<td align="right">130</td>
+<td align="right">211</td>
+<td align="right">151</td>
+<td align="right">189</td>
+<td align="right">81</td>
+<td align="right">173</td>
+<td align="right">0.0222061</td>
+<td align="right">0.0196176</td>
+<td align="right">0.0228645</td>
+<td align="right">0.0008328</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2001</td>
+<td align="right">12.77578</td>
+<td align="right">171.9918</td>
+<td align="right">-6.842968</td>
+<td align="right">172</td>
+<td align="right">147</td>
+<td align="right">196</td>
+<td align="right">160</td>
+<td align="right">183</td>
+<td align="right">49</td>
+<td align="right">166</td>
+<td align="right">0.0303311</td>
+<td align="right">0.0291206</td>
+<td align="right">0.0314204</td>
+<td align="right">0.0006133</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2002</td>
+<td align="right">15.34635</td>
+<td align="right">172.0129</td>
+<td align="right">-12.568657</td>
+<td align="right">172</td>
+<td align="right">126</td>
+<td align="right">217</td>
+<td align="right">150</td>
+<td align="right">193</td>
+<td align="right">91</td>
+<td align="right">170</td>
+<td align="right">0.0197612</td>
+<td align="right">0.0181348</td>
+<td align="right">0.0203560</td>
+<td align="right">0.0005739</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="right">16.57877</td>
+<td align="right">170.3274</td>
+<td align="right">-8.970924</td>
+<td align="right">170</td>
+<td align="right">137</td>
+<td align="right">202</td>
+<td align="right">155</td>
+<td align="right">185</td>
+<td align="right">65</td>
+<td align="right">171</td>
+<td align="right">0.0278215</td>
+<td align="right">0.0250593</td>
+<td align="right">0.0285857</td>
+<td align="right">0.0008690</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2004</td>
+<td align="right">17.88288</td>
+<td align="right">170.3540</td>
+<td align="right">-12.690668</td>
+<td align="right">170</td>
+<td align="right">124</td>
+<td align="right">216</td>
+<td align="right">148</td>
+<td align="right">191</td>
+<td align="right">92</td>
+<td align="right">171</td>
+<td align="right">0.0196843</td>
+<td align="right">0.0173623</td>
+<td align="right">0.0205992</td>
+<td align="right">0.0009340</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2005</td>
+<td align="right">18.98100</td>
+<td align="right">172.8019</td>
+<td align="right">-10.698732</td>
+<td align="right">173</td>
+<td align="right">134</td>
+<td align="right">211</td>
+<td align="right">154</td>
+<td align="right">190</td>
+<td align="right">77</td>
+<td align="right">170</td>
+<td align="right">0.0229672</td>
+<td align="right">0.0216473</td>
+<td align="right">0.0236592</td>
+<td align="right">0.0005301</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2006</td>
+<td align="right">18.11384</td>
+<td align="right">165.4067</td>
+<td align="right">-10.355334</td>
+<td align="right">165</td>
+<td align="right">127</td>
+<td align="right">202</td>
+<td align="right">147</td>
+<td align="right">182</td>
+<td align="right">75</td>
+<td align="right">186</td>
+<td align="right">0.0102283</td>
+<td align="right">0.0095402</td>
+<td align="right">0.0102860</td>
+<td align="right">0.0002150</td>
+<td align="left">Late survey</td>
+</tr>
+<tr class="odd">
+<td align="right">2007</td>
+<td align="right">13.86718</td>
+<td align="right">177.4448</td>
+<td align="right">-6.953787</td>
+<td align="right">177</td>
+<td align="right">152</td>
+<td align="right">202</td>
+<td align="right">165</td>
+<td align="right">189</td>
+<td align="right">50</td>
+<td align="right">177</td>
+<td align="right">0.0358995</td>
+<td align="right">0.0325152</td>
+<td align="right">0.0377100</td>
+<td align="right">0.0013014</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2008</td>
+<td align="right">12.79179</td>
+<td align="right">175.8556</td>
+<td align="right">-5.917996</td>
+<td align="right">176</td>
+<td align="right">154</td>
+<td align="right">197</td>
+<td align="right">166</td>
+<td align="right">185</td>
+<td align="right">43</td>
+<td align="right">177</td>
+<td align="right">0.0418273</td>
+<td align="right">0.0376223</td>
+<td align="right">0.0435083</td>
+<td align="right">0.0014579</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2009</td>
+<td align="right">12.52185</td>
+<td align="right">174.0097</td>
+<td align="right">-7.878852</td>
+<td align="right">174</td>
+<td align="right">145</td>
+<td align="right">202</td>
+<td align="right">160</td>
+<td align="right">187</td>
+<td align="right">57</td>
+<td align="right">168</td>
+<td align="right">0.0275230</td>
+<td align="right">0.0256942</td>
+<td align="right">0.0295016</td>
+<td align="right">0.0010128</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">15.04594</td>
+<td align="right">170.1637</td>
+<td align="right">-9.207301</td>
+<td align="right">170</td>
+<td align="right">136</td>
+<td align="right">203</td>
+<td align="right">154</td>
+<td align="right">185</td>
+<td align="right">67</td>
+<td align="right">166</td>
+<td align="right">0.0258048</td>
+<td align="right">0.0245326</td>
+<td align="right">0.0270889</td>
+<td align="right">0.0006384</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2011</td>
+<td align="right">17.40410</td>
+<td align="right">167.9427</td>
+<td align="right">-7.294382</td>
+<td align="right">168</td>
+<td align="right">141</td>
+<td align="right">194</td>
+<td align="right">155</td>
+<td align="right">180</td>
+<td align="right">53</td>
+<td align="right">166</td>
+<td align="right">0.0336598</td>
+<td align="right">0.0305132</td>
+<td align="right">0.0357183</td>
+<td align="right">0.0014242</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2012</td>
+<td align="right">16.50654</td>
+<td align="right">162.0105</td>
+<td align="right">-8.668062</td>
+<td align="right">162</td>
+<td align="right">130</td>
+<td align="right">193</td>
+<td align="right">147</td>
+<td align="right">176</td>
+<td align="right">63</td>
+<td align="right">168</td>
+<td align="right">0.0256506</td>
+<td align="right">0.0211165</td>
+<td align="right">0.0281688</td>
+<td align="right">0.0018654</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2013</td>
+<td align="right">15.24422</td>
+<td align="right">168.6485</td>
+<td align="right">-8.189794</td>
+<td align="right">169</td>
+<td align="right">139</td>
+<td align="right">198</td>
+<td align="right">154</td>
+<td align="right">182</td>
+<td align="right">59</td>
+<td align="right">167</td>
+<td align="right">0.0302096</td>
+<td align="right">0.0275096</td>
+<td align="right">0.0309678</td>
+<td align="right">0.0009880</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2014</td>
+<td align="right">16.68055</td>
+<td align="right">166.6999</td>
+<td align="right">-7.849516</td>
+<td align="right">167</td>
+<td align="right">138</td>
+<td align="right">194</td>
+<td align="right">153</td>
+<td align="right">179</td>
+<td align="right">56</td>
+<td align="right">166</td>
+<td align="right">0.0317752</td>
+<td align="right">0.0278831</td>
+<td align="right">0.0336887</td>
+<td align="right">0.0014823</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2015</td>
+<td align="right">15.87514</td>
+<td align="right">172.1781</td>
+<td align="right">-7.196117</td>
+<td align="right">172</td>
+<td align="right">146</td>
+<td align="right">198</td>
+<td align="right">160</td>
+<td align="right">184</td>
+<td align="right">52</td>
+<td align="right">167</td>
+<td align="right">0.0305974</td>
+<td align="right">0.0287837</td>
+<td align="right">0.0325659</td>
+<td align="right">0.0010229</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2016</td>
+<td align="right">19.91707</td>
+<td align="right">163.9509</td>
+<td align="right">-11.545784</td>
+<td align="right">164</td>
+<td align="right">122</td>
+<td align="right">205</td>
+<td align="right">144</td>
+<td align="right">183</td>
+<td align="right">83</td>
+<td align="right">169</td>
+<td align="right">0.0206470</td>
+<td align="right">0.0183833</td>
+<td align="right">0.0213547</td>
+<td align="right">0.0008289</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2017</td>
+<td align="right">14.20564</td>
+<td align="right">174.1184</td>
+<td align="right">-4.766135</td>
+<td align="right">174</td>
+<td align="right">157</td>
+<td align="right">191</td>
+<td align="right">166</td>
+<td align="right">181</td>
+<td align="right">34</td>
+<td align="right">164</td>
+<td align="right">0.0200444</td>
+<td align="right">0.0203722</td>
+<td align="right">0.0228176</td>
+<td align="right">0.0005992</td>
+<td align="left">Early survey</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="right">13.24604</td>
+<td align="right">175.0166</td>
+<td align="right">-5.397768</td>
+<td align="right">175</td>
+<td align="right">155</td>
+<td align="right">194</td>
+<td align="right">166</td>
+<td align="right">183</td>
+<td align="right">39</td>
+<td align="right">172</td>
+<td align="right">0.0428556</td>
+<td align="right">0.0388585</td>
+<td align="right">0.0474507</td>
+<td align="right">0.0020828</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2019</td>
+<td align="right">15.30224</td>
+<td align="right">176.4515</td>
+<td align="right">-7.115972</td>
+<td align="right">176</td>
+<td align="right">150</td>
+<td align="right">202</td>
+<td align="right">164</td>
+<td align="right">188</td>
+<td align="right">52</td>
+<td align="right">162</td>
+<td align="right">0.0144151</td>
+<td align="right">0.0138334</td>
+<td align="right">0.0162192</td>
+<td align="right">0.0006569</td>
+<td align="left">Early survey</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">16.00171</td>
+<td align="right">172.7190</td>
+<td align="right">-2.416524</td>
+<td align="right">173</td>
+<td align="right">164</td>
+<td align="right">181</td>
+<td align="right">169</td>
+<td align="right">176</td>
+<td align="right">17</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="right">13.87287</td>
+<td align="right">167.1134</td>
+<td align="right">-6.165775</td>
+<td align="right">167</td>
+<td align="right">145</td>
+<td align="right">189</td>
+<td align="right">156</td>
+<td align="right">177</td>
+<td align="right">44</td>
+<td align="right">169</td>
+<td align="right">0.0395918</td>
+<td align="right">0.0351090</td>
+<td align="right">0.0407122</td>
+<td align="right">0.0016291</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="right">17.66248</td>
+<td align="right">161.2610</td>
+<td align="right">-9.339120</td>
+<td align="right">161</td>
+<td align="right">127</td>
+<td align="right">194</td>
+<td align="right">145</td>
+<td align="right">176</td>
+<td align="right">67</td>
+<td align="right">171</td>
+<td align="right">0.0206312</td>
+<td align="right">0.0139210</td>
+<td align="right">0.0300410</td>
+<td align="right">0.0040431</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="odd">
+<td align="right">2023</td>
+<td align="right">17.78080</td>
+<td align="right">162.6776</td>
+<td align="right">-9.252430</td>
+<td align="right">163</td>
+<td align="right">129</td>
+<td align="right">196</td>
+<td align="right">147</td>
+<td align="right">178</td>
+<td align="right">67</td>
+<td align="right">172</td>
+<td align="right">0.0211736</td>
+<td align="right">0.0175228</td>
+<td align="right">0.0228744</td>
+<td align="right">0.0013366</td>
+<td align="left">During 70 % of spawning</td>
+</tr>
+<tr class="even">
+<td align="right">2024</td>
+<td align="right">12.06124</td>
+<td align="right">164.6106</td>
+<td align="right">-3.854380</td>
+<td align="right">165</td>
+<td align="right">150</td>
+<td align="right">178</td>
+<td align="right">158</td>
+<td align="right">170</td>
+<td align="right">28</td>
+<td align="right">174</td>
+<td align="right">0.0192266</td>
+<td align="right">0.0166539</td>
+<td align="right">0.0191131</td>
+<td align="right">0.0006932</td>
+<td align="left">Late survey</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="results" class="section level3 tabset" number="1.1.4">
+<h3 class="tabset"><span class="header-section-number">1.1.4</span>
+Results</h3>
+<div id="spawning-season" class="section level4" number="1.1.4.1">
+<h4><span class="header-section-number">1.1.4.1</span> Spawning
+season</h4>
+<pre class="r"><code>##########plots of fit with proportion###########
+scaling.factor &lt;- 4 # for second axis
+
+
+
+xdoy &lt;- seq(126, 350, 30)
+
+sp3 &lt;- ggplot(nlme.fixpredsAR %&gt;% filter(year &gt;= my.year-10)) +
+  theme_few() + theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 90)) + 
+  coord_cartesian(xlim=c(100, 300))+
+  geom_point(aes(x = doy, y = gsi, col = maturcat), size = 0.3) +
+  scale_color_manual(values = c(&quot;green3&quot;, &quot;grey&quot;)) +
+  geom_line(aes(x = doy, y = fitted), size = 0.5) +
+  geom_ribbon(aes(ymin=gsiIClwr, ymax=gsiICupr, x=doy), alpha=0.5, col=&quot;black&quot;, fill=&quot;black&quot;)+
+  geom_line(aes(x = doy, y = prob * 100 * scaling.factor), col = &quot;red&quot;, size = 0.5) +
+  geom_ribbon(aes(ymin=propIClwr* 100 * scaling.factor, ymax=propICupr* 100 * scaling.factor, x=doy), alpha=0.5, col = &quot;red&quot;, fill=&quot;red&quot;)+
+  geom_vline(data=date.med %&gt;%filter(year &gt;= my.year-5), aes(xintercept=date.med), lty=2) +
+  facet_wrap(~year, ncol = 3) 
+
+Sys.setlocale(&quot;LC_ALL&quot;, &quot;English.utf8&quot;)
+## [1] &quot;LC_COLLATE=English_United States.utf8;LC_CTYPE=English_United States.utf8;LC_MONETARY=English_United States.utf8;LC_NUMERIC=C;LC_TIME=English_United States.utf8&quot;
+ 
+spEN3 &lt;-  sp3 +
+  scale_y_continuous(
+    name = &quot;Gonadosomatic index&quot;,
+    sec.axis = sec_axis(~ . / scaling.factor, name = &quot;Percentage of eggs spawned daily&quot;)
+  ) +
+  theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(name=&quot;Day of year&quot;,breaks=xdoy, labels=format(as.Date(xdoy, origin = &quot;2001-01-01&quot;),&#39;%b-%d&#39;)) +ylab(&quot;Day of year&quot;)  
+
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/nlme_spawning_proportion_&quot;, my.year,&quot;EN3.png&quot;), width = 8, height = 6, dpi = 600, units = &quot;in&quot;)
+spEN3</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20season-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+spBI3&lt;- sp3 + scale_y_continuous(
+  name = &quot;Indice gonado-somatique\nGonadosomatic index&quot;,
+  sec.axis = sec_axis(~ . / scaling.factor, name = &quot;Percentage of eggs spawned daily\nPourcentage quotidien d&#39;oeufs pondus&quot;)
+) +
+  theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 90)) +
+  xlab(&quot;Jour de l&#39;ann\u00E9e\nDay of year&quot;)
+
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/nlme_spawning_proportion_&quot;, my.year, &quot;BI3.png&quot;), width = 8, height = 6, dpi = 600, units = &quot;in&quot;)
+</code></pre>
+</div>
+<div id="spawning-season-and-survey-timing" class="section level4"
+number="1.1.4.2">
+<h4><span class="header-section-number">1.1.4.2</span> Spawning season
+and survey timing</h4>
+<pre class="r"><code>date.medfig&lt;- date.med  %&gt;% mutate(mindoy=ifelse(year==1979, date.med, mindoy), maxdoy=ifelse(year==1979, date.med,maxdoy)) %&gt;%  dplyr::rename(doytop=date.med)
+tabl_outfig &lt;-  unique( tabl_out %&gt;%  dplyr::select(year, doymin, doymax,doytop, doymin70, doymax70))
+
+
+pt2 &lt;-    ggplot(data=tabl_outfig, aes(y = doytop, x = year)) +
+       geom_line()+
+       geom_ribbon(aes(ymin=doymin70, ymax=doymax70), col=&quot;goldenrod2&quot;, fill=&quot;goldenrod2&quot;, alpha=0.3) +
+      geom_ribbon(aes(ymin=doymin, ymax=doymax), col=&quot;gold&quot;, fill=&quot;gold&quot;, alpha=0.3) +
+  geom_point(data=date.medfig ,aes(y=doytop,x=year)) +
+       geom_errorbar(data=date.medfig,aes(ymin = mindoy, ymax = maxdoy, y=doytop,x=year)) +
+       scale_x_continuous(breaks=seq(1975, my.year, 5))+
+       #scale_y_continuous(limits = c(150, 200)) +
+       theme_few()+
+       theme(legend.position=&quot;bottom&quot;,
+           legend.key.width = unit(30, &quot;pt&quot;))
+
+pt2EN &lt;-  pt2+ylab(&quot;Day of year&quot;) + xlab(&quot;Year&quot;) 
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year, &quot;EN.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+
+pt2FR &lt;-  pt2+ylab(&quot;Jour de l&#39;ann\u00E9e&quot;) + xlab(&quot;Ann\u00E9e&quot;) 
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year, &quot;FR.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+
+pt2BI &lt;-  pt2+ylab(&quot;Jour de l&#39;ann\u00E9e / Day of year&quot;) + xlab(&quot;Ann\u00E9e / Year&quot;)
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year,&quot;BI.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+
+
+y &lt;- c(100,120,140,160,180,200,220,240)
+Sys.setlocale(&quot;LC_ALL&quot;, &quot;English&quot;)
+## [1] &quot;LC_COLLATE=English_United States.1252;LC_CTYPE=English_United States.1252;LC_MONETARY=English_United States.1252;LC_NUMERIC=C;LC_TIME=English_United States.1252&quot;
+pt2dayEN &lt;-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = &quot;2001-01-01&quot;),&#39;%B-%d&#39;)) +ylab(&quot;Day of year&quot;) + xlab(&quot;Year&quot;)
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year, &quot;EN2.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+pt2dayBI &lt;-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = &quot;2001-01-01&quot;),&#39;%B-%d&#39;)) +ylab(&quot;Jour de l&#39;ann\u00E9e | Day of year&quot;) + xlab(&quot;Ann\u00E9e | Year&quot;)
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year, &quot;BI2.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+
+Sys.setlocale(&quot;LC_ALL&quot;, &quot;French_Canada.utf8&quot;)
+## [1] &quot;LC_COLLATE=French_Canada.utf8;LC_CTYPE=French_Canada.utf8;LC_MONETARY=French_Canada.utf8;LC_NUMERIC=C;LC_TIME=French_Canada.utf8&quot;
+pt2dayFR &lt;-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = &quot;2001-01-01&quot;),&#39;%d-%B&#39;)) +ylab(&quot;Jour de l&#39;ann\u00E9e&quot;) + xlab(&quot;Ann\u00E9e&quot;)
+ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/spawning_season_&quot;, my.year, &quot;FR2.png&quot;), width = 7, height = 5, dpi = 600, units = &quot;in&quot;)
+
+pt2dayEN</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20season.survey-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="bias-indicators" class="section level3 tabset" number="1.1.5">
+<h3 class="tabset"><span class="header-section-number">1.1.5</span> Bias
+indicators</h3>
+<div id="proportion-of-stage-6" class="section level4" number="1.1.5.1">
+<h4><span class="header-section-number">1.1.5.1</span> Proportion of
+stage 6</h4>
+<pre class="r"><code>  PESd&lt;- read.delim(paste0(&quot;results/&quot;,my.year,&quot;/spawning/table_nlmeAR_&quot;,my.year,&quot;.txt&quot;))  %&gt;% dplyr::select(year, xmid)
+  
+  propstages&lt;- read.delim(paste0(&quot;results/&quot;,my.year,&quot;/spawning/proportion_stages_doy.txt&quot;))
+  
+ 
+ # propstages&lt;- read.delim(paste0(&quot;results/&quot;,year,&quot;/spawning/proportion_stages_doy.txt&quot;)) %&gt;%  dplyr::select(-n, -prop_stage6) %&gt;%  pivot_longer(X5:X8, names_to=&quot;stages&quot;, values_to=&quot;n&quot;) %&gt;% 
+ #    mutate(stages=recode_factor(stages, X5 = &quot;5&quot;,X6 = &quot;6&quot;,X7 = &quot;7&quot;,X8 = &quot;8&quot;))
+  
+  
+  #2. proportion of stages weighted for all n for a year
+
+newprop &lt;- left_join(propstages %&gt;%  dplyr::select(-n),
+  propstages %&gt;%  group_by(year) %&gt;%  tally(n)) %&gt;%  
+  mutate(prop_stage6 = X6/n) %&gt;% ungroup() %&gt;% dplyr::filter(prop_stage6&gt;0.05)
+
+
+newprop &lt;- propstages %&gt;% ungroup() %&gt;% dplyr::filter(prop_stage6&gt;0.05)
+
+
+#weighted average of date, weight = proportion or N?
+wa&lt;- list(newprop %&gt;% group_by(year) %&gt;%  summarize(maxstage6 =weighted.mean(doy, w=prop_stage6))  ,
+     newprop %&gt;%  group_by(year) %&gt;%  summarize(start6=min(doy, na.rm=T), end6=max(doy, na.rm=T)),
+     PESd %&gt;%  group_by(year)) %&gt;% purrr::reduce(left_join) %&gt;% 
+  mutate(for_fill= ifelse(year %in% c(1999, 1991), &quot;fit&quot;, 
+                      ifelse(year %in% c(2006, 2017,2019), &quot;timing&quot;, 
+                          ifelse(year %in% c(2022), &quot;uncertain&quot;, &quot;OK&quot;))))
+
+sd_diff&lt;- wa %&gt;%  filter(year!=2022)%&gt;%  reframe(meandiff_xmid6= sd(xmid-maxstage6, na.rm=T) )
+ bias&lt;-  ggplot(data=wa,aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col=&quot;red&quot;, lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
+    scale_fill_manual(values=c(&quot;#ff6a6a&quot;,&quot;white&quot;, &quot;dodgerblue&quot;, &quot;seagreen3&quot;), guide=&quot;none&quot;) +theme_few()
+  
+ 
+ biasEN&lt;- bias + ylab(&quot;Day of year of maximum proportion of stage 6&quot;) + xlab(&quot;Day of year of peak spawning (xmid)&quot;)
+ ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/bias_indicator_spawning_EN.png&quot;), width=6, height=5, dpi=600, units=&quot;in&quot;)
+ biasEN</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20bias1-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code> 
+ biasFR &lt;- bias + ylab(&quot;Jour de l&#39;année de la proportion maximale de stade 6&quot;) + xlab(&quot;Jour de l&#39;année du pic de ponte (xmid)&quot;)
+ ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/bias_indicator_spawning_FR.png&quot;), width=6, height=5, dpi=600, units=&quot;in&quot;)
+
+ 
+  biasBI&lt;- bias + ylab(&quot;Jour de l&#39;année de la proportion maximale de stade 6\nDay of year of maximum proportion of stage 6&quot;) + xlab(&quot;Jour de l&#39;année du pic de ponte (xmid)\nDay of year of peak spawning (xmid)&quot;)
+ ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/bias_indicator_spawning_BI.png&quot;), width=6, height=5, dpi=600, units=&quot;in&quot;)
+ </code></pre>
+</div>
+<div id="proportion-of-larvae" class="section level4" number="1.1.5.2">
+<h4><span class="header-section-number">1.1.5.2</span> Proportion of
+larvae</h4>
+<pre class="r"><code>  load(paste0(&quot;results/&quot;,my.year,&quot;/spawning/predicted_propspawn_doy&quot;, my.year, &quot;.RData&quot;))
+  
+  tabAR&lt;- read.delim(paste0(&quot;results/&quot;,my.year,&quot;/spawning/table_nlmeAR_&quot;, my.year, &quot;.txt&quot;)) %&gt;%  dplyr::select(year, date.med)
+  
+  prop&lt;- left_join(tabAR, nlme.fixpredsAR1) %&gt;%  group_by(year) %&gt;%  filter(doy &lt; date.med) %&gt;%  summarize(prop=sum(prob))
+  
+  
+  df_prop_larvae&lt;- full_join(prop, eggt1 %&gt;%  mutate(prop_larvae =maq_larvae /(maq_eggs_stage1_5 +maq_larvae)) %&gt;%  
+                               group_by(year) %&gt;%  summarize(mean_prop_larvae=mean(prop_larvae, na.rm=T),
+                                                                     sd_prop_larvae = sd(prop_larvae, na.rm=T))) %&gt;% 
+    mutate(for_fill= ifelse(year %in% c(1999, 1991), &quot;fit&quot;, 
+                            ifelse(year %in% c(2006, 2017,2019), &quot;timing&quot;, 
+                                   ifelse(year %in% c(2022), &quot;uncertain&quot;, &quot;OK&quot;))))
+  
+  pl2&lt;- ggplot(data=df_prop_larvae, aes(x=prop, y=mean_prop_larvae))+geom_label(aes(label=year, fill=for_fill),alpha=0.5)  + theme_few() +
+      scale_fill_manual(values=c(&quot;#ff6a6a&quot;,&quot;white&quot;, &quot;dodgerblue&quot;, &quot;seagreen3&quot;), guide=&quot;none&quot;)+
+    theme(legend.title=element_blank())
+  
+  pl1 &lt;- ggplot(df_prop_larvae  , aes(x=year, y=mean_prop_larvae)) +geom_point()+geom_errorbar(aes(ymin=ifelse(mean_prop_larvae-sd_prop_larvae &lt;0, 0,mean_prop_larvae-sd_prop_larvae),
+                                                                                                                                                                             ymax=mean_prop_larvae+sd_prop_larvae)) +theme_few() + theme(legend.title=element_blank())
+  
+  pl1EN&lt;- pl1 + scale_x_continuous(name=&quot;Year&quot;, breaks=seq(1980, my.year, 5)) + ylab(&quot;Proportion of larvae&quot;)
+  pl2EN&lt;- pl2 + scale_x_continuous(name=&quot;Proportion of spawning before median date&quot;) + ylab(&quot;Proportion of larvae&quot;)
+  
+  ggarrange(pl1EN, pl2EN, common.legend=T, legend=&quot;bottom&quot;, ncol=1)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20larvae-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>  ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/Valdiation_spawning_larvesEN.png&quot;), width=9, height=8)
+  
+  
+  pl1FR&lt;- pl1 + scale_x_continuous(name=&quot;Année&quot;, breaks=seq(1980, my.year, 5)) + ylab(&quot;Proportion de larves&quot;)
+  pl2FR&lt;- pl2 + scale_x_continuous(name=&quot;Proportion de ponte avant la date m\u00E9diane&quot;) + ylab(&quot;Proportion de larves&quot;)
+  
+  ggFR&lt;- ggarrange(pl1FR, pl2FR, common.legend = T, legend=&quot;bottom&quot;, ncol=1)
+  ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/Valdiation_spawning_larvesFR.png&quot;), width=9, height=8)
+  
+  
+   pl1BI&lt;- pl1 + scale_x_continuous(name=&quot;Année | Year&quot;, breaks=seq(1980, my.year, 5)) + ylab(&quot;Proportion de larves | Proportion of larvae&quot;)
+  pl2BI&lt;- pl2 + scale_x_continuous(name=&quot;Proportion de ponte avant la date m\u00E9diane\nProportion of spawning before median date&quot;) + ylab(&quot;Proportion de larves | Proportion of larvae&quot;)
+  
+  ggBI&lt;- ggarrange(pl1BI, pl2BI, common.legend = T, legend=&quot;bottom&quot;, ncol=1)
+   ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/Valdiation_spawning_larvesBI.png&quot;), width=9, height=8)
+  pl2BI</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20larvae-2.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>  ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/Valdiation_spawning_larvesBI2.png&quot;), width=6, height=5)
+
+  
+  
+   dur&lt;- read.delim(paste0(&quot;results/&quot;,my.year,&quot;/spawning/table_nlmeAR_&quot;, my.year, &quot;.txt&quot;)) %&gt;%  dplyr::filter(!year %in% c(1980:1982,1991, 1999,2020))
+  
+  my.formula &lt;- y ~ x # for smooth in ggplot
+  
+  pdu&lt;-   ggplot(dur, aes(x=year, y=duration))+geom_point() + geom_smooth(method=&quot;lm&quot;)+
+    stat_poly_eq(
+      formula = my.formula,
+      aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = &quot;~~~&quot;)),
+      parse = TRUE, label.x=&quot;right&quot;
+    ) +theme_few()
+  
+  lmdur&lt;- lm(duration ~ year, data=dur)
+  par(mfcol=c(2,2));plot(lmdur)</code></pre>
+<p><img src="3.0_Spawning_files/figure-html/spawn%20larvae-3.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>  
+  pduEN&lt;- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name=&quot;Year&quot;)+ ylab(&quot;Spawning duration (days)&quot;) 
+  ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/durationEN.png&quot;), width=7, height=4, dpi=600, units=&quot;in&quot;)
+  pduFR&lt;- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name=&quot;Ann\u00E9e&quot;)+ ylab(&quot;Durée de la ponte (jours)&quot;) 
+  ggsave(paste0(&quot;img/&quot;,my.year,&quot;/spawning/durationFR.png&quot;), width=7, height=4, dpi=600, units=&quot;in&quot;)
+ 
+  ####median date
+  date.med &lt;- eggt1 %&gt;% filter(year &gt; 1982) %&gt;% 
+    ungroup() %&gt;%
+    group_by(year) %&gt;% mutate(date=as.Date(paste(year, month, day, sep=&quot;-&quot;))) %&gt;% 
+    dplyr::summarize(
+      doy.med = round(median(doy, na.rm = T)),
+      mindoy = min(doy, na.rm = T),
+      maxdoy = max(doy, na.rm = T),
+      date.med =paste0(&quot;&#39;&quot;,substring(median(date, na.rm = T), 6,10)), #&#39; for excel compatibiltiy
+      mindate=paste0(&quot;&#39;&quot;,substring(min(date), 6,10)),
+  maxdate=paste0(&quot;&#39;&quot;,substring(max(date), 6,10))
+    )
+  
+  write.table(date.med, paste0(&quot;results/&quot;,my.year,&quot;/Survey_dates.txt&quot;), row.names=F, sep=&quot;\t&quot;, dec=&quot;.&quot;)</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

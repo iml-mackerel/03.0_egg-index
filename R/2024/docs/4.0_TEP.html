@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2024-12-17" />
+
+<title>Read</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel Egg production</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fa fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Read</a>
+</li>
+<li>
+  <a href="2.0_DEP.html">DEP</a>
+</li>
+<li>
+  <a href="3.0_Spawning.html">Spawning</a>
+</li>
+<li>
+  <a href="4.0_TEP.html">TEP</a>
+</li>
+<li>
+  <a href="5.0_Exploration.html">Exploration</a>
+</li>
+<li>
+  <a href="6.0_NL.html">NL</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Read</h1>
+<h4 class="date">2024-12-17</h4>
+
+</div>
+
+
+<pre><code># SET-UP</code></pre>
+<pre class="r"><code>##### my packages ################################################################################
+## CRAN
+cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,
+                   &#39;fields&#39;, &#39;inlabru&#39;, &#39;sf&#39;, &#39;PresenceAbsence&#39;, &#39;verification&#39;, &#39;raster&#39;,
+                   &#39;scales&#39;, &#39;nlme&#39;,&#39;nls.multstart&#39;, &#39;stringr&#39;, &#39;ggforce&#39;,&quot;readxl&quot;, &quot;marmap&quot;)
+
+
+
+install.this &lt;- cran.packages[!(cran.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(length(install.this)&gt;=1) install.packages(install.this)
+dummy &lt;- lapply(cran.packages, require, character.only = TRUE)
+
+## github
+git.packages &lt;- c(&#39;catchR&#39;,&#39;DFOdata&#39;,&#39;CCAM&#39;, &#39;INLA&#39;)
+install.this &lt;- git.packages[!(git.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(&#39;catchR&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/catchR@eli_parallel&quot;)
+if(&#39;DFOdata&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/DFOdata&quot;)
+if(&#39;CCAM&#39; %in% install.this)  devtools::install_github(&quot;elisvb/CCAM&quot;)
+if(&#39;INLA&#39; %in% install.this)install.packages(&quot;INLA&quot;,repos=c(getOption(&quot;repos&quot;),INLA=&quot;https://inla.r-inla-download.org/R/stable&quot;), dep=TRUE)
+
+dummy &lt;- lapply(git.packages, require, character.only = TRUE)
+
+##### source R directory  ############################################################################
+#invisible(sapply(list.files(pattern=&quot;[.]R$&quot;, path=&quot;R/&quot;, full.names=TRUE), source))
+
+##### my ggplot theme ################################################################################
+theme_set(theme_mackerel())             # theme_mackerel from catchR
+update_geom_defaults(&quot;line&quot;, list(size = 1))  # no idea why somethimes I get fat lines otherwise
+
+##### passwords databases #############################################################################
+source(&quot;../../bdOracle.R&quot;)
+
+source(paste0(&quot;utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
+source(paste0(&quot;utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
+source(paste0(&quot;utils/spatial_projections.R&quot;))#
+source(paste0(&quot;utils/extract_biochem.R&quot;))
+source(paste0(&quot;utils/extract_T0_10.R&quot;))
+source(paste0(&quot;INLA/Mesh.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/nlme_boot.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations_CV.R&quot;))
+
+
+
+source(paste0(&#39;INLA/plotSpatialFieldCL.R&#39;))
+source(paste0(&#39;INLA/plotSmoother.R&#39;))
+source(paste0(&#39;INLA/model_validation.R&#39;))
+source(paste0(&#39;INLA/get_prediction_grid.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_SampleID_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_Counts_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Read_Filter.R&#39;))
+source(paste0(&#39;../biochem/PL_Taxonomic_Grouping.R&#39;))
+
+
+log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
+
+#source(paste0(&quot;R/&quot;,year_to_report,&quot;/INLA/getvar.R&quot;)) # needs to be retought</code></pre>
+<pre class="r"><code>new=F
+pwd = &quot;../../&quot;
+
+load(file=paste0(pwd,&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
+load(paste0(pwd,&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
+
+N=100</code></pre>
+<div id="read" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Read</h1>
+<pre class="r"><code>    # pour date med
+spaw.med &lt;- read.delim(paste0(pwd, &quot;results/&quot;,my.year,&quot;/spawning/table_nlmeAR_&quot;, my.year, &quot;.txt&quot;))  %&gt;% 
+  ungroup()
+
+area &lt;- sum(distinct(eggt1 %&gt;% dplyr::select(stratum_area, stratum))$stratum_area)
+
+spawn_error &lt;- left_join(DEP %&gt;% 
+ group_by(year) %&gt;%
+  dplyr::summarize(
+    DEP.p = mean(DEP, na.rm = T)), spaw.med) %&gt;% 
+  mutate(
+    TEP = (DEP.p * area) / prob_at_med)
+
+spawn.out2 &lt;- full_join(spawn_error, spaw.med)
+                        
+spawn.out2 &lt;- right_join(spawn.out2, expand_grid(all_years))
+
+##export for assessment
+TEP_output&lt;- spawn.out2 %&gt;%  dplyr::select(year, DEP.p, prob_at_med, TEP)
+
+write.table(TEP_output, file=paste0(pwd, &quot;csv/&quot;,my.year,&quot;/TEP_&quot;, my.year,&quot;.csv&quot;), row.names=F, sep=&quot;,&quot;, dec=&quot;.&quot;)
+
+kable(TEP_output)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">DEP.p</th>
+<th align="right">prob_at_med</th>
+<th align="right">TEP</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">119.435149</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1983</td>
+<td align="right">64.323777</td>
+<td align="right">0.0416979</td>
+<td align="right">1.071346e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">1984</td>
+<td align="right">85.007595</td>
+<td align="right">0.0164225</td>
+<td align="right">3.594930e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1985</td>
+<td align="right">138.085746</td>
+<td align="right">0.0140817</td>
+<td align="right">6.810316e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">1986</td>
+<td align="right">257.180708</td>
+<td align="right">0.0180925</td>
+<td align="right">9.872171e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1987</td>
+<td align="right">165.160338</td>
+<td align="right">0.0215455</td>
+<td align="right">5.323798e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">1988</td>
+<td align="right">234.723339</td>
+<td align="right">0.0360260</td>
+<td align="right">4.524938e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1989</td>
+<td align="right">111.910595</td>
+<td align="right">0.0144295</td>
+<td align="right">5.386336e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">1990</td>
+<td align="right">119.181741</td>
+<td align="right">0.0233729</td>
+<td align="right">3.541347e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1991</td>
+<td align="right">209.636471</td>
+<td align="right">0.0133741</td>
+<td align="right">1.088617e+15</td>
+</tr>
+<tr class="odd">
+<td align="right">1992</td>
+<td align="right">176.490629</td>
+<td align="right">0.0209990</td>
+<td align="right">5.837069e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="right">175.496008</td>
+<td align="right">0.0177772</td>
+<td align="right">6.856081e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="right">88.578418</td>
+<td align="right">0.0195493</td>
+<td align="right">3.146791e+14</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">29.594572</td>
+<td align="right">0.0218199</td>
+<td align="right">9.419564e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="right">25.627342</td>
+<td align="right">0.0239965</td>
+<td align="right">7.416984e+13</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="right">29.405535</td>
+<td align="right">0.0081370</td>
+<td align="right">2.509792e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">35.669444</td>
+<td align="right">0.0222061</td>
+<td align="right">1.115569e+14</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="right">10.088628</td>
+<td align="right">0.0303311</td>
+<td align="right">2.310022e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2002</td>
+<td align="right">75.567170</td>
+<td align="right">0.0197612</td>
+<td align="right">2.655778e+14</td>
+</tr>
+<tr class="even">
+<td align="right">2003</td>
+<td align="right">98.454806</td>
+<td align="right">0.0278215</td>
+<td align="right">2.457698e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">2004</td>
+<td align="right">76.387923</td>
+<td align="right">0.0196843</td>
+<td align="right">2.695120e+14</td>
+</tr>
+<tr class="even">
+<td align="right">2005</td>
+<td align="right">39.566366</td>
+<td align="right">0.0229672</td>
+<td align="right">1.196441e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="right">6.760290</td>
+<td align="right">0.0102283</td>
+<td align="right">4.590238e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2007</td>
+<td align="right">44.880585</td>
+<td align="right">0.0358995</td>
+<td align="right">8.682459e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2008</td>
+<td align="right">53.525655</td>
+<td align="right">0.0418273</td>
+<td align="right">8.887383e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">27.062880</td>
+<td align="right">0.0275230</td>
+<td align="right">6.828901e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">9.519215</td>
+<td align="right">0.0258048</td>
+<td align="right">2.561967e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">14.236694</td>
+<td align="right">0.0336598</td>
+<td align="right">2.937444e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">3.801634</td>
+<td align="right">0.0256506</td>
+<td align="right">1.029307e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">16.589751</td>
+<td align="right">0.0302096</td>
+<td align="right">3.813885e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">21.614442</td>
+<td align="right">0.0317752</td>
+<td align="right">4.724198e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">20.055516</td>
+<td align="right">0.0305974</td>
+<td align="right">4.552202e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">14.514270</td>
+<td align="right">0.0206470</td>
+<td align="right">4.882133e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">21.869949</td>
+<td align="right">0.0200444</td>
+<td align="right">7.577514e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">28.216466</td>
+<td align="right">0.0428556</td>
+<td align="right">4.572645e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">20.772903</td>
+<td align="right">0.0144151</td>
+<td align="right">1.000808e+14</td>
+</tr>
+<tr class="odd">
+<td align="right">2021</td>
+<td align="right">9.266757</td>
+<td align="right">0.0395918</td>
+<td align="right">1.625529e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2022</td>
+<td align="right">10.995425</td>
+<td align="right">0.0206312</td>
+<td align="right">3.701353e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">2023</td>
+<td align="right">23.135631</td>
+<td align="right">0.0211736</td>
+<td align="right">7.588563e+13</td>
+</tr>
+<tr class="even">
+<td align="right">2024</td>
+<td align="right">4.507021</td>
+<td align="right">0.0192266</td>
+<td align="right">1.628016e+13</td>
+</tr>
+<tr class="odd">
+<td align="right">1980</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1981</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">1982</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">1995</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>
+ptEN1 &lt;- ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
+  geom_point() +
+  #  geom_errorbar(aes(ymin=TEPlwr,ymax=TEPupr))+
+  geom_line() +
+  theme_few() +
+  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
+   scale_x_continuous(name = &quot;Year&quot;, breaks = seq(1980, max(spawn.out2$year), 5)) +
+  ylab(&quot;Total egg production&quot;)
+
+ptEN1</code></pre>
+<p><img src="4.0_TEP_files/figure-html/read%20spawn-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(paste0(pwd,&quot;img/&quot;,my.year,&quot;/Total_egg_production_EN.png&quot;), width = 8, height = 5, unit = &quot;in&quot;, dpi = 600)
+
+ptFR1 &lt;-ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
+  geom_point() +
+  geom_line() +
+  theme_few() +
+  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
+  scale_x_continuous(name = &quot;Ann\u00E9e&quot;, breaks = seq(1980, max(spawn.out2$year), 5)) +
+  ylab(&quot;Production total d&#39;oeufs&quot;)
+ggsave(paste0(pwd,&quot;img/&quot;,my.year,&quot;/Total_egg_production_FR.png&quot;), width = 8, height = 5, unit = &quot;in&quot;, dpi = 600)
+</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

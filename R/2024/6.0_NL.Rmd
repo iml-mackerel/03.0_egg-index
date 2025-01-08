@@ -1,0 +1,156 @@
+---
+title: "Read"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: hide
+    number_sections: TRUE
+---
+
+# SET-UP
+
+```{r markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 8, message=F, warning=F)
+options(width = 200)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+my.year=2024
+
+```
+
+```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```
+
+# Eggs counts
+
+## Biochem
+
+```{r biochemsp, message = F}
+#extract_biochem(year=my.year, path_to_file = NULL, sql="BOCHEM_Bongo_NL.sql")
+
+egg <- readRDS(paste0("data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", my.year, ".RDS"))# %>%
+eggNL <- egg %>%  dplyr::filter(grepl(station, pattern="4R") | grepl(station, pattern="3P") | grepl(station, pattern="SP")) %>%  dplyr::arrange(year,station)
+eggsgsl <- egg %>%  dplyr::filter(!grepl(station, pattern="4R") & !grepl(station, pattern="3P") & !grepl(station, pattern="SP")) %>%  dplyr::arrange(year,station) %>%  filter(year %in% c(eggNL$year, my.year))
+
+
+```
+
+## Temperature
+2022 not yet available sonde marport
+
+```{r temperature, message = F}
+t22a <-  readRDS('../mackerel_4R/data/2022/marport/meantemp.RDS') #available temperature
+t22b <- read_excel("S:/Pélagiques/Plancton/Relevés/Relevé 2022/IML-2022-043_juillet/Métadonnées_IML-2022-043.xlsx", 2, col_types=c(rep("guess",3), "date", rep("guess",20))) # all stations for dates
+t22b<- t22b %>%  mutate(`Date_Heure(UTC)`= ymd_hms(paste(Date,format(Heure, "%H:%M:%S"), sep=" "))) %>% 
+ dplyr::select(`Date_Heure(UTC)`, Station) %>%  filter(!Station %in% t22a)
+t22<- full_join(t22a, t22b) %>%  filter(!is.na(`Date_Heure(UTC)`))
+
+
+t23<- read_excel("S:/Pélagiques/Plancton/Relevés/Relevé 2023/IML2023-025_Juillet/IML2023025_Moyenne_SBE37_10m_surface.xlsx",2) %>%  filter(!is.na(Station)) %>%  mutate(`Température(ºC)`=as.numeric(if_else(`Température(ºC)`=="fil", NA, `Température(ºC)`)))
+  
+station = t23 %>%  dplyr::select(Station,`Latitude(°)`, `Longitude(°)`) %>%  rename(latitude =`Latitude(°)`, longitude=`Longitude(°)`)
+
+t24<- read_excel("S:/Pélagiques/Plancton/Relevés/Relevé 2024/IML2024-16_juillet/CTD/IML2024016_Moyenne_SBE37_10m_surface.xlsx",2) 
+
+nlp<- left_join(bind_rows(t22,
+          t23 %>%  dplyr::select(Station, `Date_Heure(UTC)`, `Température(ºC)`),
+          t24 %>%  dplyr::select(Station, `Date_Heure(UTC)`, `Température(ºC)`)
+                    ),
+         station) %>% 
+  rename(temperature=`Température(ºC)`) %>% 
+  mutate(year=year(`Date_Heure(UTC)`),
+         doy=as.numeric(format(`Date_Heure(UTC)`, format="%j")))
+#incubation time.
+#egg %<>%
+#  dplyr::mutate(
+ #   I = I_lockwood(temperature0_10),
+  #  IM = I_mendiola(temperature0_10),
+   # DEP = maq_eggs_stage1_5 / I * 24,
+    #DEPM = maq_eggs_stage1_5 / IM * 24
+#  ) # Calculate daily egg production (DEP) by station
+eggmap <-  nlp %>%  st_as_sf(coords=c("longitude", "latitude"), remove=F, crs=4326) 
+
+emap<- eggmap %>% st_as_sf(coords=c("longitude", "latitude"), crs=4326, remove=F) %>% ungroup() %>% dplyr::arrange(year,`Date_Heure(UTC)`)  %>% mutate(ID=1:nrow(eggmap)) %>%  st_drop_geometry() #%>% st_coordinates() %>% st_linestring() %>%  as.matrix()
+
+lab_dates <- seq(min(eggmap$doy, na.rm=T), max(eggmap$doy, na.rm=T),2)
+Sys.setlocale("LC_ALL", "English_Canada.utf8")
+basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=eggmap %>%  filter(!is.na(doy)), aes(fill= doy), size=2.5, shape=21) + 
+   geom_sf(data=eggmap %>%  filter(is.na(doy)),  size=2.5, shape=3, col="red", stroke=1.1) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) +
+  scale_fill_viridis_b(name="Date d'échantillonnage\n Sampling date", breaks=lab_dates, labels=paste(lab_dates, format(as.Date(lab_dates, origin = paste0(my.year,"-01-01")),'%B-%d'), sep="\n")) +facet_wrap(~year) +
+  theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"), plot.background = element_blank()) +
+  scale_x_continuous(breaks=seq(-60, -56,1))
+
+Sys.setlocale("LC_ALL","French_Canada.utf8")
+
+ggsave(paste0("img/", my.year,"/MAP_egg_cover_NL.png"), width=8, height=5, dpi=600, units="in")
+
+basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=eggmap %>%  filter(!is.na(doy)), aes(fill= temperature), size=2.5, shape=21) + 
+   geom_sf(data=eggmap %>%  filter(is.na(doy)),  size=2.5, shape=3, col="red", stroke=2) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) +
+  scale_fill_viridis_b(name="Temperature 0-10 m",option="H", limits=c(6, 16), breaks=seq(6,16,1)) +facet_wrap(~year) +
+  theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"), plot.background = element_blank())+
+  scale_x_continuous(breaks=seq(-60, -56,1))
+ggsave(paste0("img/", my.year,"/MAP_egg_temperatureNL.png"), width=8, height=5, dpi=600, units="in", bg="transparent")
+
+
+basemap2 +  geom_sf(data=station %>%  st_as_sf(coords=c("longitude", "latitude"), crs=4326), shape=19, size=2) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) 
+ggsave(paste0("img/", my.year,"/NLstations.png"), width=4, height=5, dpi=600, units="in", bg="transparent")
+
+
+```
+
+## MAPs of density
+
+```{r covarage}
+eggall <-  bind_rows( eggNL  %>%  ungroup() %>% mutate(mission=if_else(month==6, "sGSL", "NL")) %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae), 
+                      eggsgsl %>%  ungroup() %>%  mutate(mission="sGSL") %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae))  %>%  
+   st_as_sf(coords=c("longitude", "latitude"), crs=4326) 
+
+
+p1<- basemap2 + geom_sf(data=eggall %>%  filter(maq_eggs_stage1_5 ==0), shape=3, size=0.5, aes(col=mission)) +
+  geom_sf(data=eggall %>%  filter(maq_eggs_stage1_5 >0), aes(size=maq_eggs_stage1_5, fill=mission), shape=21, alpha=0.5) + 
+  theme(legend.position = "bottom", legend.key.width = unit(2, "cm"), plot.background = element_blank(), axis.text = element_blank()) +
+ coord_sf(xlim=c(-66.5,-56), ylim=c(45.5,50)) +
+  scale_fill_manual(values=c( "dodgerblue4","goldenrod1"), guide=F) +
+  scale_color_manual(values=c("dodgerblue4","goldenrod1"), guide=F)
+
+
+p2<- basemap2 + geom_sf(data=eggall %>%  filter(maq_larvae ==0),shape=3, size=0.5, aes(col=mission)) +
+  geom_sf(data=eggall %>%  filter(maq_larvae >0), aes(size=maq_larvae, fill=mission), shape=21, alpha=0.5) + 
+  theme(legend.position = "bottom", legend.key.width = unit(2, "cm"), plot.background = element_blank(), axis.text = element_blank()) +
+ coord_sf(xlim=c(-66.5,-56), ylim=c(45.5,50), expand=T) +
+  scale_fill_manual(values=c( "dodgerblue4","goldenrod1"), guide=F) +
+  scale_color_manual(values=c("dodgerblue4","goldenrod1"), guide=F)
+
+pw<- ggarrange(p1 +labs(size="Egg density") + facet_wrap(~year, ncol=1), p2 +labs(size="Larvae density") +facet_wrap(~year, ncol=1), ncol=2)
+
+ggsave(paste0("img/",my.year,"/NL_eggs.png"), dpi=600, units="in", width=8, height=6, bg="white")
+
+ggarrange(p1 + theme(legend.position="right") +labs(size="Densité des oeufs\nEgg density")+ facet_wrap(~year, ncol=4),
+p2 + theme(legend.position="right")  +labs(size="Densité des larves\nLarvae density")+ facet_wrap(~year, ncol=4), ncol=1)
+ggsave(paste0("img/",my.year,"/NL_eggsBI.png"), dpi=600, units="in", width=10, height=4)
+
+
+```
+
+
+
+## proportion of larvae
+
+```{r larvae}
+eggall <-  bind_rows( eggNL %>%  ungroup() %>% mutate(mission="NL") %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae), 
+                      eggsgsl %>%  ungroup() %>%  
+                        mutate(mission="sGSL",
+                               ) %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae))  %>% 
+  mutate(prop_larvae= maq_larvae/ (maq_eggs_stage1_5+maq_larvae)) %>% as_tibble() %>% 
+ dplyr::ungroup() %>%   dplyr::group_by(year,mission) %>%  dplyr::summarize(prop_larvae=mean(prop_larvae, na.rm=T)) %>%  filter(year > 2021) %>%  pivot_wider(names_from="mission", values_from="prop_larvae")
+
+write.csv(eggall, file=paste0("csv/", my.year,"/NL_prop_larvae.csv"), row.names=F)
+
+kable(eggall, digits=2)
+
+
+```

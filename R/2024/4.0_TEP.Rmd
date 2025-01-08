@@ -1,0 +1,88 @@
+---
+title: "Read"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+
+    # SET-UP
+```{r markdwon, echo=F}
+
+#si knit ou render_site ne fonctionne pas utiliser: render("R/2024/4.0_TEP.Rmd")
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
+options(width = 200)
+my.year=2024
+all_years= data.frame(year=seq(1979, my.year, 1))
+```    
+
+```{r code=readLines(paste0('0.0_settings.R'))}
+```
+
+```{r settings, message = F}
+new=F
+pwd = "../../"
+
+load(file=paste0(pwd,"data/",my.year,"/eggt1.RData"))
+load(paste0(pwd,"data/",my.year,"/DEP.RData"))
+
+N=100
+```
+
+
+
+# Read 
+
+```{r read spawn, message = F}
+    # pour date med
+spaw.med <- read.delim(paste0(pwd, "results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt"))  %>% 
+  ungroup()
+
+area <- sum(distinct(eggt1 %>% dplyr::select(stratum_area, stratum))$stratum_area)
+
+spawn_error <- left_join(DEP %>% 
+ group_by(year) %>%
+  dplyr::summarize(
+    DEP.p = mean(DEP, na.rm = T)), spaw.med) %>% 
+  mutate(
+    TEP = (DEP.p * area) / prob_at_med)
+
+spawn.out2 <- full_join(spawn_error, spaw.med)
+                        
+spawn.out2 <- right_join(spawn.out2, expand_grid(all_years))
+
+##export for assessment
+TEP_output<- spawn.out2 %>%  dplyr::select(year, DEP.p, prob_at_med, TEP)
+
+write.table(TEP_output, file=paste0(pwd, "csv/",my.year,"/TEP_", my.year,".csv"), row.names=F, sep=",", dec=".")
+
+kable(TEP_output)
+
+ptEN1 <- ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
+  geom_point() +
+  #  geom_errorbar(aes(ymin=TEPlwr,ymax=TEPupr))+
+  geom_line() +
+  theme_few() +
+  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
+   scale_x_continuous(name = "Year", breaks = seq(1980, max(spawn.out2$year), 5)) +
+  ylab("Total egg production")
+
+ptEN1
+ggsave(paste0(pwd,"img/",my.year,"/Total_egg_production_EN.png"), width = 8, height = 5, unit = "in", dpi = 600)
+
+ptFR1 <-ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
+  geom_point() +
+  geom_line() +
+  theme_few() +
+  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
+  scale_x_continuous(name = "Ann\u00E9e", breaks = seq(1980, max(spawn.out2$year), 5)) +
+  ylab("Production total d'oeufs")
+ggsave(paste0(pwd,"img/",my.year,"/Total_egg_production_FR.png"), width = 8, height = 5, unit = "in", dpi = 600)
+
+```

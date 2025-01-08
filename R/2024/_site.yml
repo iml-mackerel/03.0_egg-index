@@ -1,0 +1,25 @@
+name: "Mackerel Total egg production"
+output_dir: "docs"
+navbar:
+  title: "Mackerel Egg production"
+  left:
+    - icon: fa-cogs
+      href: 0.0_settings.html
+    - text: "Read"
+      href: 1.0_read.html
+    - text: "DEP"
+      href: 2.0_DEP.html
+    - text: "Spawning"
+      href: 3.0_Spawning.html
+    - text: "TEP"
+      href: 4.0_TEP.html
+    - text: "Exploration"
+      href: 5.0_Exploration.html
+    - text: "NL"
+      href: 6.0_NL.html
+      
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+    css: styles.css

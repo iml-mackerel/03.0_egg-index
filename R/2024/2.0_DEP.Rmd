@@ -1,0 +1,196 @@
+---
+title: "Read"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: hide
+    number_sections: TRUE
+---
+
+```{r markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
+options(width = 200)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+my.year <- 2024 
+
+new=F
+
+```    
+
+```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```
+
+
+# DEP {.tabset}
+## INLA Mesh 
+
+```{r inlamesh, message = F}
+###INLA mesh###
+load(file=paste0("data/",my.year,"/eggt1.RData"))
+
+loc_egg1 <- make_boundary(dat = eggt1, year=my.year, trajet = 1)
+make_mesh(range = 150, Loc = loc_egg1, year=my.year, trajet = 1)
+
+# prediction grid for INLA
+predstation <- expand_grid(distinct(eggt1 %>% dplyr::select(year)), eggt1 %>% group_by(station) %>% dplyr::summarise(x = mean(longitude, na.rm = T), y = mean(latitude, na.rm = T)) %>% mutate(station = as.factor(station))) %>%  
+  st_as_sf(coords=c("x", "y"), crs=4326, remove=F) %>%  st_transform(lcc)
+
+predstation<- bind_cols(predstation, st_coordinates(predstation) %>%  as.data.frame() %>%  dplyr::rename(X.m=X, Y.m=Y)) %>%  st_drop_geometry()
+
+saveRDS(predstation, paste0("data/",my.year,"/INLA/prediction_grid_station", my.year, ".RDS"))
+
+```
+
+
+
+## Spatial field 
+```{r inla analysis, message = F, fig.width = 12, fig.height = 4}
+if(new) INLA_ZAG(dat = eggt1, res_mesh = 150, res_pred = "station", year=my.year, Rvar = "DEP", trajet = 1)
+
+res_mesh = 150
+res_pred = "station"
+myfamily = "ZAG"
+minw = -10
+maxw = 10
+smoother = F
+Rvar = "DEP"
+trajet=1
+name = paste0(Rvar, "_INLA_mesh", res_mesh,"km_pred_",res_pred,"_",myfamily,my.year,"_trajet",trajet)
+ 
+  #extract predictions#
+get_prediction_grid(dir=paste0("results/",my.year,"/INLA/"), dir.out=paste0("results/",my.year,"/INLA/predictions/"),name=name, trans="")
+
+  #plot random field#
+spfield<-  plotSpatialFieldCL(dir=paste0("results/",my.year,"/INLA/"),name=name ,minw=minw, maxw=maxw, my.year=my.year)
+ 
+annotate_figure(spfield[[1]], "Bernouilli")
+annotate_figure(spfield[[2]],"Gamma")
+```
+  
+## Coefficients 
+```{r inla smoothers, message = F}
+ 
+  plotSmoother(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="binomial",smoother=smoother)
+  plotSmoother(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="gamma",smoother=smoother)
+  
+  
+  fixed_effect1 <-  read.delim(paste0("results/",my.year,"/INLA/fixed_effects_",name,"binomial", ".txt"))
+kable(fixed_effect1, caption="fixed effect Bernoulli model")
+
+
+ fixed_effect2 <-  read.delim(paste0("results/",my.year,"/INLA/fixed_effects_",name,"gamma", ".txt"))
+kable(fixed_effect2, caption="fixed effect Gamma model")
+  
+``` 
+  
+## Range  
+```{r inla range, message = F}
+
+  rbern<- myrange(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="binomial")
+kable(rbern, caption="Range for the Bernoulli model")
+  rgamma<- myrange(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="gamma")
+  
+ kable(rgamma, caption="Range for the Gamma model")
+ 
+```
+ 
+## Validation
+```{r inla validation, message = F, fig.height=4}
+
+validation_ZAG(dir=paste0("results/",my.year,"/INLA/"),name=name,
+                        rvarpos=2, varpos=5)
+
+```
+
+
+## INLA cross-validation
+```{r inla crvalidation, message = F, fig.height=4, fig.width=6}
+load(file=paste0("data/",my.year,"/INLA/INLA_CV_eggdata.RData"))
+
+#do not need to do every year.
+if(new) INLA_ZAG_CV(dat = eggcv_all , res_mesh = 150, res_pred = "station", trajet = 1, year=my.year, Rvar="DEP")
+# to get result use summary fitted values
+load(paste0("results/",my.year,"/INLA/DEP_INLA_mesh150km_pred_station_ZAG_",my.year,"_CV_trajet1.RData"))
+# Extract mean from fitted values
+idb.prd <- inla.stack.index(stkallBern, "BernFit")$data
+Pi <- Gbern$summary.fitted.values$mean[idb.prd] # il n'y a pas d'index pour prediction, j'ai setté à NA.
+# sd.prd   <- I$summary.fitted.values$sd[id.prd]
+mu <- Ggamma$summary.fitted.values$mean[idb.prd]
+eggcv_all$Fit <- Pi * mu
+my.formula <- y ~ x # for smooth in ggplot
+
+inlastation1 <- eggcv_all %>%
+  ungroup() %>%
+  filter(!sample_id %in% eggcv_to_fit$sample_id) %>%
+  dplyr::rename(inlastation = Fit) %>%
+  dplyr::select(sample_id, inlastation)
+
+
+pcv <- full_join(eggt1 %>% dplyr::select(sample_id, year, DEP) %>% filter(sample_id %in% inlastation1$sample_id), inlastation1) %>%
+  ggplot(aes(x = DEP, y = inlastation)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  basetheme+
+  stat_poly_eq(
+    formula = my.formula,
+    aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = "~~~")),
+    parse = TRUE, vstep = 0.08
+  ) +geom_abline(slope=1, intercept=0, col="red", lty=2)
+##attention il faut sauvegarder eggcv pour que cette figure soit reproductible.
+
+mybreaks=c(0,10,30,100,300,1000,2000)
+
+pcv + scale_x_continuous(name = "PJO calculées (N/m²/day) | Calculated DEP (N/m²/day)", trans = "log10p1", breaks=mybreaks) + scale_y_continuous(name = "PJO prédite (N/m²/day)\nPredicted DEP (N/m²/day)", trans = "log10p1", breaks=mybreaks)
+```
+
+## DEP MAPs
+```{r DEP, message = F}
+predt1 <- read.delim(paste0("results/",my.year,"/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG", my.year, "_trajet1.txt"))
+lookup <-  read.delim("data/lookup_station_egg.txt")
+
+
+DEPt1a <- full_join(eggt1 %>%  mutate(station=as.numeric(station),
+                                      stratum=as.numeric(stratum)), left_join(predt1, lookup %>% dplyr::select(-c(depth, latitude, longitude)))) %>% mutate(DEP = coalesce(DEPbackup, Fit))
+
+
+DEP <- full_join(lookup %>%  dplyr::rename(lat=latitude, lon=longitude) %>% dplyr::select(station, lat, lon),
+                 DEPt1a %>% mutate(estimated = ifelse(is.na(DEPbackup) & !is.na(DEP), "estimated", "observed"))) %>% 
+     mutate(latitude=coalesce(latitude, lat),
+                          longitude=coalesce(longitude,lon))
+year_to_plot= (my.year-4) : my.year
+
+basemap2 + 
+  geom_point(data = DEP %>%  filter(year %in% year_to_plot,DEP > 0), aes(x = longitude, y = latitude, size = DEP, col = estimated), shape = 21, stroke=0.5) + 
+  geom_point(data = DEP %>%  filter(year %in% year_to_plot,DEP == 0), aes(x = longitude, y = latitude), shape = 3, size=0.8, stroke=0.5) + 
+  facet_wrap(~year) + 
+  scale_color_manual(values = c("red", "black"), guide = "none") + 
+  theme_few()+ theme(legend.position="bottom", plot.background = element_blank())+
+  scale_x_continuous(breaks=seq(-66,-60,2))+
+  scale_size_continuous(name="",breaks=c(seq(0, ceiling(max(DEP$DEP)), 50)),range=c(0.25,5)) 
+
+
+ggsave(paste0("img/",my.year,"/DEP.png"), width=4, height=4.8, dpi=600, units="in")
+
+save(DEP,  file=paste0("data/",my.year,"/DEP.RData"))
+
+
+all_years= data.frame(year=seq(1979, my.year, 1))
+
+left_join(all_years,DEP) %>% 
+ group_by(year) %>%
+  dplyr::summarize(
+    DEP.p = mean(DEP, na.rm = T)) %>% 
+  ggplot(aes(x=year, y=DEP.p)) +geom_point()+geom_line() +
+  ylab("Production journalière d'oeufs (N/m²/jour)\nDaily egg production (N/m²/day)")+
+  xlab("Ann\u00E9e\nYear")
+
+ggsave(paste0("img/",my.year,"/DEP_trajet1_year.png"),width = 6, height = 4, unit = "in", dpi = 600)
+
+```
+

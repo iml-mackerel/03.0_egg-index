@@ -1,0 +1,269 @@
+---
+title: "Spawning"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+
+    # SET-UP
+```{r markdwon, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
+options(width = 200)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+
+my.year <- 2024 # maximum year to extract data
+year_to_plot= (my.year-5) : my.year
+
+```    
+
+```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+
+```
+  
+
+```{r settings}
+new=F
+N=100
+load(file=paste0("data/",my.year,"/DEP.RData"))
+load(file=paste0("data/",my.year,"/eggt1.RData"))
+dat=eggt1
+
+```
+
+# Read 
+
+```{r read spawn, message = F}
+#prop_spawn(year,year=year, dat = egg, cv = T) # dat is used to calculate median date and in split with trajet.
+
+date.med <- eggt1 %>%  filter(year !=1979) %>%
+  ungroup() %>%
+  group_by(year) %>%
+  dplyr::summarize(
+    date.med = round(median(doy, na.rm = T)),
+    mindoy = min(doy, na.rm = T),
+    maxdoy = max(doy, na.rm = T)
+  )
+
+date.med <- date.med %>% mutate(date.med = ifelse(year == 1979, 166, date.med)) # from Ouellet et al. 1987
+date.med <- as.data.frame(date.med)
+
+#2024 4 -11 juillet
+
+doy = as.numeric(format(as.Date(paste("2024/07/08", sep = "/"), format = "%Y/%m/%d"), format = "%j"))
+
+bio <- get.bio(species = "maquereau", user = my.env$bio.username, password = my.env$bio.password)
+bio.backup <- bio
+    
+      bio <- bio %>% mutate(doy = as.numeric(format(as.Date(paste(year, month, day, sep = "/"), format = "%Y/%m/%d"), format = "%j"))) %>%
+        dplyr::filter(
+          !is.na(weight), !is.na(wgonad), !is.na(doy),
+          weight > 0, weight > wgonad, matur != 0, prov=="NL"
+        ) 
+    
+      
+bio %<>% mutate(gsi = (wgonad / weight) * 100)
+
+#remove outliers
+df <- bio %>%
+  dplyr::filter(!is.na(gsi), matur > 4, year > 1978, !(gsi > 5 & doy > 250), !(gsi > 10 & doy > 200 & year %in% c(1994, 1999, 2018, 2019, 2020)), length.frozen > 0.2, weight > 0.03, gsi < 40)  %>%  
+  group_by(agef) %>% filter(weight>quantile(weight,0.0001), weight<quantile(weight,0.9999))%>% 
+  arrange(year)
+
+
+df <- df %>%
+  arrange(year) %>%
+  mutate(year = as.numeric(as.character(year))) %>%  filter(!is.na(gsi), !is.na(doy), !is.na(year)) %>% mutate(maturcat = ifelse(!is.na(matur) & matur == 6, "6",                                                                                                                                 ifelse(is.na(matur), "other", "other"))) %>%  ungroup()
+
+
+bio.backup %<>% mutate(gsi = (wgonad / weight) * 100)
+
+#bio.backup %>% filter(gsi < 50,  matur %in% 5:6) %>%   ggplot(aes(x=as.factor(month), y=gsi, fill=as.factor(matur)))+geom_boxplot() + facet_wrap(~prov)
+
+```
+
+## CHECKS {.tabset} 
+
+### Check for outliers
+```{r check outliers, message = F}
+df %>% filter(year %in% year_to_plot) %>% ggplot(aes(x=doy, y=gsi)) +geom_point(aes(col=maturcat)) + facet_wrap(~year) + scale_color_manual(values = c("green3", "grey")) 
+
+```
+
+### Check data
+```{r samples, message = F}
+ df %>%  group_by(matur, nafo) %>%  tally()
+nlbackup<-  bio.backup %>% mutate(doy = as.numeric(format(as.Date(paste(year, month, day, sep = "/"), format = "%Y/%m/%d"), format = "%j")))
+ggplot(data=nlbackup,aes(y=doy, fill=nafo, x=nafo)) +geom_boxplot()
+
+nnl<- nlbackup %>%  filter(gsi <40, matur %in% c(5,6)) %>% group_by(nafo, matur) %>%  tally()
+ggplot(data=nlbackup %>%  filter(gsi <40, matur %in% c(5,6)),aes(y=gsi, fill=nafo, x=nafo)) +geom_boxplot() +
+  geom_text(data=nnl, aes(x=nafo, y=40, label=n)) +facet_wrap(~matur) +scale_fill_viridis_d()
+ggplot(data=nlbackup %>%  filter(gsi <40, month <=8),aes(fill=as.factor(matur), x=nafo)) +geom_bar(position="fill")
+
+propdoy<- left_join(left_join(df %>%  group_by(year,doy, matur) %>%  tally() %>%  pivot_wider(names_from=matur, values_from=n, values_fill=0),
+df %>%  group_by(year,doy) %>%  tally()) %>%  mutate(prop_stage6= `6` /n),
+df %>%  group_by(year, doy) %>%  filter(matur=="6") %>%  summarize(mgsi=mean(gsi, na.rm=T)))
+
+#df = df %>%  filter(year >2022)
+
+#date mediane
+#2022 12-19
+#2023 12-18 juillet
+#2024 4 -11 juillet
+
+datmed <- data.frame(year=c("2007","2008-2009","2022-2023", "2024"),
+                     group=c("2000s", "2000s", "2020s", "2020s"),
+doy = c(as.numeric(format(as.Date(paste("2007/07/20", sep = "/"), format = "%Y/%m/%d"), format = "%j")),
+        as.numeric(format(as.Date(paste("2008/07/17", sep = "/"), format = "%Y/%m/%d"), format = "%j")),
+        as.numeric(format(as.Date(paste("2022/07/15", sep = "/"), format = "%Y/%m/%d"), format = "%j")),
+          as.numeric(format(as.Date(paste("2024/07/08", sep = "/"), format = "%Y/%m/%d"), format = "%j"))))
+datmed$matur=6#bidon
+y <- seq(130, 365, 15)
+Sys.setlocale("LC_ALL", "English")
+
+df %>% filter(year > 2021, doy>1) %>% ungroup() %>% group_by(matur,doy) %>%
+  summarise(n = n()) %>% group_by(doy) %>% 
+  mutate(sumn =sum(n),
+         freq = n / sum(n)) %>% ggplot(aes(x=doy, fill=as.factor(matur)))+geom_bar(position="fill", width=2) +
+  scale_y_continuous(labels = scales::percent,expand=c(0,0.03)) +
+  scale_fill_viridis_d(direction=-1) + scale_x_continuous(expand=c(0,0),limits=c(min(y), max(y)), breaks=y, labels=format(as.Date(y, origin = "2022-01-01"),'%b-%d'))  +xlab("") + ylab("Composition des échantillons à T-N-L \nComposition of samples NL") +
+  #geom_text(aes(x=doy, y=1, label=sumn))+
+  geom_point(data=datmed,  aes(x=doy, y= -0.01, col=year), size=4) +
+  scale_color_brewer(palette = "Paired")+
+  theme(axis.text.x = element_text(angle=45, hjust=1), legend.title = element_blank(),
+        legend.position="inside", legend.position.inside = c(0.1,0.6)) 
+ggsave("img/2024/NL_spawning_surveys.png", width=6, height=3.5, dpi=600, unit="in")
+
+df %>% filter(year > 2021, doy>1) %>%   ggplot()+geom_bar(aes(x=doy))
+
+
+```
+
+
+### Model {.tabset}
+```{r spawn2, message = F}
+
+#evaluate starting values
+
+if(new){
+start.val <- nls.multstart::nls_multstart(gsi ~ SSlogis(doy, Asym, xmid, scal),
+                                          data = df %>%  filter(year >2021),
+                                          start_lower = c(Asym = min(df %>% filter(matur == 5) %>% dplyr::select(gsi)), xmid = min(df$doy), scal = -100),
+                                          start_upper = c(Asym = max(df$gsi), xmid = max(df$doy), scal = 100),
+                                          iter = 500,
+                                          supp_errors = "Y"
+)
+
+
+
+nlme.fixAR <- nlme(gsi ~ SSlogis(doy, Asym, xmid, scal),
+  data = df %>%  filter(year >2022),
+  fixed = Asym + xmid + scal ~ 1,
+  start = coefficients(start.val),
+  correlation = corAR1(),
+  random = Asym + xmid + scal ~ 1 | year
+)
+
+nlme.fixAR <-nls(gsi ~ SSlogis(doy, Asym, xmid, scal), data = df %>%  filter(year==2024), start = coefficients(start.val),)
+
+#df<- df %>%  mutate(year=as.factor(year), group=as.numeric(year))
+#test<- glm(gsi/100 ~ doy |year, family="binomial", data=df, correlation=corAR1())
+#library(glmmTMB)
+#tmb1<- glmmTMB(gsi/100 ~ doy + ar1(year + 0 | group), data=df, family=beta_family(link="logit"))
+#plot(residuals(tmb1, type="pearson") ~ fitted(tmb1))
+#library(DHARMa)
+#plot(simulateResiduals(tmb1))
+
+#newdata=data.frame(doy=seq(100,300, 5))
+#newdata$pred<- predict(test,newdata)
+
+nlme_coefAR = as_tibble(coef(nlme.fixAR), rownames = 'year')
+
+#keep starting values in case of needed for update
+} 
+predtimes <- expand_grid(year = unique(df$year), doy = seq(0.5, 364.5)) # doy aligned to calculate probability at doy
+
+
+nlme.fixpredsAR1 <- predtimes %>%
+  mutate(fitted =predict(nlme.fixAR, newdata = predtimes,interval = 'confidence')) %>%
+  group_by(year) %>%
+  mutate(
+    slope = c(diff(fitted, lag = 1), NA),
+    prob = slope / sum(slope, na.rm = T)
+  ) %>%
+  filter(!is.na(prob)) %>%
+  mutate(
+    probcum0025 = cumsum(prob),
+    #probcum9725 = rev(cumsum(rev(prob))),
+    doy = ceiling(doy)
+  ) # get back the real doy
+
+```
+ 
+
+
+ 
+#### Check
+```{r spawvalid1, message = F}
+df = df %>%  filter(year==2024)
+valid<- data.frame(resid=residuals(nlme.fixAR , type="pearson"), mu=fitted(nlme.fixAR), obs=df$gsi, year=df$year)
+
+h<- ggplot(valid, aes(x=mu, y=resid))+geom_point(col="grey35", size=0.5, alpha=0.3) +theme_few() + geom_hline(yintercept=0, col="red", lty=2)+ geom_smooth()
+f<- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col="grey35", size=0.5, alpha=0.3)+theme_few() +geom_abline(slope=1, intercept=0, col="red", lty=2)+ geom_smooth(method="lm")
+
+hEN <-  h+ ylab("Résidus de Pearson | Pearson's residuals") + xlab("Valeurs calibrées | Fitted values")
+
+fEN <-  f+ ylab("Valeurs calibrées | Fitted values") + xlab("Valeurs observées | Observed values")
+
+ggarrange(hEN, fEN, ncol=2)
+
+
+h<- ggplot(valid, aes(x=mu, y=resid))+geom_point(col="grey35", size=0.5) +theme_few() + facet_wrap( ~ year) +geom_hline(yintercept=0, col="red", lty=2)
+f<- ggplot(valid, aes(x=df$gsi, y=mu))+geom_point(col="grey35", size=0.5)+theme_few() + facet_wrap( ~ year) +geom_abline(slope=1, intercept=0, col="red", lty=2)+ geom_smooth(method="lm")
+
+hEN <-  h+ ylab("Résidus de Pearson | Pearson's residuals") + xlab("Valeurs calibrées | Fitted values")
+
+ggarrange(hEN, fEN, ncol=2)
+```
+
+
+### Results {.tabset}
+
+#### Spawning season
+```{r spawn season, message = F}
+##########plots of fit with proportion###########
+scaling.factor <- 4 # for second axis
+nlme.fixpredsAR <- full_join(df, nlme.fixpredsAR1) 
+
+sp3 <- ggplot(nlme.fixpredsAR %>% filter(year ==2024)) +
+  theme_few() + theme(legend.position = "none", axis.text.x = element_text(angle = 90)) + 
+  coord_cartesian(xlim=c(100, 300))+
+  geom_point(aes(x = doy, y = gsi, col = maturcat), size = 0.3) +
+  scale_color_manual(values = c("green3", "grey")) +
+  geom_line(aes(x = doy, y = fitted), size = 0.5) +
+  #geom_ribbon(aes(ymin=gsiIClwr, ymax=gsiICupr, x=doy), alpha=0.5, col="black", fill="black")+
+  geom_line(aes(x = doy, y = prob * 100 * scaling.factor), col = "red", size = 0.5) +
+ # geom_ribbon(aes(ymin=propIClwr* 100 * scaling.factor, ymax=propICupr* 100 * scaling.factor, x=doy), alpha=0.5, col = "red", fill="red")+
+  geom_vline(aes(xintercept=190), lty=2) +
+  facet_wrap(~year, ncol = 3) 
+
+
+spEN3 <-  sp3 +
+  scale_y_continuous(
+    name = "Gonadosomatic index",
+    sec.axis = sec_axis(~ . / scaling.factor, name = "Percentage of eggs spawned daily")
+  ) +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
+  xlab("Day of year")
+spEN3
+
+```
+
+
