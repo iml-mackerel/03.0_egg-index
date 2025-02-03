@@ -2,7 +2,7 @@ library(tidyverse)
 library(lubridate)
 library(magrittr)
 library(stringr)
-source("bdOracle.Rprofile") #containing password and username for data extraction
+source("../bdOracle.Rprofile") #containing password and username for data extraction
 source("R/biochem/PL_Get_SampleID_Batch.R")
 source('R/biochem/PL_Get_Counts_Batch.R')
 source("R/biochem/PL_Read_Filter.R")

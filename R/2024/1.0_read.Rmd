@@ -17,13 +17,14 @@ output:
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
 options(width = 200)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 my.year=2024
-new=F
+new=T
+root<- "../../"
 
 ```
 
-```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```{r code=readLines('0.0_settings.R')}
 ```
 
 # Eggs counts
@@ -32,15 +33,16 @@ new=F
 
 ```{r biochemsp, message = F}
 if(new){
-extract_biochem(year=my.year, path_to_file = NULL)
+  setwd(rprojroot::find_rstudio_root_file())
+extract_biochem(year=my.year, path_to_file = NULL) # if warning about maqytr then probably wrong locale Rstart R
 extract_T0_10(year=my.year)
 }
 ```
 
 ```{r filter, message = F}
-lookup <- read.delim("data/lookup_station_egg.txt") # position and depth of stations.
+lookup <- read.delim(paste0(root,"data/lookup_station_egg.txt")) # position and depth of stations.
 
-bat <- getNOAA.bathy(-70,-58,40,52, res = 4, keep = TRUE)
+bat <- getNOAA.bathy(-70,-58,40,52, res = 4, keep = F)
 bat_xyz <- as.xyz(bat) # %>%  filter(V3 < -90 & V3 > -110)
 
 basemap2 +
@@ -57,11 +59,11 @@ basemap2 +
     geom_sf(data = fortify(nec), fill = "bisque2", col = "bisque4") +
   geom_label(data = lookup, aes(x = longitude, y = latitude, label = station), size = 3, label.padding = unit(0.1, "lines")) + coord_sf(xlim=c(-66.5,-60),ylim=c(45.5,49.5))
 
-ggsave(paste0("img/",my.year,"/area_of_interest.png"), width = 6, height = 6, units = "in", dpi = 600)
+ggsave(paste0(root,"img/",my.year,"/area_of_interest.png"), width = 6, height = 6, units = "in", dpi = 600)
 
 
 
-egg <- readRDS(paste0("data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", my.year, ".RDS"))# %>%
+egg <- readRDS(paste0(root,"data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", my.year, ".RDS"))# %>%
 egg <- egg %>%  dplyr::filter(!grepl(station, pattern="4R"),
                               !grepl(station, pattern="3P"),
                               !grepl(station, pattern="SP")) %>%  dplyr::arrange(year,station)
@@ -92,7 +94,7 @@ tableN <-eggt1 %>%
 
 kable(tableN %>%  dplyr::arrange(desc(year)))
 
-write.table(tableN, paste0("results/",my.year,"/tableN_trajets.txt"), sep = "\t", dec = ".", row.names = F)
+write.table(tableN, paste0(root,"results/",my.year,"/tableN_trajets.txt"), sep = "\t", dec = ".", row.names = F)
 
 all_years= data.frame(year=seq(1979, my.year, 1))
 
@@ -111,11 +113,11 @@ eggcv <- eggt1 %>%
 eggcv_to_fit <- eggt1 %>% dplyr::filter(!sample_id %in% eggcv$sample_id)
 eggcv_all <- as.data.frame(bind_rows(eggcv, eggcv_to_fit))
 
-if(!file.exists(paste0("data/",my.year,"/INLA/INLA_CV_eggdata.RData"))){ #prevent overwriting
-save(eggcv_to_fit, eggcv_all, file=paste0("data/",my.year,"/INLA/INLA_CV_eggdata.RData"))
+if(!file.exists(paste0(root,"data/",my.year,"/INLA/INLA_CV_eggdata.RData"))){ #prevent overwriting
+save(eggcv_to_fit, eggcv_all, file=paste0(root,"data/",my.year,"/INLA/INLA_CV_eggdata.RData"))
 }
 
-save(eggt1,  file=paste0("data/",my.year,"/eggt1.RData"))
+save(eggt1,  file=paste0(root,"data/",my.year,"/eggt1.RData"))
 
 ```
 
@@ -144,7 +146,7 @@ p1<- Temp %>% mutate(`Incubation` = I_lockwood(Temp)) %>%
 
 p1 +ggtitle(expression(Incubation~time~"="~e^(-1.61~log(T10[y][,][i])~+~7.76))) +theme(plot.title=element_text(hjust=0.5))
 
-ggsave(paste0("img/",my.year,"/Incubation_timeBI.png"), width=6, height=4, dpi=600, units="in")  
+ggsave(paste0(root,"img/",my.year,"/Incubation_timeBI.png"), width=6, height=4, dpi=600, units="in")  
 ```
 
 ## MAP of last 2 years's coverage
@@ -158,15 +160,18 @@ egg2<- plyr::join(eggmap, look2 , type="full") %>%  st_as_sf(coords=c("longitude
 emap<- eggmap %>% st_as_sf(coords=c("longitude", "latitude"), crs=4326, remove=F) %>% mutate(consecutive=as.numeric(as.character(consecutive))) %>% ungroup() %>% dplyr::arrange(year,consecutive)  %>% mutate(ID=1:nrow(eggmap)) %>%  st_drop_geometry() #%>% st_coordinates() %>% st_linestring() %>%  as.matrix()
 
 lab_dates <- seq(min(egg2$doy, na.rm=T), max(egg2$doy, na.rm=T),1)
+
 Sys.setlocale("LC_ALL", "English_Canada.utf8")
 basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=egg2 %>%  filter(!is.na(doy)), aes(fill= doy), size=3, shape=21) + 
    geom_sf(data=egg2 %>%  filter(is.na(doy)),  size=3, shape=3, col="black", stroke=1.1) +coord_sf(xlim=c(-66.5,-60), ylim=c(45.5,49.5)) +
-  scale_fill_viridis_b(name="Date d'échantillonnage\n Sampling date", breaks=lab_dates, labels=paste(lab_dates, format(as.Date(lab_dates, origin = paste0(my.year,"-01-01")),'%B-%d'), sep="\n")) +facet_wrap(~year) +
-  theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"), plot.background = element_blank())
+  scale_fill_viridis_b(name="Date d'échantillonnage\n Sampling date", breaks=lab_dates, labels=format(as.Date(lab_dates, origin = paste0(my.year,"-01-01")),'%B-%d')) +facet_wrap(~year) +
+  theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"),
+        legend.text=element_text(angle=90),
+        plot.background = element_blank())
 
 Sys.setlocale("LC_ALL","French_Canada.utf8")
 
-ggsave(paste0("img/", my.year,"/MAP_egg_cover.png"), width=8, height=5, dpi=600, units="in")
+ggsave(paste0(root,"img/", my.year,"/MAP_egg_cover.png"), width=9, height=5, dpi=600, units="in")
 
 basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=egg2 %>%  filter(!is.na(doy)), aes(fill= temperature0_10), size=3, shape=21) + 
    geom_sf(data=egg2 %>%  filter(is.na(doy)),  size=3, shape=3, col="black", stroke=1.1) +coord_sf(xlim=c(-66.5,-60), ylim=c(45.5,49.5)) +
@@ -186,8 +191,9 @@ pf<- basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(dat
         legend.text = element_text(size=14),
         plot.background = element_blank(),
         strip.placement = "outside")
+saveRDS(pf, file=paste0(root,"img/", my.year,"/MAP_egg_temperature_flip.RDS"))
 
-ggsave(paste0("img/", my.year,"/MAP_egg_temperature_flip.png"), width=6, height=7, dpi=600, units="in", bg="transparent")
+ggsave(paste0(root,"img/", my.year,"/MAP_egg_temperature_flip.png"), width=6, height=7, dpi=600, units="in", bg="transparent")
 
 ```
 
@@ -248,7 +254,7 @@ po<- ggplot(eggt1 %>%  filter(set_duration < 2000), aes(y = volume, x = set_dura
     geom_point(data=eggt1 %>%  filter(year %in% (my.year-1): my.year,set_duration < 2000), aes(col = as.factor(year)), size=0.8) +
   scale_color_manual(values=c("blue","black"), name="")  +
   scale_fill_manual(values=c( "blue","black"), name="") +theme(legend.position = "none")
-ggsave(paste0("img/", my.year,"/Volume_validation.png"), width=6, height=4, dpi=600, units="in")
+ggsave(paste0(root,"img/", my.year,"/Volume_validation.png"), width=6, height=4, dpi=600, units="in")
 
 ```
 
@@ -277,7 +283,7 @@ eggt1filter<-eggt1filter%>%  dplyr::mutate(outliers_depth = if_else(DEP==0, "No 
                                      outliers_depth= recode_factor(outliers_depth, `No egg`="No egg", `Depth within CI`="Depth within CI",`Depth < CI`="Depth < CI", `Depth > CI`="Depth > CI"),
                                      outliers_depthFR= recode_factor(outliers_depth, `Sans oeuf`="Sans oeuf",`Depth within CI` = "Profondeur à l'intérieur des IC", 
                                                                      `Depth < CI` = "Profondeur < IC",
-                                                                     `Depth > CI` = "Profondeur > IC")) %>%  as_tibble() %>% dplyr::filter(year %in% c(1996,(as.numeric(as.character(my.year))-1): as.numeric(as.character(my.year)))) 
+                                                                     `Depth > CI` = "Profondeur > IC")) %>%  as_tibble() %>% dplyr::filter(year %in% c((as.numeric(as.character(my.year))-1): as.numeric(as.character(my.year)))) 
 
 
 
@@ -307,7 +313,7 @@ eggt1filter %>% filter(!is.na(outliers_depth)) %>%
   theme(legend.position ="bottom", legend.text = element_text(size=12)) +
   facet_wrap(~year)
                           
-ggsave(paste0("img/", my.year,"/Depth_validation.png"), width=7, height=4, dpi=600, units="in")
+ggsave(paste0(root,"img/", my.year,"/Depth_validation.png"), width=7, height=4, dpi=600, units="in")
 
          
 ```

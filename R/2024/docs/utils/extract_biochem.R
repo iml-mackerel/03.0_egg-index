@@ -251,11 +251,10 @@ meta  %<>% ungroup %>%  transmute(year = as.numeric(Année),
                             volume = `Volume (m3) Bionet`,
                             sounding = `Prof. station (m)`,
                             comments=Comentaires,
-                      sample_id= paste(year, consecutive, bongo),) #vérifier si le nom de colonne est le même à chaque année.
+                      sample_id= paste(year, consecutive, bongo)) #vérifier si le nom de colonne est le même à chaque année.
 
 
-  maqytr <- read_excel(path_to_file, 
-                               sheet = "Plancton")
+  maqytr <- read_excel(path_to_file,sheet = "Plancton")
 
   
   p1 <- maqytr %>% mutate(year = as.numeric(Année), 
@@ -272,7 +271,7 @@ meta  %<>% ungroup %>%  transmute(year = as.numeric(Année),
                                      stage="egg",
                           sex="UNASSIGNED",
                           collector_comment=ifelse(`Arrêt du tri (+ de 6h)`=="O", paste("Arrêt du tri car plus de 6hres.", Remarques), Remarques),
-                          sample_id= paste(year, consecutive, bongo),) %>% 
+                          sample_id= paste(year, consecutive, bongo)) %>% 
     pivot_longer(cols = c(`STADE 1`: `STADE 5`), names_to = "molt_number", values_to = "counts") %>% 
     mutate(start_time=format(Heure, format="%H:%M"))#%
   
@@ -343,11 +342,31 @@ all_sgsl <- full_join(all_sgsl, x1982) %>%  mutate(volume= coalesce(volume, repl
   
 #####################  Calculate Abundance  ####################
 
+#deal avec individus sans tete encoding problem
+#check
+all_sgsl$ge_collector_comment <- iconv(all_sgsl$ge_collector_comment, from = "UTF-8", to = "ASCII", sub = "")
+
+all_sgsl<- all_sgsl %>% mutate(nlarves_sans_tete = if_else(grepl(ge_collector_comment, pattern="tete"), 
+                                                      gsub(ge_collector_comment, pattern=" individus sans tete", replacement=""),
+                                                      ge_collector_comment),
+     nlarves_sans_tete = as.numeric(if_else(grepl(nlarves_sans_tete, pattern="tete"), 
+                                 gsub(nlarves_sans_tete, pattern=" individu sans tete", replacement=""),
+                                 NA)),
+     stade5enr=as.numeric(if_else(grepl(ge_collector_comment, pattern="embry") & grepl(ge_collector_comment, pattern="enr"), 
+                    str_extract(ge_collector_comment, "\\d+"),
+                    NA)))
+
 # Calculate concentration and density by dividing the counts by the fraction of the sample treated, dividing by the filtered volume sampled by the gear, and multiplying by the depth sampled
 sgsl_ichthyo_L1 <-  all_sgsl %>%  mutate(
   n = counts/split_fraction,
   n_m3 = ifelse(is.na(volume) & n==0, 0,n/volume),#if no eggs found but volume is missing, set Nm2 to zero
   n_m2 = n_m3*(start_depth),
+  nsanstete = nlarves_sans_tete/split_fraction,
+  nsanstete_m3 = ifelse(is.na(volume) & n==0, 0,nsanstete/volume),#if no eggs found but volume is missing, set Nm2 to zero
+  nsanstete_m2 = nsanstete_m3*(start_depth),
+  n5enr = stade5enr/split_fraction,
+  n5enr_m3 = ifelse(is.na(volume) & n==0, 0,n5enr/volume),#if no eggs found but volume is missing, set Nm2 to zero
+  n5enr_m2 = n5enr_m3*(start_depth)
 ) %>% arrange(date, consecutive) %>%  filter(!is.na(counts))
 
 sgsl_ichthyo_L1<- sgsl_ichthyo_L1[!duplicated(sgsl_ichthyo_L1 %>%  dplyr::select(sample_id, taxonomic_name, stage, molt_number)),] #patching up for 2005 for now. update in biochem pending
@@ -360,21 +379,20 @@ sgsl_ichthyo_meta <-  distinct(sgsl_ichthyo_L1 %>%  filter(!(year==year & stage=
 #filter file with eggs and larvae
 df.filter <- PL_Read_Filter(filter_file = paste0("sql/",year,"/Biochem_maq_eggs_filter_file.txt")) #two last rows of filter file are for 1979
 
+
+###2023-2024 remove larvae without heads. stage 5 not doing anything yet.For bias indicator removed larvae without head for continuous time series
 df.data.L2 <- left_join(PL_Taxonomic_Grouping(
   df.data = sgsl_ichthyo_L1 %>% dplyr::select(., sample_id, taxonomic_name, stage, molt_number, sex, n_m2),
   df.filter
 ), sgsl_ichthyo_meta) %>% filter(extra_consecutive==1) %>% 
-  dplyr::select(sample_id, mission_name, consecutive,station,bongo,trajet, date,year:day, doy, start_time, set_duration, latitude:start_depth, sounding:volume, set_duration, mesh_size,stratum, stratum_area, collector_name:mission_comment2, maq_eggs:maq_larvae)
+  dplyr::select(sample_id, mission_name, consecutive,station,bongo,trajet, date,year:day, doy, start_time, set_duration, latitude:start_depth, sounding:volume, set_duration, mesh_size,stratum, stratum_area, collector_name:mission_comment2, maq_eggs:maq_larvae,
+                nsanstete_m2, n5enr_m2) %>%  mutate(perclarve_sanstete= nsanstete_m2/maq_larvae *100, maq_larvae=if_else(!is.na(nsanstete_m2),maq_larvae-nsanstete_m2, maq_larvae))
 
-if(sql =="BOCHEM_Bongo.sql"){
+
+
 write.table(df.data.L2, paste0("data/",year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", year, ".tsv"), sep="\t", dec=".", row.names=F)
 write_rds(df.data.L2, paste0("data/",year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", year, ".RDS"))
-}
 
-if(grepl(sql, pattern="NL")){
-  write.table(df.data.L2, paste0("data/",year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", year, "NL.tsv"), sep="\t", dec=".", row.names=F)
-  write_rds(df.data.L2, paste0("data/",year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", year, "NL.RDS"))
-}
 
 df.filterb <- PL_Read_Filter(filter_file = paste0("sql/",year,"/Biochem_capelin_larvae_filter_file.txt")) #two last rows of filter file are for 1979
 

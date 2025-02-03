@@ -36,9 +36,9 @@ Run_Database_Query <- function(sql_file, host, port, sid, username, password) {
     "(DESCRIPTION=",
     "(ADDRESS=(PROTOCOL=tcp)(HOST=", host, ")(PORT=", port, "))",
     "(CONNECT_DATA=(SID=", sid, ")))", sep = "")
-  
+
   # use username/password authentication
-  conn <- ROracle::dbConnect(drv, username=username, password=password, dbname = connect.string, encoding="windows-1252")
+  conn <- ROracle::dbConnect(drv, username=username, password=password, dbname = connect.string, encoding="UTF-8")
   #"windows-1252"
   # run SQL statement by creating first a resultSet object
   rs <- dbSendQuery(conn, data[[1]])

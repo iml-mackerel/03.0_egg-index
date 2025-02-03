@@ -17,12 +17,13 @@ output:
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 8, message=F, warning=F)
 options(width = 200)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 my.year=2024
+root<- "../../"
 
 ```
 
-```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```{r code=readLines(paste0('0.0_settings.R'))}
 ```
 
 # Eggs counts
@@ -32,7 +33,7 @@ my.year=2024
 ```{r biochemsp, message = F}
 #extract_biochem(year=my.year, path_to_file = NULL, sql="BOCHEM_Bongo_NL.sql")
 
-egg <- readRDS(paste0("data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", my.year, ".RDS"))# %>%
+egg <- readRDS(paste0(root,"data/",my.year,"/PL_Bongo_Scomber_eggs_larvae_Counts_L2_", my.year, ".RDS"))# %>%
 eggNL <- egg %>%  dplyr::filter(grepl(station, pattern="4R") | grepl(station, pattern="3P") | grepl(station, pattern="SP")) %>%  dplyr::arrange(year,station)
 eggsgsl <- egg %>%  dplyr::filter(!grepl(station, pattern="4R") & !grepl(station, pattern="3P") & !grepl(station, pattern="SP")) %>%  dplyr::arrange(year,station) %>%  filter(year %in% c(eggNL$year, my.year))
 
@@ -43,7 +44,7 @@ eggsgsl <- egg %>%  dplyr::filter(!grepl(station, pattern="4R") & !grepl(station
 2022 not yet available sonde marport
 
 ```{r temperature, message = F}
-t22a <-  readRDS('../mackerel_4R/data/2022/marport/meantemp.RDS') #available temperature
+t22a <-  readRDS(paste0('../',root,'mackerel_4R/data/2022/marport/meantemp.RDS')) #available temperature
 t22b <- read_excel("S:/Pélagiques/Plancton/Relevés/Relevé 2022/IML-2022-043_juillet/Métadonnées_IML-2022-043.xlsx", 2, col_types=c(rep("guess",3), "date", rep("guess",20))) # all stations for dates
 t22b<- t22b %>%  mutate(`Date_Heure(UTC)`= ymd_hms(paste(Date,format(Heure, "%H:%M:%S"), sep=" "))) %>% 
  dplyr::select(`Date_Heure(UTC)`, Station) %>%  filter(!Station %in% t22a)
@@ -86,18 +87,31 @@ basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=egg
 
 Sys.setlocale("LC_ALL","French_Canada.utf8")
 
-ggsave(paste0("img/", my.year,"/MAP_egg_cover_NL.png"), width=8, height=5, dpi=600, units="in")
+ggsave(paste0(root, "img/", my.year,"/MAP_egg_cover_NL.png"), width=8, height=5, dpi=600, units="in")
 
 basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=eggmap %>%  filter(!is.na(doy)), aes(fill= temperature), size=2.5, shape=21) + 
    geom_sf(data=eggmap %>%  filter(is.na(doy)),  size=2.5, shape=3, col="red", stroke=2) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) +
   scale_fill_viridis_b(name="Temperature 0-10 m",option="H", limits=c(6, 16), breaks=seq(6,16,1)) +facet_wrap(~year) +
   theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"), plot.background = element_blank())+
   scale_x_continuous(breaks=seq(-60, -56,1))
-ggsave(paste0("img/", my.year,"/MAP_egg_temperatureNL.png"), width=8, height=5, dpi=600, units="in", bg="transparent")
+ggsave(paste0(root,"img/", my.year,"/MAP_egg_temperatureNL.png"), width=8, height=5, dpi=600, units="in", bg="transparent")
+
+pg<- readRDS(file=paste0(root,"img/", my.year,"/MAP_egg_temperature_flip.RDS"))
+
+pn<- basemap2 + geom_path(data=emap %>%  filter(year> 2022), aes(x=longitude, y=latitude)) + geom_sf(data=eggmap %>%  filter(!is.na(doy), year>2022), aes(fill= temperature), size=2.5, shape=21) + 
+   geom_sf(data=eggmap %>%  filter(is.na(doy)),  size=2.5, shape=3, col="red", stroke=2) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) +
+  scale_fill_viridis_b(name="Temperature 0-10 m",option="H", limits=c(6, 16), breaks=seq(6,16,1)) +facet_wrap(~year, ncol=1, strip.position="left") +
+  theme(legend.position = "bottom", legend.key.width = unit(2.5, "cm"), plot.background = element_blank(),
+        legend.text = element_text(size=14),
+        strip.placement = "outside")+
+  scale_x_continuous(breaks=seq(-60, -56,1))
+
+ggarrange(pg + theme(legend.key.height = unit(1, "cm"), legend.key.width = unit(3, "cm")), pn, common.legend=T, legend="bottom", ncol=2, align="v")
+ggsave(paste0(root, "img/", my.year,"/MAP_egg_temperatureGSL_NL.png"), width=9, height=8, dpi=600, units="in", bg="white")
 
 
 basemap2 +  geom_sf(data=station %>%  st_as_sf(coords=c("longitude", "latitude"), crs=4326), shape=19, size=2) +coord_sf(xlim=c(-60,-55), ylim=c(45.5,50.2)) 
-ggsave(paste0("img/", my.year,"/NLstations.png"), width=4, height=5, dpi=600, units="in", bg="transparent")
+ggsave(paste0(root,"img/", my.year,"/NLstations.png"), width=4, height=5, dpi=600, units="in", bg="transparent")
 
 
 ```
@@ -105,15 +119,20 @@ ggsave(paste0("img/", my.year,"/NLstations.png"), width=4, height=5, dpi=600, un
 ## MAPs of density
 
 ```{r covarage}
-eggall <-  bind_rows( eggNL  %>%  ungroup() %>% mutate(mission=if_else(month==6, "sGSL", "NL")) %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae), 
-                      eggsgsl %>%  ungroup() %>%  mutate(mission="sGSL") %>%  dplyr::select(mission, year, station, longitude, latitude,maq_eggs_stage1_5,maq_larvae))  %>%  
-   st_as_sf(coords=c("longitude", "latitude"), crs=4326) 
-
+eggall <-  bind_rows( eggNL  %>%  ungroup() %>% mutate(mission=if_else(month==6, "sGSL", "NL")) %>%  dplyr::select(mission, year, station, maq_eggs_stage1_5,maq_larvae, latitude, longitude), 
+                      eggsgsl %>%  ungroup() %>%  mutate(mission="sGSL") %>%  
+                        dplyr::select(mission, year, station, maq_eggs_stage1_5,maq_larvae, latitude, longitude))  %>%  #errors in altitude longitude, using default position
+  filter(year > 2021) %>%  mutate(latitude=if_else(mission=="NL", NA, latitude),
+                                  longitude=if_else(mission=="NL", NA, longitude))
+eggall<- left_join(eggall, nlp %>% filter(year ==2024) %>%  rename(station=Station, checklat=latitude, checklon=longitude) %>%  dplyr::select(station, checklat, checklon)) %>% mutate(latitude=coalesce(latitude, checklat),
+                                                      longitude=coalesce(longitude, checklon)  ) %>% 
+  st_as_sf(coords=c("longitude", "latitude"), crs=4326)  
 
 p1<- basemap2 + geom_sf(data=eggall %>%  filter(maq_eggs_stage1_5 ==0), shape=3, size=0.5, aes(col=mission)) +
   geom_sf(data=eggall %>%  filter(maq_eggs_stage1_5 >0), aes(size=maq_eggs_stage1_5, fill=mission), shape=21, alpha=0.5) + 
   theme(legend.position = "bottom", legend.key.width = unit(2, "cm"), plot.background = element_blank(), axis.text = element_blank()) +
  coord_sf(xlim=c(-66.5,-56), ylim=c(45.5,50)) +
+ # scale_size_continuous(breaks=seq(0,150,25))+
   scale_fill_manual(values=c( "dodgerblue4","goldenrod1"), guide=F) +
   scale_color_manual(values=c("dodgerblue4","goldenrod1"), guide=F)
 
@@ -122,16 +141,21 @@ p2<- basemap2 + geom_sf(data=eggall %>%  filter(maq_larvae ==0),shape=3, size=0.
   geom_sf(data=eggall %>%  filter(maq_larvae >0), aes(size=maq_larvae, fill=mission), shape=21, alpha=0.5) + 
   theme(legend.position = "bottom", legend.key.width = unit(2, "cm"), plot.background = element_blank(), axis.text = element_blank()) +
  coord_sf(xlim=c(-66.5,-56), ylim=c(45.5,50), expand=T) +
+  scale_size_continuous(breaks=seq(0,150,25))+
   scale_fill_manual(values=c( "dodgerblue4","goldenrod1"), guide=F) +
   scale_color_manual(values=c("dodgerblue4","goldenrod1"), guide=F)
+  
 
-pw<- ggarrange(p1 +labs(size="Egg density") + facet_wrap(~year, ncol=1), p2 +labs(size="Larvae density") +facet_wrap(~year, ncol=1), ncol=2)
+pw<- ggarrange(p1 +labs(size="Egg density") + facet_wrap(~year, ncol=1) + 
+  guides(size=guide_legend(nrow=3,byrow=TRUE, direction="vertical")), 
+               p2 +labs(size="Larvae density") +facet_wrap(~year, ncol=1)+
+  guides(size=guide_legend(nrow=3,byrow=TRUE, direction="vertical")), ncol=2)
 
-ggsave(paste0("img/",my.year,"/NL_eggs.png"), dpi=600, units="in", width=8, height=6, bg="white")
+ggsave(paste0(root,"img/",my.year,"/NL_eggs.png"), dpi=600, units="in", width=6, height=8, bg="white")
 
-ggarrange(p1 + theme(legend.position="right") +labs(size="Densité des oeufs\nEgg density")+ facet_wrap(~year, ncol=4),
-p2 + theme(legend.position="right")  +labs(size="Densité des larves\nLarvae density")+ facet_wrap(~year, ncol=4), ncol=1)
-ggsave(paste0("img/",my.year,"/NL_eggsBI.png"), dpi=600, units="in", width=10, height=4)
+ggarrange(p1 + theme(legend.position="right") +labs(size="Densité des oeufs\nEgg density")+ facet_wrap(~year, ncol=3),
+p2 + theme(legend.position="right")  +labs(size="Densité des larves\nLarvae density")+ facet_wrap(~year, ncol=3), ncol=1)
+ggsave(paste0(root,"img/",my.year,"/NL_eggsBI.png"), dpi=600, units="in", width=9, height=4, bg="white")
 
 
 ```
@@ -148,7 +172,7 @@ eggall <-  bind_rows( eggNL %>%  ungroup() %>% mutate(mission="NL") %>%  dplyr::
   mutate(prop_larvae= maq_larvae/ (maq_eggs_stage1_5+maq_larvae)) %>% as_tibble() %>% 
  dplyr::ungroup() %>%   dplyr::group_by(year,mission) %>%  dplyr::summarize(prop_larvae=mean(prop_larvae, na.rm=T)) %>%  filter(year > 2021) %>%  pivot_wider(names_from="mission", values_from="prop_larvae")
 
-write.csv(eggall, file=paste0("csv/", my.year,"/NL_prop_larvae.csv"), row.names=F)
+write.csv(eggall, file=paste0(root,"csv/", my.year,"/NL_prop_larvae.csv"), row.names=F)
 
 kable(eggall, digits=2)
 

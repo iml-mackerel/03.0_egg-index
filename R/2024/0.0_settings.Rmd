@@ -15,10 +15,10 @@ output:
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
 options(width = 120)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 my.year=2024
 
 ```    
 
-```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```{r code=readLines(paste0('0.0_settings.R'))}
 ```

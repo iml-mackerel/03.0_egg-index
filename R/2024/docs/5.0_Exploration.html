@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-12-18" />
+<meta name="date" content="2025-02-01" />
 
 <title>5.0_Exploration_field</title>
 
@@ -377,7 +377,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">5.0_Exploration_field</h1>
-<h4 class="date">2024-12-18</h4>
+<h4 class="date">2025-02-01</h4>
 
 </div>
 
@@ -442,7 +442,7 @@ source(paste0(&#39;../biochem/PL_Taxonomic_Grouping.R&#39;))
 log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
 
 #source(paste0(&quot;R/&quot;,year_to_report,&quot;/INLA/getvar.R&quot;)) # needs to be retought</code></pre>
-<pre class="r"><code>new=F
+<pre class="r"><code>new=T
 pdir = &quot;../../&quot;
 
 load(file=paste0(pdir,&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
@@ -524,8 +524,8 @@ load(paste0(pdir,&quot;results/&quot;,my.year,&quot;/spawning/predicted_propspaw
   my.formula &lt;- y ~ x
 
   eplo&lt;-  eplo %&gt;%  mutate(for_fill= ifelse(year %in% c(1999, 1991), &quot;fit&quot;, 
-                            ifelse(year %in% c(2006, 2017,2019), &quot;timing&quot;, 
-                                   ifelse(year %in% c(2022), &quot;uncertain&quot;, &quot;OK&quot;))))
+                            ifelse(year %in% c(2006, 2017,2019,2024), &quot;timing&quot;, 
+                                   ifelse(year %in% c(2022,2023), &quot;uncertain&quot;, &quot;OK&quot;))))
   
  library(mgcv)
   gam1 &lt;-  gam(prop ~ t010, data=eplo[2:39,], family=betar)
@@ -548,7 +548,7 @@ load(paste0(pdir,&quot;results/&quot;,my.year,&quot;/spawning/predicted_propspaw
    ylab(&quot;Proportion of spawning before median date&quot;) +xlab(&quot;Mean temperature 0-10m during the survey&quot;)</code></pre>
 <p><img src="5.0_Exploration_files/figure-html/temp%20rela-2.png" width="576" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>eggs&lt;- readRDS(paste0(pdir,&quot;data/&quot;,my.year,&quot;/PL_Bongo_Scomber_eggs_larvae_Counts_L2_&quot;,my.year,&quot;.RDS&quot;))  %&gt;% 
- filter(year %in% 2022:2023) %&gt;%  mutate(mission_name=substring(mission_name, 1,11),
+ filter(year %in% 2022:2024) %&gt;%  mutate(mission_name=substring(mission_name, 1,11),
                                          mission_name=gsub(mission_name, pattern=&quot;IML-20&quot;, replacement=&quot;IML-&quot;),
                                          mission_name=gsub(mission_name, pattern=&quot;IML20&quot;, replacement=&quot;IML&quot;))
 
@@ -568,14 +568,29 @@ eggs_cal&lt;- left_join(eggs,zi) %&gt;%
 
 
 library(ggsci)
-bp&lt;- eggs_cal %&gt;% ungroup() %&gt;%  dplyr::select(year,Region, station,T_Cf.Cg4.6_m2, T_Ch4.6_m2,maq_eggs_stage1_5, maq_larvae) %&gt;%   pivot_longer(4:7) %&gt;% 
+bpdat&lt;- eggs_cal %&gt;% ungroup() %&gt;%  dplyr::select(year,Region, station,T_Cf.Cg4.6_m2, T_Ch4.6_m2,maq_eggs_stage1_5, maq_larvae) %&gt;%   pivot_longer(4:7) %&gt;% 
   mutate(#value=if_else(!grepl(name, pattern=&quot;egg&quot;), value/1000, value),
-         name=recode_factor(name, T_Cf.Cg4.6_m2 = &quot;C.finmarchicus&quot;, T_Ch4.6_m2= &quot;C. hyperboreus&quot;,maq_eggs_stage1_5 = &quot;Mackerel eggs&quot;, maq_larvae= &quot;Mackerel larvae&quot;)
-         ) %&gt;% 
-ggplot(aes(y=value, x=as.factor(year), fill=name)) + labs(x=&quot;&quot;, y=&quot;N/m²&quot;, fill=&quot;&quot;, col=&quot;&quot;)+ facet_wrap(~Region)+
+         name1=recode_factor(name, T_Cf.Cg4.6_m2 = &quot;C.finmarchicus&quot;, T_Ch4.6_m2= &quot;C. hyperboreus&quot;,maq_eggs_stage1_5 = &quot;Mackerel\neggs&quot;, maq_larvae= &quot;Mackerel\nlarvae&quot;),
+         cat1=recode_factor(name, T_Cf.Cg4.6_m2 = &quot;Calanus spp.&quot;, T_Ch4.6_m2= &quot;Calanus spp.&quot;,maq_eggs_stage1_5 = &quot;Mackerel&quot;, maq_larvae= &quot;Mackerel&quot;)
+         ) 
+
+
+bp&lt;- ggplot(data=bpdat,aes(y=value, x=as.factor(year), fill=name1)) + labs(x=&quot;&quot;, y=&quot;N/m²&quot;, fill=&quot;&quot;, col=&quot;&quot;)+ facet_wrap(~Region)+
  geom_boxplot(outlier.stroke=0.02, outlier.shape=21)  +  scale_fill_jco() + theme(legend.position=&quot;bottom&quot;, legend.background = element_blank())
 bp +scale_y_continuous(trans=&quot;log10p1&quot;,breaks=c(0,10,100,1000, 5000)) </code></pre>
-<p><img src="5.0_Exploration_files/figure-html/plancton-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="5.0_Exploration_files/figure-html/plancton-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+
+bp1&lt;- ggplot(data=bpdat %&gt;%  filter(cat1==&quot;Calanus spp.&quot;),aes(y=value , x=name1, fill=Region)) + labs(x=&quot;&quot;, y=&quot;N/m²&quot;, fill=&quot;&quot;, col=&quot;&quot;)+ facet_wrap(~year, scales=&quot;free_x&quot;)+
+ geom_boxplot(outlier.stroke=0.02, outlier.shape=21)  +  scale_fill_manual(values=c( &quot;dodgerblue4&quot;,&quot;goldenrod1&quot;)) + theme(legend.position=&quot;bottom&quot;, legend.background = element_blank(), axis.text.x = element_text(face=&quot;italic&quot;, angle=35,vjust=0.75))
+bp1&lt;- bp1 +scale_y_continuous(trans=&quot;log10p1&quot;,breaks=c(0,10,100,1000, 5000)) 
+
+bp2&lt;- ggplot(data=bpdat %&gt;%  filter(cat1==&quot;Mackerel&quot;),aes(y=value , x=name1, fill=Region)) + labs(x=&quot;&quot;, y=&quot;N/m²&quot;, fill=&quot;&quot;, col=&quot;&quot;)+ facet_wrap(~year, scales=&quot;free_x&quot;)+
+ geom_boxplot(outlier.stroke=0.02, outlier.shape=21)  +  scale_fill_manual(values=c( &quot;dodgerblue4&quot;,&quot;goldenrod1&quot;)) + theme(legend.position=&quot;bottom&quot;, legend.background = element_blank(), axis.text.x = element_text( angle=35 , vjust=0.75))
+bp2&lt;- bp2 +scale_y_continuous(trans=&quot;log10p1&quot;,breaks=c(0,10,100,1000, 5000)) 
+
+ggarrange( bp2,bp1, ncol=1, common.legend = T, legend=&quot;right&quot;)</code></pre>
+<p><img src="5.0_Exploration_files/figure-html/plancton-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 
 

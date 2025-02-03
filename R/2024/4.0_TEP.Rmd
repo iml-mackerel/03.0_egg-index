@@ -26,7 +26,7 @@ all_years= data.frame(year=seq(1979, my.year, 1))
 ```
 
 ```{r settings, message = F}
-new=F
+new=T
 pwd = "../../"
 
 load(file=paste0(pwd,"data/",my.year,"/eggt1.RData"))
@@ -64,25 +64,25 @@ write.table(TEP_output, file=paste0(pwd, "csv/",my.year,"/TEP_", my.year,".csv")
 
 kable(TEP_output)
 
-ptEN1 <- ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
+pt <- ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
   geom_point() +
   #  geom_errorbar(aes(ymin=TEPlwr,ymax=TEPupr))+
   geom_line() +
   theme_few() +
-  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
-   scale_x_continuous(name = "Year", breaks = seq(1980, max(spawn.out2$year), 5)) +
+  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) 
+
+ptEN1 <- pt +   scale_x_continuous(name = "Year", breaks = seq(1980, max(spawn.out2$year), 5)) +
   ylab("Total egg production")
 
 ptEN1
 ggsave(paste0(pwd,"img/",my.year,"/Total_egg_production_EN.png"), width = 8, height = 5, unit = "in", dpi = 600)
 
-ptFR1 <-ggplot(data = spawn.out2, aes(x = year, y = TEP)) +
-  geom_point() +
-  geom_line() +
-  theme_few() +
-  theme(legend.position = c(0.8, 0.7), legend.title = element_blank()) +
-  scale_x_continuous(name = "Ann\u00E9e", breaks = seq(1980, max(spawn.out2$year), 5)) +
+ptFR1<- pt + scale_x_continuous(name = "Ann\u00E9e", breaks = seq(1980, max(spawn.out2$year), 5)) +
   ylab("Production total d'oeufs")
 ggsave(paste0(pwd,"img/",my.year,"/Total_egg_production_FR.png"), width = 8, height = 5, unit = "in", dpi = 600)
+
+ptBI1<- pt + scale_x_continuous(name = "Ann\u00E9e | Year", breaks = seq(1980, max(spawn.out2$year), 5)) +
+  ylab("Production total d'oeufs\n Total egg production")
+ggsave(paste0(pwd,"img/",my.year,"/Total_egg_production_BI.png"), width = 7, height = 4, unit = "in", dpi = 600)
 
 ```

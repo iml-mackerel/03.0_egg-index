@@ -16,23 +16,25 @@ output:
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
 options(width = 200)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 my.year <- 2024 # maximum year to extract data
 year_to_plot= (my.year-5) : my.year
 
 ```    
 
-```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```{r code=readLines(paste0('0.0_settings.R'))}
 
 ```
   
 
 ```{r settings}
-new=F
+root<- "../../"
+
+new=T
 N=100
-load(file=paste0("data/",my.year,"/DEP.RData"))
-load(file=paste0("data/",my.year,"/eggt1.RData"))
+load(file=paste0(root,"data/",my.year,"/DEP.RData"))
+load(file=paste0(root,"data/",my.year,"/eggt1.RData"))
 dat=eggt1
 
 ```
@@ -101,7 +103,7 @@ table_prov<- df %>%  group_by(year, nafo) %>%  tally() %>%  pivot_wider(names_fr
                                                                                                                     prop4W=round(`4W`/total,3),
                                                                                                                     prop4V=round(`4V`/total, 3))
 
-write.table(table_prov, paste0("results/",my.year,"/spawning/table_provenance_ech.txt"), row.names=F, sep="\t", dec=".")
+write.table(table_prov, paste0(root,"results/",my.year,"/spawning/table_provenance_ech.txt"), row.names=F, sep="\t", dec=".")
 
 
 ns<- table_prov %>% dplyr::select(-total) %>%  pivot_longer(2:7) %>%  mutate(type=ifelse(grepl(name, pattern="prop"), "Proportion", "n"),
@@ -114,7 +116,7 @@ ggplot(aes(x=year, y=n))+geom_bar( stat="identity", aes(fill=region)) + theme_fe
 
 
  ns + ylab("Nombre de poissons | Number of fish") + scale_x_continuous(name="Année | Year", breaks=seq(1980, max(df$year), 5))
-ggsave(paste0("img/",my.year,"/spawning/NsamplesBI.png"), width=6, height=5, dpi=600, units="in")
+ggsave(paste0(root,"img/",my.year,"/spawning/NsamplesBI.png"), width=6, height=5, dpi=600, units="in")
 
 
 ns2<- df %>%  group_by(year, matur) %>%  tally() %>%  pivot_wider(names_from=matur, values_from=n) %>% 
@@ -124,7 +126,7 @@ ns2<- df %>%  group_by(year, matur) %>%  tally() %>%  pivot_wider(names_from=mat
         legend.background = element_blank()) #+ geom_text(data=table_prov , aes(x=year, y=1, label=total), angle=90)
 
  ns2 + ylab("Nombre de poissons | Number of fish") + scale_x_continuous(name="Année | Year", breaks=seq(1980, max(df$year), 5))
-ggsave(paste0("img/",my.year,"/spawning/Nsamples_stagesBI.png"), width=6, height=5, dpi=600, units="in")
+ggsave(paste0(root,"img/",my.year,"/spawning/Nsamples_stagesBI.png"), width=6, height=5, dpi=600, units="in")
 
 
 
@@ -132,7 +134,7 @@ propdoy<- left_join(left_join(df %>%  group_by(year,doy, matur) %>%  tally() %>%
 df %>%  group_by(year,doy) %>%  tally()) %>%  mutate(prop_stage6= `6` /n),
 df %>%  group_by(year, doy) %>%  filter(matur=="6") %>%  summarize(mgsi=mean(gsi, na.rm=T)))
 
-write.table(propdoy, paste0("results/",my.year,"/spawning/proportion_stages_doy.txt"), row.names=F, sep="\t", dec=".")
+write.table(propdoy, paste0(root,"results/",my.year,"/spawning/proportion_stages_doy.txt"), row.names=F, sep="\t", dec=".")
 
 
 nsy<- df %>%  group_by(doy, year, matur) %>%  tally() %>% 
@@ -192,8 +194,8 @@ nlme.fixAR <- nlme(gsi ~ SSlogis(doy, Asym, xmid, scal),
 nlme_coefAR = as_tibble(coef(nlme.fixAR), rownames = 'year')
 
 #keep starting values in case of needed for update
-save(nlme.fixAR,start.val,df, nlme_coefAR, file = paste0("results/", my.year,"/spawning/nlmeAR", my.year,".RData"))
-} else{load(paste0("results/", my.year,"/spawning/nlmeAR", my.year,".RData"))}
+save(nlme.fixAR,start.val,df, nlme_coefAR, file = paste0(root,"results/", my.year,"/spawning/nlmeAR", my.year,".RData"))
+} else{load(paste0(root,"results/", my.year,"/spawning/nlmeAR", my.year,".RData"))}
 
 predtimes <- expand_grid(year = unique(df$year), doy = seq(0.5, 364.5)) # doy aligned to calculate probability at doy
 
@@ -263,8 +265,8 @@ prob_pred<- bind_cols(yout[,seq(2,N*2, 2)],nlme.fixpredsAR1) %>%  pivot_longer(1
 
 nlme.fixpredsAR1<- list(nlme.fixpredsAR1, gsi_pred, prob_pred) %>%  purrr::reduce(full_join)
 
-save(nlme.fixpredsAR1, file = paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
-} else{load(file = paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
+save(nlme.fixpredsAR1, file = paste0(root,"results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
+} else{load(file = paste0(root,"results/",my.year,"/spawning/predicted_propspawn_doy", my.year,".RData"))
 }
 
 ```
@@ -296,7 +298,7 @@ tabl2 <- left_join(date.med, nlme.fixpredsAR1) %>%
 tabl_out <- left_join(tabl1, tabl2) %>%  mutate(survey_date= ifelse(date.med < doymin70, "Early survey",
                                                                     ifelse(date.med > doymax70, "Late survey", "During 70 % of spawning")))
 
-write.table(tabl_out, paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt"), row.names = F, sep = "\t", dec = ".")
+write.table(tabl_out, paste0(root,"results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt"), row.names = F, sep = "\t", dec = ".")
 
 nlme.fixpredsAR <- full_join(df, nlme.fixpredsAR1) 
 
@@ -314,7 +316,7 @@ scaling.factor <- 4 # for second axis
 
 xdoy <- seq(126, 350, 30)
 
-sp3 <- ggplot(nlme.fixpredsAR %>% filter(year >= my.year-10)) +
+sp3 <- ggplot(nlme.fixpredsAR %>% filter(year >= my.year-5)) +
   theme_few() + theme(legend.position = "none", axis.text.x = element_text(angle = 90)) + 
   coord_cartesian(xlim=c(100, 300))+
   geom_point(aes(x = doy, y = gsi, col = maturcat), size = 0.3) +
@@ -324,7 +326,7 @@ sp3 <- ggplot(nlme.fixpredsAR %>% filter(year >= my.year-10)) +
   geom_line(aes(x = doy, y = prob * 100 * scaling.factor), col = "red", size = 0.5) +
   geom_ribbon(aes(ymin=propIClwr* 100 * scaling.factor, ymax=propICupr* 100 * scaling.factor, x=doy), alpha=0.5, col = "red", fill="red")+
   geom_vline(data=date.med %>%filter(year >= my.year-5), aes(xintercept=date.med), lty=2) +
-  facet_wrap(~year, ncol = 3) 
+  facet_wrap(~year, ncol = 2) 
 
 Sys.setlocale("LC_ALL", "English.utf8")
  
@@ -336,7 +338,7 @@ spEN3 <-  sp3 +
   theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
   scale_x_continuous(name="Day of year",breaks=xdoy, labels=format(as.Date(xdoy, origin = "2001-01-01"),'%b-%d')) +ylab("Day of year")  
 
-ggsave(paste0("img/",my.year,"/spawning/nlme_spawning_proportion_", my.year,"EN3.png"), width = 8, height = 6, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/nlme_spawning_proportion_", my.year,"EN3.png"), width = 6, height = 6, dpi = 600, units = "in")
 spEN3
 
 spBI3<- sp3 + scale_y_continuous(
@@ -344,9 +346,9 @@ spBI3<- sp3 + scale_y_continuous(
   sec.axis = sec_axis(~ . / scaling.factor, name = "Percentage of eggs spawned daily\nPourcentage quotidien d'oeufs pondus")
 ) +
   theme(legend.position = "none", axis.text.x = element_text(angle = 90)) +
-  xlab("Jour de l'ann\u00E9e\nDay of year")
+  scale_x_continuous(name="Jour de l'ann\u00E9e\nDay of year",breaks=xdoy, labels=format(as.Date(xdoy, origin = "2001-01-01"),'%b-%d'))
 
-ggsave(paste0("img/",my.year,"/spawning/nlme_spawning_proportion_", my.year, "BI3.png"), width = 8, height = 6, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/nlme_spawning_proportion_", my.year, "BI3.png"), width = 6, height = 6, dpi = 600, units = "in")
 ```
 
 
@@ -370,33 +372,34 @@ pt2 <-    ggplot(data=tabl_outfig, aes(y = doytop, x = year)) +
            legend.key.width = unit(30, "pt"))
 
 pt2EN <-  pt2+ylab("Day of year") + xlab("Year") 
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "EN.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year, "EN.png"), width = 7, height = 5, dpi = 600, units = "in")
 
 pt2FR <-  pt2+ylab("Jour de l'ann\u00E9e") + xlab("Ann\u00E9e") 
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "FR.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year, "FR.png"), width = 7, height = 5, dpi = 600, units = "in")
 
 pt2BI <-  pt2+ylab("Jour de l'ann\u00E9e / Day of year") + xlab("Ann\u00E9e / Year")
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year,"BI.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year,"BI.png"), width = 7, height = 5, dpi = 600, units = "in")
 
 y <- c(100,120,140,160,180,200,220,240)
 Sys.setlocale("LC_ALL", "English")
 pt2dayEN <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%B-%d')) +ylab("Day of year") + xlab("Year")
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "EN2.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year, "EN2.png"), width = 7, height = 5, dpi = 600, units = "in")
 pt2dayBI <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%B-%d')) +ylab("Jour de l'ann\u00E9e | Day of year") + xlab("Ann\u00E9e | Year")
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "BI2.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year, "BI2.png"), width = 7, height = 5, dpi = 600, units = "in")
 
 Sys.setlocale("LC_ALL", "French_Canada.utf8")
 pt2dayFR <-  pt2 + scale_y_continuous(breaks=y, labels=format(as.Date(y, origin = "2001-01-01"),'%d-%B')) +ylab("Jour de l'ann\u00E9e") + xlab("Ann\u00E9e")
-ggsave(paste0("img/",my.year,"/spawning/spawning_season_", my.year, "FR2.png"), width = 7, height = 5, dpi = 600, units = "in")
+ggsave(paste0(root,"img/",my.year,"/spawning/spawning_season_", my.year, "FR2.png"), width = 7, height = 5, dpi = 600, units = "in")
 
 pt2dayEN
 ```
-### Bias indicators {.tabset}
-#### Proportion of stage 6
+
+#### Bias indicators {.tabset}
+##### Proportion of stage 6
 ```{r spawn bias1, message = F}
-  PESd<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_",my.year,".txt"))  %>% dplyr::select(year, xmid)
+  PESd<- read.delim(paste0(root,"results/",my.year,"/spawning/table_nlmeAR_",my.year,".txt"))  %>% dplyr::select(year, xmid)
   
-  propstages<- read.delim(paste0("results/",my.year,"/spawning/proportion_stages_doy.txt"))
+  propstages<- read.delim(paste0(root,"results/",my.year,"/spawning/proportion_stages_doy.txt"))
   
  
  # propstages<- read.delim(paste0("results/",year,"/spawning/proportion_stages_doy.txt")) %>%  dplyr::select(-n, -prop_stage6) %>%  pivot_longer(X5:X8, names_to="stages", values_to="n") %>% 
@@ -418,8 +421,8 @@ wa<- list(newprop %>% group_by(year) %>%  summarize(maxstage6 =weighted.mean(doy
      newprop %>%  group_by(year) %>%  summarize(start6=min(doy, na.rm=T), end6=max(doy, na.rm=T)),
      PESd %>%  group_by(year)) %>% purrr::reduce(left_join) %>% 
   mutate(for_fill= ifelse(year %in% c(1999, 1991), "fit", 
-                      ifelse(year %in% c(2006, 2017,2019), "timing", 
-                          ifelse(year %in% c(2022), "uncertain", "OK"))))
+                      ifelse(year %in% c(2006, 2017,2019,2024), "timing", 
+                          ifelse(year %in% c(2022, 2023), "uncertain", "OK"))))
 
 sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstage6, na.rm=T) )
  bias<-  ggplot(data=wa,aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col="red", lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
@@ -427,22 +430,23 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
   
  
  biasEN<- bias + ylab("Day of year of maximum proportion of stage 6") + xlab("Day of year of peak spawning (xmid)")
- ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_EN.png"), width=6, height=5, dpi=600, units="in")
+ ggsave(paste0(root,"img/",my.year,"/spawning/bias_indicator_spawning_EN.png"), width=6, height=5, dpi=600, units="in")
  biasEN
  
  biasFR <- bias + ylab("Jour de l'année de la proportion maximale de stade 6") + xlab("Jour de l'année du pic de ponte (xmid)")
- ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_FR.png"), width=6, height=5, dpi=600, units="in")
+ ggsave(paste0(root,"img/",my.year,"/spawning/bias_indicator_spawning_FR.png"), width=6, height=5, dpi=600, units="in")
 
  
   biasBI<- bias + ylab("Jour de l'année de la proportion maximale de stade 6\nDay of year of maximum proportion of stage 6") + xlab("Jour de l'année du pic de ponte (xmid)\nDay of year of peak spawning (xmid)")
- ggsave(paste0("img/",my.year,"/spawning/bias_indicator_spawning_BI.png"), width=6, height=5, dpi=600, units="in")
+ ggsave(paste0(root,"img/",my.year,"/spawning/bias_indicator_spawning_BI.png"), width=6, height=5, dpi=600, units="in")
  
 ``` 
-#### Proportion of larvae
+
+##### Proportion of larvae
 ```{r spawn larvae, message = F}
-  load(paste0("results/",my.year,"/spawning/predicted_propspawn_doy", my.year, ".RData"))
+  load(paste0(root,"results/",my.year,"/spawning/predicted_propspawn_doy", my.year, ".RData"))
   
-  tabAR<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::select(year, date.med)
+  tabAR<- read.delim(paste0(root,"results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::select(year, date.med)
   
   prop<- left_join(tabAR, nlme.fixpredsAR1) %>%  group_by(year) %>%  filter(doy < date.med) %>%  summarize(prop=sum(prob))
   
@@ -450,8 +454,8 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
                                group_by(year) %>%  summarize(mean_prop_larvae=mean(prop_larvae, na.rm=T),
                                                                      sd_prop_larvae = sd(prop_larvae, na.rm=T))) %>% 
     mutate(for_fill= ifelse(year %in% c(1999, 1991), "fit", 
-                            ifelse(year %in% c(2006, 2017,2019), "timing", 
-                                   ifelse(year %in% c(2022), "uncertain", "OK"))))
+                            ifelse(year %in% c(2006, 2017,2019,2024), "timing", 
+                                   ifelse(year %in% c(2022,2023), "uncertain", "OK"))))
   
   pl2<- ggplot(data=df_prop_larvae, aes(x=prop, y=mean_prop_larvae))+geom_label(aes(label=year, fill=for_fill),alpha=0.5)  + theme_few() +
       scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none")+
@@ -464,27 +468,27 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
   pl2EN<- pl2 + scale_x_continuous(name="Proportion of spawning before median date") + ylab("Proportion of larvae")
   
   ggarrange(pl1EN, pl2EN, common.legend=T, legend="bottom", ncol=1)
-  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesEN.png"), width=9, height=8)
+  ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesEN.png"), width=9, height=8)
   
   
   pl1FR<- pl1 + scale_x_continuous(name="Année", breaks=seq(1980, my.year, 5)) + ylab("Proportion de larves")
   pl2FR<- pl2 + scale_x_continuous(name="Proportion de ponte avant la date m\u00E9diane") + ylab("Proportion de larves")
   
   ggFR<- ggarrange(pl1FR, pl2FR, common.legend = T, legend="bottom", ncol=1)
-  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesFR.png"), width=9, height=8)
+  ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesFR.png"), width=9, height=8)
   
   
    pl1BI<- pl1 + scale_x_continuous(name="Année | Year", breaks=seq(1980, my.year, 5)) + ylab("Proportion de larves | Proportion of larvae")
   pl2BI<- pl2 + scale_x_continuous(name="Proportion de ponte avant la date m\u00E9diane\nProportion of spawning before median date") + ylab("Proportion de larves | Proportion of larvae")
   
   ggBI<- ggarrange(pl1BI, pl2BI, common.legend = T, legend="bottom", ncol=1)
-   ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesBI.png"), width=9, height=8)
+   ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesBI.png"), width=9, height=8)
   pl2BI
-  ggsave(paste0("img/",my.year,"/spawning/Valdiation_spawning_larvesBI2.png"), width=6, height=5)
+  ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesBI2.png"), width=6, height=5)
 
   
   
-   dur<- read.delim(paste0("results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::filter(!year %in% c(1980:1982,1991, 1999,2020))
+   dur<- read.delim(paste0(root,"results/",my.year,"/spawning/table_nlmeAR_", my.year, ".txt")) %>%  dplyr::filter(!year %in% c(1980:1982,1991, 1999,2020))
   
   my.formula <- y ~ x # for smooth in ggplot
   
@@ -499,9 +503,9 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
   par(mfcol=c(2,2));plot(lmdur)
   
   pduEN<- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name="Year")+ ylab("Spawning duration (days)") 
-  ggsave(paste0("img/",my.year,"/spawning/durationEN.png"), width=7, height=4, dpi=600, units="in")
+  ggsave(paste0(root,"img/",my.year,"/spawning/durationEN.png"), width=7, height=4, dpi=600, units="in")
   pduFR<- pdu +scale_x_continuous(breaks=seq(1980, my.year, 5), name="Ann\u00E9e")+ ylab("Durée de la ponte (jours)") 
-  ggsave(paste0("img/",my.year,"/spawning/durationFR.png"), width=7, height=4, dpi=600, units="in")
+  ggsave(paste0(root,"img/",my.year,"/spawning/durationFR.png"), width=7, height=4, dpi=600, units="in")
  
   ####median date
   date.med <- eggt1 %>% filter(year > 1982) %>% 
@@ -516,7 +520,7 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
   maxdate=paste0("'",substring(max(date), 6,10))
     )
   
-  write.table(date.med, paste0("results/",my.year,"/Survey_dates.txt"), row.names=F, sep="\t", dec=".")
+  write.table(date.med, paste0(root,"results/",my.year,"/Survey_dates.txt"), row.names=F, sep="\t", dec=".")
 ```
   
   

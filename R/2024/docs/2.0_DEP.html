@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-12-12" />
+<meta name="date" content="2025-01-31" />
 
 <title>Read</title>
 
@@ -377,7 +377,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Read</h1>
-<h4 class="date">2024-12-12</h4>
+<h4 class="date">2025-01-31</h4>
 
 </div>
 
@@ -412,30 +412,30 @@ theme_set(theme_mackerel())             # theme_mackerel from catchR
 update_geom_defaults(&quot;line&quot;, list(size = 1))  # no idea why somethimes I get fat lines otherwise
 
 ##### passwords databases #############################################################################
-source(&quot;bdOracle.R&quot;)
+source(&quot;../../bdOracle.R&quot;)
 
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/spatial_projections.R&quot;))#
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_biochem.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_T0_10.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/Mesh.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/nlme_boot.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
+source(paste0(&quot;utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
+source(paste0(&quot;utils/spatial_projections.R&quot;))#
+source(paste0(&quot;utils/extract_biochem.R&quot;))
+source(paste0(&quot;utils/extract_T0_10.R&quot;))
+source(paste0(&quot;INLA/Mesh.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/nlme_boot.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations_CV.R&quot;))
 
 
 
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSpatialFieldCL.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSmoother.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/model_validation.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/get_prediction_grid.R&#39;))
-source(paste0(&#39;R/biochem/PL_Get_SampleID_Batch.R&#39;))
-source(paste0(&#39;R/biochem/PL_Get_Counts_Batch.R&#39;))
-source(paste0(&#39;R/biochem/PL_Read_Filter.R&#39;))
-source(paste0(&#39;R/biochem/PL_Taxonomic_Grouping.R&#39;))
+source(paste0(&#39;INLA/plotSpatialFieldCL.R&#39;))
+source(paste0(&#39;INLA/plotSmoother.R&#39;))
+source(paste0(&#39;INLA/model_validation.R&#39;))
+source(paste0(&#39;INLA/get_prediction_grid.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_SampleID_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_Counts_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Read_Filter.R&#39;))
+source(paste0(&#39;../biochem/PL_Taxonomic_Grouping.R&#39;))
 
 
 log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
@@ -446,6 +446,7 @@ log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=func
 <div id="inla-mesh" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> INLA Mesh</h2>
 <pre class="r"><code>###INLA mesh###
+setwd(rprojroot::find_rstudio_root_file())
 load(file=paste0(&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
 
 loc_egg1 &lt;- make_boundary(dat = eggt1, year=my.year, trajet = 1)
@@ -471,7 +472,8 @@ saveRDS(predstation, paste0(&quot;data/&quot;,my.year,&quot;/INLA/prediction_gri
 </div>
 <div id="spatial-field" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Spatial field</h2>
-<pre class="r"><code>if(new) INLA_ZAG(dat = eggt1, res_mesh = 150, res_pred = &quot;station&quot;, year=my.year, Rvar = &quot;DEP&quot;, trajet = 1)
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
+if(new) INLA_ZAG(dat = eggt1, res_mesh = 150, res_pred = &quot;station&quot;, year=my.year, Rvar = &quot;DEP&quot;, trajet = 1)
 
 res_mesh = 150
 res_pred = &quot;station&quot;
@@ -496,7 +498,7 @@ annotate_figure(spfield[[1]], &quot;Bernouilli&quot;)</code></pre>
 </div>
 <div id="coefficients" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Coefficients</h2>
-<pre class="r"><code> 
+<pre class="r"><code> setwd(rprojroot::find_rstudio_root_file())
   plotSmoother(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;binomial&quot;,smoother=smoother)
   plotSmoother(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;gamma&quot;,smoother=smoother)
   
@@ -517,472 +519,472 @@ kable(fixed_effect1, caption=&quot;fixed effect Bernoulli model&quot;)</code></p
 <tbody>
 <tr class="odd">
 <td align="left">Intercept</td>
-<td align="right">8.2956706</td>
-<td align="right">3.920082</td>
-<td align="right">0.6093556</td>
-<td align="right">15.9831585</td>
+<td align="right">7.7748510</td>
+<td align="right">4.178556</td>
+<td align="right">-0.6725828</td>
+<td align="right">15.7726494</td>
 </tr>
 <tr class="even">
 <td align="left">station1.1</td>
-<td align="right">-2.9222463</td>
-<td align="right">4.034460</td>
-<td align="right">-10.8317847</td>
-<td align="right">4.9906602</td>
+<td align="right">-2.5859806</td>
+<td align="right">4.179659</td>
+<td align="right">-10.6895714</td>
+<td align="right">5.7209217</td>
 </tr>
 <tr class="odd">
 <td align="left">station1.2</td>
-<td align="right">-4.3537161</td>
-<td align="right">3.976568</td>
-<td align="right">-12.1513845</td>
-<td align="right">3.4439572</td>
+<td align="right">-3.9511944</td>
+<td align="right">4.155300</td>
+<td align="right">-11.9805371</td>
+<td align="right">4.3429238</td>
 </tr>
 <tr class="even">
 <td align="left">station1.3</td>
-<td align="right">-8.5988512</td>
-<td align="right">3.952042</td>
-<td align="right">-16.3498830</td>
-<td align="right">-0.8506992</td>
+<td align="right">-8.0695789</td>
+<td align="right">4.212258</td>
+<td align="right">-16.1304322</td>
+<td align="right">0.4491027</td>
 </tr>
 <tr class="odd">
 <td align="left">station1.4</td>
-<td align="right">-10.6585946</td>
-<td align="right">3.972749</td>
-<td align="right">-18.4513738</td>
-<td align="right">-2.8709240</td>
+<td align="right">-10.0715877</td>
+<td align="right">4.275559</td>
+<td align="right">-18.2108949</td>
+<td align="right">-1.3601545</td>
 </tr>
 <tr class="even">
 <td align="left">station1.5</td>
-<td align="right">-11.5323525</td>
-<td align="right">3.999210</td>
-<td align="right">-19.3787214</td>
-<td align="right">-3.6944021</td>
+<td align="right">-10.9087531</td>
+<td align="right">4.327948</td>
+<td align="right">-19.1222600</td>
+<td align="right">-2.0496649</td>
 </tr>
 <tr class="odd">
 <td align="left">station10.1</td>
-<td align="right">29.9952642</td>
-<td align="right">12.103601</td>
-<td align="right">6.2632415</td>
-<td align="right">53.7317837</td>
+<td align="right">27.6050019</td>
+<td align="right">14.066004</td>
+<td align="right">-3.1372389</td>
+<td align="right">53.1904513</td>
 </tr>
 <tr class="even">
 <td align="left">station11.1</td>
-<td align="right">29.7040841</td>
-<td align="right">12.084637</td>
-<td align="right">6.0087227</td>
-<td align="right">53.4034103</td>
+<td align="right">27.3774863</td>
+<td align="right">13.999393</td>
+<td align="right">-3.1294736</td>
+<td align="right">52.8900344</td>
 </tr>
 <tr class="odd">
 <td align="left">station12.1</td>
-<td align="right">-0.6954064</td>
-<td align="right">4.206229</td>
-<td align="right">-8.9328625</td>
-<td align="right">7.5637215</td>
+<td align="right">-0.5617201</td>
+<td align="right">4.231942</td>
+<td align="right">-8.8413488</td>
+<td align="right">7.7566525</td>
 </tr>
 <tr class="even">
 <td align="left">station2.1</td>
-<td align="right">-1.4650659</td>
-<td align="right">4.091840</td>
-<td align="right">-9.4867394</td>
-<td align="right">6.5607438</td>
+<td align="right">-1.2049523</td>
+<td align="right">4.183705</td>
+<td align="right">-9.3589190</td>
+<td align="right">7.0562910</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.2</td>
-<td align="right">-1.8534292</td>
-<td align="right">4.077147</td>
-<td align="right">-9.8471696</td>
-<td align="right">6.1426541</td>
+<td align="right">-1.5432026</td>
+<td align="right">4.199943</td>
+<td align="right">-9.7065875</td>
+<td align="right">6.7778058</td>
 </tr>
 <tr class="even">
 <td align="left">station2.3</td>
-<td align="right">-5.4452677</td>
-<td align="right">3.951556</td>
-<td align="right">-13.1941364</td>
-<td align="right">2.3031021</td>
+<td align="right">-5.0059467</td>
+<td align="right">4.156772</td>
+<td align="right">-13.0136853</td>
+<td align="right">3.3244043</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.4</td>
-<td align="right">-6.6735783</td>
-<td align="right">3.944620</td>
-<td align="right">-14.4091450</td>
-<td align="right">1.0608957</td>
+<td align="right">-6.1991399</td>
+<td align="right">4.172474</td>
+<td align="right">-14.2154212</td>
+<td align="right">2.1931299</td>
 </tr>
 <tr class="even">
 <td align="left">station2.5</td>
-<td align="right">-8.8451759</td>
-<td align="right">3.948205</td>
-<td align="right">-16.5886099</td>
-<td align="right">-1.1044753</td>
+<td align="right">-8.3103930</td>
+<td align="right">4.211288</td>
+<td align="right">-16.3662312</td>
+<td align="right">0.2108905</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.6</td>
-<td align="right">-10.6708241</td>
-<td align="right">3.968654</td>
-<td align="right">-18.4554787</td>
-<td align="right">-2.8910939</td>
+<td align="right">-10.0829561</td>
+<td align="right">4.271107</td>
+<td align="right">-18.2137396</td>
+<td align="right">-1.3805608</td>
 </tr>
 <tr class="even">
 <td align="left">station3.1</td>
-<td align="right">-2.3544638</td>
-<td align="right">4.055367</td>
-<td align="right">-10.3050932</td>
-<td align="right">5.5993927</td>
+<td align="right">-2.0518104</td>
+<td align="right">4.156482</td>
+<td align="right">-10.1456628</td>
+<td align="right">6.1643715</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.2</td>
-<td align="right">-2.5478409</td>
-<td align="right">4.033325</td>
-<td align="right">-10.4553145</td>
-<td align="right">5.3626747</td>
+<td align="right">-2.2390924</td>
+<td align="right">4.146604</td>
+<td align="right">-10.3051940</td>
+<td align="right">5.9679704</td>
 </tr>
 <tr class="even">
 <td align="left">station3.3</td>
-<td align="right">-1.4927625</td>
-<td align="right">4.109157</td>
-<td align="right">-9.5460869</td>
-<td align="right">6.5694922</td>
+<td align="right">-1.2471370</td>
+<td align="right">4.206762</td>
+<td align="right">-9.4375321</td>
+<td align="right">7.0700251</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.4</td>
-<td align="right">-3.9260616</td>
-<td align="right">3.977681</td>
-<td align="right">-11.7257859</td>
-<td align="right">3.8739074</td>
+<td align="right">-3.5498813</td>
+<td align="right">4.138636</td>
+<td align="right">-11.5627340</td>
+<td align="right">4.6900018</td>
 </tr>
 <tr class="even">
 <td align="left">station3.5</td>
-<td align="right">-3.2032116</td>
-<td align="right">3.994076</td>
-<td align="right">-11.0347093</td>
-<td align="right">4.6292822</td>
+<td align="right">-2.8438908</td>
+<td align="right">4.156959</td>
+<td align="right">-10.8904761</td>
+<td align="right">5.4346329</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.6</td>
-<td align="right">-6.7811706</td>
-<td align="right">3.942277</td>
-<td align="right">-14.5121266</td>
-<td align="right">0.9487247</td>
+<td align="right">-6.2941260</td>
+<td align="right">4.182047</td>
+<td align="right">-14.3171682</td>
+<td align="right">2.1340027</td>
 </tr>
 <tr class="even">
 <td align="left">station3.7</td>
-<td align="right">-7.8577637</td>
-<td align="right">3.944850</td>
-<td align="right">-15.5941349</td>
-<td align="right">-0.1231786</td>
+<td align="right">-7.3509010</td>
+<td align="right">4.193139</td>
+<td align="right">-15.3866803</td>
+<td align="right">1.1120914</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.8</td>
-<td align="right">-10.2490786</td>
-<td align="right">3.960390</td>
-<td align="right">-18.0168377</td>
-<td align="right">-2.4848992</td>
+<td align="right">-9.6825527</td>
+<td align="right">4.247708</td>
+<td align="right">-17.7840128</td>
+<td align="right">-1.0515090</td>
 </tr>
 <tr class="even">
 <td align="left">station3.9</td>
-<td align="right">-10.7581113</td>
-<td align="right">3.974930</td>
-<td align="right">-18.5550596</td>
-<td align="right">-2.9660647</td>
+<td align="right">-10.1739817</td>
+<td align="right">4.274440</td>
+<td align="right">-18.3146226</td>
+<td align="right">-1.4701557</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.1</td>
-<td align="right">-2.3272639</td>
-<td align="right">4.051154</td>
-<td align="right">-10.2686465</td>
-<td align="right">5.6193157</td>
+<td align="right">-2.0553308</td>
+<td align="right">4.144961</td>
+<td align="right">-10.1315348</td>
+<td align="right">6.1319342</td>
 </tr>
 <tr class="even">
 <td align="left">station4.2</td>
-<td align="right">-2.4454760</td>
-<td align="right">4.040027</td>
-<td align="right">-10.3645447</td>
-<td align="right">5.4798020</td>
+<td align="right">-2.1765911</td>
+<td align="right">4.143543</td>
+<td align="right">-10.2415334</td>
+<td align="right">6.0182871</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.3</td>
-<td align="right">-1.4943499</td>
-<td align="right">4.118845</td>
-<td align="right">-9.5626990</td>
-<td align="right">6.5912959</td>
+<td align="right">-1.2721414</td>
+<td align="right">4.214999</td>
+<td align="right">-9.4727072</td>
+<td align="right">7.0685693</td>
 </tr>
 <tr class="even">
 <td align="left">station4.4</td>
-<td align="right">-1.5628298</td>
-<td align="right">4.079626</td>
-<td align="right">-9.5590078</td>
-<td align="right">6.4406552</td>
+<td align="right">-1.3245365</td>
+<td align="right">4.179893</td>
+<td align="right">-9.4615902</td>
+<td align="right">6.9403537</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.5</td>
-<td align="right">-3.5961940</td>
-<td align="right">3.978755</td>
-<td align="right">-11.3974367</td>
-<td align="right">4.2064767</td>
+<td align="right">-3.2302012</td>
+<td align="right">4.151667</td>
+<td align="right">-11.2565829</td>
+<td align="right">5.0510196</td>
 </tr>
 <tr class="even">
 <td align="left">station4.6</td>
-<td align="right">-6.5780293</td>
-<td align="right">3.943402</td>
-<td align="right">-14.3112847</td>
-<td align="right">1.1539838</td>
+<td align="right">-6.0937769</td>
+<td align="right">4.177011</td>
+<td align="right">-14.1131679</td>
+<td align="right">2.3157064</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.7</td>
-<td align="right">-7.2870584</td>
-<td align="right">3.943827</td>
-<td align="right">-15.0212796</td>
-<td align="right">0.4456590</td>
+<td align="right">-6.7861195</td>
+<td align="right">4.188815</td>
+<td align="right">-14.8169865</td>
+<td align="right">1.6631638</td>
 </tr>
 <tr class="even">
 <td align="left">station4.8</td>
-<td align="right">-8.7451007</td>
-<td align="right">3.947262</td>
-<td align="right">-16.4864017</td>
-<td align="right">-1.0059829</td>
+<td align="right">-8.2114769</td>
+<td align="right">4.214730</td>
+<td align="right">-16.2697970</td>
+<td align="right">0.3226365</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.9</td>
-<td align="right">-10.8754068</td>
-<td align="right">3.973364</td>
-<td align="right">-18.6693125</td>
-<td align="right">-3.0864564</td>
+<td align="right">-10.2917477</td>
+<td align="right">4.270714</td>
+<td align="right">-18.4271555</td>
+<td align="right">-1.5983762</td>
 </tr>
 <tr class="even">
 <td align="left">station5.1</td>
-<td align="right">30.6491258</td>
-<td align="right">12.373268</td>
-<td align="right">6.3878600</td>
-<td align="right">54.9135384</td>
+<td align="right">28.0951577</td>
+<td align="right">14.422754</td>
+<td align="right">-3.5191108</td>
+<td align="right">54.2761586</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.2</td>
-<td align="right">-4.8624543</td>
-<td align="right">3.961059</td>
-<td align="right">-12.6301658</td>
-<td align="right">2.9043530</td>
+<td align="right">-4.4253960</td>
+<td align="right">4.160065</td>
+<td align="right">-12.4455463</td>
+<td align="right">3.9034244</td>
 </tr>
 <tr class="even">
 <td align="left">station5.3</td>
-<td align="right">-4.5290569</td>
-<td align="right">3.962633</td>
-<td align="right">-12.2991899</td>
-<td align="right">3.2414898</td>
+<td align="right">-4.1219491</td>
+<td align="right">4.155322</td>
+<td align="right">-12.1380293</td>
+<td align="right">4.1901885</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.4</td>
-<td align="right">-4.9981215</td>
-<td align="right">3.953762</td>
-<td align="right">-12.7508510</td>
-<td align="right">2.7550350</td>
+<td align="right">-4.5761348</td>
+<td align="right">4.161597</td>
+<td align="right">-12.5900652</td>
+<td align="right">3.7681436</td>
 </tr>
 <tr class="even">
 <td align="left">station5.5</td>
-<td align="right">-6.2196025</td>
-<td align="right">3.944305</td>
-<td align="right">-13.9543534</td>
-<td align="right">1.5144489</td>
+<td align="right">-5.7529817</td>
+<td align="right">4.170245</td>
+<td align="right">-13.7668285</td>
+<td align="right">2.6321559</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.6</td>
-<td align="right">-7.1453669</td>
-<td align="right">3.943746</td>
-<td align="right">-14.8793949</td>
-<td align="right">0.5872262</td>
+<td align="right">-6.6500642</td>
+<td align="right">4.183720</td>
+<td align="right">-14.6761465</td>
+<td align="right">1.7817370</td>
 </tr>
 <tr class="even">
 <td align="left">station5.7</td>
-<td align="right">-9.1357858</td>
-<td align="right">3.953486</td>
-<td align="right">-16.8896603</td>
-<td align="right">-1.3848145</td>
+<td align="right">-8.5964969</td>
+<td align="right">4.220078</td>
+<td align="right">-16.6659146</td>
+<td align="right">-0.0525724</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.1</td>
-<td align="right">-1.3638155</td>
-<td align="right">4.094139</td>
-<td align="right">-9.3860210</td>
-<td align="right">6.6707475</td>
+<td align="right">-1.1860450</td>
+<td align="right">4.157755</td>
+<td align="right">-9.3020285</td>
+<td align="right">7.0084294</td>
 </tr>
 <tr class="even">
 <td align="left">station6.2</td>
-<td align="right">-2.8237435</td>
-<td align="right">4.013619</td>
-<td align="right">-10.6921004</td>
-<td align="right">5.0486000</td>
+<td align="right">-2.5302408</td>
+<td align="right">4.139847</td>
+<td align="right">-10.5715954</td>
+<td align="right">5.6778311</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.3</td>
-<td align="right">-3.5478262</td>
-<td align="right">3.994304</td>
-<td align="right">-11.3796821</td>
-<td align="right">4.2852383</td>
+<td align="right">-3.1531301</td>
+<td align="right">4.177093</td>
+<td align="right">-11.2196375</td>
+<td align="right">5.1914171</td>
 </tr>
 <tr class="even">
 <td align="left">station6.4</td>
-<td align="right">-5.0700971</td>
-<td align="right">3.956028</td>
-<td align="right">-12.8273970</td>
-<td align="right">2.6873811</td>
+<td align="right">-4.6579563</td>
+<td align="right">4.148474</td>
+<td align="right">-12.6608320</td>
+<td align="right">3.6405133</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.5</td>
-<td align="right">-5.0548029</td>
-<td align="right">3.953462</td>
-<td align="right">-12.8071477</td>
-<td align="right">2.6975625</td>
+<td align="right">-4.6263386</td>
+<td align="right">4.158631</td>
+<td align="right">-12.6374174</td>
+<td align="right">3.7080574</td>
 </tr>
 <tr class="even">
 <td align="left">station6.6</td>
-<td align="right">-4.7742802</td>
-<td align="right">3.954847</td>
-<td align="right">-12.5293882</td>
-<td align="right">2.9807502</td>
+<td align="right">-4.3459297</td>
+<td align="right">4.157440</td>
+<td align="right">-12.3574852</td>
+<td align="right">3.9821579</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.7</td>
-<td align="right">-6.9908241</td>
-<td align="right">3.946951</td>
-<td align="right">-14.7310247</td>
-<td align="right">0.7481614</td>
+<td align="right">-6.5081518</td>
+<td align="right">4.178307</td>
+<td align="right">-14.5324363</td>
+<td align="right">1.9003822</td>
 </tr>
 <tr class="even">
 <td align="left">station6.8</td>
-<td align="right">-8.7936022</td>
-<td align="right">3.997620</td>
-<td align="right">-16.6345499</td>
-<td align="right">-0.9565838</td>
+<td align="right">-8.2592562</td>
+<td align="right">4.256165</td>
+<td align="right">-16.4080188</td>
+<td align="right">0.3430604</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.1</td>
-<td align="right">30.2020599</td>
-<td align="right">12.133013</td>
-<td align="right">6.4107483</td>
-<td align="right">53.9941105</td>
+<td align="right">27.7805258</td>
+<td align="right">14.109072</td>
+<td align="right">-3.0449097</td>
+<td align="right">53.4440978</td>
 </tr>
 <tr class="even">
 <td align="left">station7.2</td>
-<td align="right">28.9080191</td>
-<td align="right">11.738363</td>
-<td align="right">5.8918991</td>
-<td align="right">51.9280947</td>
+<td align="right">26.7341987</td>
+<td align="right">13.458025</td>
+<td align="right">-2.1832665</td>
+<td align="right">51.4648220</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.3</td>
-<td align="right">-2.3886536</td>
-<td align="right">4.045725</td>
-<td align="right">-10.3190100</td>
-<td align="right">5.5476898</td>
+<td align="right">-2.0456441</td>
+<td align="right">4.200247</td>
+<td align="right">-10.1786959</td>
+<td align="right">6.3159072</td>
 </tr>
 <tr class="even">
 <td align="left">station7.4</td>
-<td align="right">-3.2445583</td>
-<td align="right">3.998318</td>
-<td align="right">-11.0837408</td>
-<td align="right">4.5969269</td>
+<td align="right">-2.8827820</td>
+<td align="right">4.165244</td>
+<td align="right">-10.9397721</td>
+<td align="right">5.4199940</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.5</td>
-<td align="right">-4.3700936</td>
-<td align="right">3.964850</td>
-<td align="right">-12.1445792</td>
-<td align="right">3.4047961</td>
+<td align="right">-3.9713657</td>
+<td align="right">4.149129</td>
+<td align="right">-11.9832124</td>
+<td align="right">4.3178819</td>
 </tr>
 <tr class="even">
 <td align="left">station7.6</td>
-<td align="right">-6.0235437</td>
-<td align="right">3.950836</td>
-<td align="right">-13.7711566</td>
-<td align="right">1.7232590</td>
+<td align="right">-5.5652089</td>
+<td align="right">4.166323</td>
+<td align="right">-13.5818368</td>
+<td align="right">2.7974946</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.7</td>
-<td align="right">-7.3884893</td>
-<td align="right">3.956819</td>
-<td align="right">-15.1484030</td>
-<td align="right">0.3695048</td>
+<td align="right">-6.9014091</td>
+<td align="right">4.187845</td>
+<td align="right">-14.9445166</td>
+<td align="right">1.5258718</td>
 </tr>
 <tr class="even">
 <td align="left">station8.1</td>
-<td align="right">-2.8994440</td>
-<td align="right">4.026513</td>
-<td align="right">-10.7935565</td>
-<td align="right">4.9977220</td>
+<td align="right">-2.6023694</td>
+<td align="right">4.135309</td>
+<td align="right">-10.6496291</td>
+<td align="right">5.5784888</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.2</td>
-<td align="right">29.7532325</td>
-<td align="right">12.000458</td>
-<td align="right">6.2223600</td>
-<td align="right">53.2859680</td>
+<td align="right">27.4302170</td>
+<td align="right">13.899259</td>
+<td align="right">-2.7959247</td>
+<td align="right">52.7855915</td>
 </tr>
 <tr class="even">
 <td align="left">station8.3</td>
-<td align="right">-0.9782507</td>
-<td align="right">4.141723</td>
-<td align="right">-9.0902322</td>
-<td align="right">7.1535678</td>
+<td align="right">-0.7587369</td>
+<td align="right">4.232757</td>
+<td align="right">-8.9965352</td>
+<td align="right">7.6137868</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.4</td>
-<td align="right">28.5721023</td>
-<td align="right">11.659512</td>
-<td align="right">5.7113642</td>
-<td align="right">51.4381891</td>
+<td align="right">26.4395071</td>
+<td align="right">13.325306</td>
+<td align="right">-2.1246435</td>
+<td align="right">50.9653666</td>
 </tr>
 <tr class="even">
 <td align="left">station8.5</td>
-<td align="right">29.0966717</td>
-<td align="right">11.755625</td>
-<td align="right">6.0459416</td>
-<td align="right">52.1493306</td>
+<td align="right">26.8761470</td>
+<td align="right">13.525573</td>
+<td align="right">-2.3490237</td>
+<td align="right">51.6485537</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.6</td>
-<td align="right">-5.1660441</td>
-<td align="right">3.959317</td>
-<td align="right">-12.9300728</td>
-<td align="right">2.5976035</td>
+<td align="right">-4.7301088</td>
+<td align="right">4.160334</td>
+<td align="right">-12.7488870</td>
+<td align="right">3.6015567</td>
 </tr>
 <tr class="even">
 <td align="left">station8.7</td>
-<td align="right">-5.9664195</td>
-<td align="right">3.960027</td>
-<td align="right">-13.7320968</td>
-<td align="right">1.7983760</td>
+<td align="right">-5.5136298</td>
+<td align="right">4.169614</td>
+<td align="right">-13.5422182</td>
+<td align="right">2.8479167</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.1</td>
-<td align="right">-2.5773185</td>
-<td align="right">4.045432</td>
-<td align="right">-10.5066363</td>
-<td align="right">5.3589863</td>
+<td align="right">-2.2830399</td>
+<td align="right">4.156236</td>
+<td align="right">-10.3666621</td>
+<td align="right">5.9445469</td>
 </tr>
 <tr class="even">
 <td align="left">station9.2</td>
-<td align="right">30.0244192</td>
-<td align="right">12.098744</td>
-<td align="right">6.3003848</td>
-<td align="right">53.7496851</td>
+<td align="right">27.6758281</td>
+<td align="right">14.057957</td>
+<td align="right">-3.0053592</td>
+<td align="right">53.2645714</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.3</td>
-<td align="right">29.7788966</td>
-<td align="right">11.993185</td>
-<td align="right">6.2653922</td>
-<td align="right">53.3007807</td>
+<td align="right">27.3749642</td>
+<td align="right">13.870559</td>
+<td align="right">-2.7997032</td>
+<td align="right">52.6739732</td>
 </tr>
 <tr class="even">
 <td align="left">station9.4</td>
-<td align="right">-2.7540925</td>
-<td align="right">4.021879</td>
-<td align="right">-10.6395165</td>
-<td align="right">5.1335558</td>
+<td align="right">-2.4325383</td>
+<td align="right">4.146508</td>
+<td align="right">-10.4900956</td>
+<td align="right">5.7849287</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.5</td>
-<td align="right">-1.5247555</td>
-<td align="right">4.095026</td>
-<td align="right">-9.5529189</td>
-<td align="right">6.5070545</td>
+<td align="right">-1.2534745</td>
+<td align="right">4.189335</td>
+<td align="right">-9.4174296</td>
+<td align="right">7.0200504</td>
 </tr>
 </tbody>
 </table>
@@ -1004,479 +1006,479 @@ kable(fixed_effect2, caption=&quot;fixed effect Gamma model&quot;)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="left">Intercept</td>
-<td align="right">2.0792846</td>
-<td align="right">3.866305</td>
-<td align="right">-5.502158</td>
-<td align="right">9.660725</td>
+<td align="right">2.0772409</td>
+<td align="right">3.866388</td>
+<td align="right">-5.504363</td>
+<td align="right">9.658844</td>
 </tr>
 <tr class="even">
 <td align="left">station1.1</td>
-<td align="right">-0.3355164</td>
-<td align="right">3.877648</td>
-<td align="right">-7.939198</td>
-<td align="right">7.268170</td>
+<td align="right">-0.3332040</td>
+<td align="right">3.877683</td>
+<td align="right">-7.936954</td>
+<td align="right">7.270552</td>
 </tr>
 <tr class="odd">
 <td align="left">station1.2</td>
-<td align="right">-0.4457024</td>
-<td align="right">3.875798</td>
-<td align="right">-8.045751</td>
-<td align="right">7.154360</td>
+<td align="right">-0.4430456</td>
+<td align="right">3.875853</td>
+<td align="right">-8.043200</td>
+<td align="right">7.157126</td>
 </tr>
 <tr class="even">
 <td align="left">station1.3</td>
-<td align="right">-2.1347711</td>
-<td align="right">3.884756</td>
-<td align="right">-9.752386</td>
-<td align="right">5.482856</td>
+<td align="right">-2.1321703</td>
+<td align="right">3.884790</td>
+<td align="right">-9.749852</td>
+<td align="right">5.485525</td>
 </tr>
 <tr class="odd">
 <td align="left">station1.4</td>
-<td align="right">-3.4220449</td>
-<td align="right">3.907842</td>
-<td align="right">-11.084934</td>
-<td align="right">4.240849</td>
+<td align="right">-3.4202591</td>
+<td align="right">3.907872</td>
+<td align="right">-11.083207</td>
+<td align="right">4.242693</td>
 </tr>
 <tr class="even">
 <td align="left">station1.5</td>
-<td align="right">-4.8827425</td>
-<td align="right">3.924169</td>
-<td align="right">-12.577658</td>
-<td align="right">2.812156</td>
+<td align="right">-4.8875297</td>
+<td align="right">3.924355</td>
+<td align="right">-12.582807</td>
+<td align="right">2.807736</td>
 </tr>
 <tr class="odd">
 <td align="left">station10.1</td>
-<td align="right">1.4158353</td>
-<td align="right">3.874788</td>
-<td align="right">-6.182235</td>
-<td align="right">9.013913</td>
+<td align="right">1.4169375</td>
+<td align="right">3.874838</td>
+<td align="right">-6.181232</td>
+<td align="right">9.015115</td>
 </tr>
 <tr class="even">
 <td align="left">station11.1</td>
-<td align="right">2.4388049</td>
-<td align="right">3.877014</td>
-<td align="right">-5.163629</td>
-<td align="right">10.041249</td>
+<td align="right">2.4384267</td>
+<td align="right">3.877093</td>
+<td align="right">-5.164161</td>
+<td align="right">10.041027</td>
 </tr>
 <tr class="odd">
 <td align="left">station12.1</td>
-<td align="right">0.5792715</td>
-<td align="right">3.880866</td>
-<td align="right">-7.030728</td>
-<td align="right">8.189258</td>
+<td align="right">0.5778017</td>
+<td align="right">3.880954</td>
+<td align="right">-7.032371</td>
+<td align="right">8.187959</td>
 </tr>
 <tr class="even">
 <td align="left">station2.1</td>
-<td align="right">-0.2102191</td>
-<td align="right">3.875056</td>
-<td align="right">-7.808815</td>
-<td align="right">7.388386</td>
+<td align="right">-0.2080613</td>
+<td align="right">3.875103</td>
+<td align="right">-7.806749</td>
+<td align="right">7.390638</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.2</td>
-<td align="right">-0.7122409</td>
-<td align="right">3.873931</td>
-<td align="right">-8.308631</td>
-<td align="right">6.884158</td>
+<td align="right">-0.7098171</td>
+<td align="right">3.873974</td>
+<td align="right">-8.306290</td>
+<td align="right">6.886667</td>
 </tr>
 <tr class="even">
 <td align="left">station2.3</td>
-<td align="right">-0.9798076</td>
-<td align="right">3.874529</td>
-<td align="right">-8.577372</td>
-<td align="right">6.617763</td>
+<td align="right">-0.9772313</td>
+<td align="right">3.874552</td>
+<td align="right">-8.574839</td>
+<td align="right">6.620384</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.4</td>
-<td align="right">-2.1517660</td>
-<td align="right">3.876197</td>
-<td align="right">-9.752603</td>
-<td align="right">5.449071</td>
+<td align="right">-2.1495986</td>
+<td align="right">3.876212</td>
+<td align="right">-9.750467</td>
+<td align="right">5.451269</td>
 </tr>
 <tr class="even">
 <td align="left">station2.5</td>
-<td align="right">-2.6054794</td>
-<td align="right">3.883478</td>
-<td align="right">-10.220599</td>
-<td align="right">5.009633</td>
+<td align="right">-2.6042186</td>
+<td align="right">3.883504</td>
+<td align="right">-10.219390</td>
+<td align="right">5.010944</td>
 </tr>
 <tr class="odd">
 <td align="left">station2.6</td>
-<td align="right">-3.1223235</td>
-<td align="right">3.899647</td>
-<td align="right">-10.769134</td>
-<td align="right">4.524509</td>
+<td align="right">-3.1240496</td>
+<td align="right">3.899730</td>
+<td align="right">-10.771019</td>
+<td align="right">4.522950</td>
 </tr>
 <tr class="even">
 <td align="left">station3.1</td>
-<td align="right">0.8669195</td>
-<td align="right">3.877789</td>
-<td align="right">-6.737032</td>
-<td align="right">8.470886</td>
+<td align="right">0.8693661</td>
+<td align="right">3.877869</td>
+<td align="right">-6.734742</td>
+<td align="right">8.473492</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.2</td>
-<td align="right">0.0596316</td>
-<td align="right">3.875580</td>
-<td align="right">-7.539993</td>
-<td align="right">7.659263</td>
+<td align="right">0.0619530</td>
+<td align="right">3.875626</td>
+<td align="right">-7.537761</td>
+<td align="right">7.661675</td>
 </tr>
 <tr class="even">
 <td align="left">station3.3</td>
-<td align="right">0.1753426</td>
-<td align="right">3.873828</td>
-<td align="right">-7.420846</td>
-<td align="right">7.771538</td>
+<td align="right">0.1775919</td>
+<td align="right">3.873865</td>
+<td align="right">-7.418668</td>
+<td align="right">7.773861</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.4</td>
-<td align="right">-0.6074998</td>
-<td align="right">3.872690</td>
-<td align="right">-8.201458</td>
-<td align="right">6.986465</td>
+<td align="right">-0.6052521</td>
+<td align="right">3.872721</td>
+<td align="right">-8.199269</td>
+<td align="right">6.988774</td>
 </tr>
 <tr class="even">
 <td align="left">station3.5</td>
-<td align="right">-0.7900621</td>
-<td align="right">3.872206</td>
-<td align="right">-8.383072</td>
-<td align="right">6.802950</td>
+<td align="right">-0.7876600</td>
+<td align="right">3.872213</td>
+<td align="right">-8.380685</td>
+<td align="right">6.805366</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.6</td>
-<td align="right">-1.2457892</td>
-<td align="right">3.876053</td>
-<td align="right">-8.846348</td>
-<td align="right">6.354765</td>
+<td align="right">-1.2422606</td>
+<td align="right">3.876084</td>
+<td align="right">-8.842880</td>
+<td align="right">6.358353</td>
 </tr>
 <tr class="even">
 <td align="left">station3.7</td>
-<td align="right">-1.3040033</td>
-<td align="right">3.881085</td>
-<td align="right">-8.914429</td>
-<td align="right">6.306418</td>
+<td align="right">-1.3017747</td>
+<td align="right">3.881163</td>
+<td align="right">-8.912352</td>
+<td align="right">6.308800</td>
 </tr>
 <tr class="odd">
 <td align="left">station3.8</td>
-<td align="right">-2.5355331</td>
-<td align="right">3.893670</td>
-<td align="right">-10.170639</td>
-<td align="right">5.099563</td>
+<td align="right">-2.5354628</td>
+<td align="right">3.893706</td>
+<td align="right">-10.170640</td>
+<td align="right">5.099704</td>
 </tr>
 <tr class="even">
 <td align="left">station3.9</td>
-<td align="right">-3.9944722</td>
-<td align="right">3.903934</td>
-<td align="right">-11.649710</td>
-<td align="right">3.660747</td>
+<td align="right">-3.9952411</td>
+<td align="right">3.903978</td>
+<td align="right">-11.650567</td>
+<td align="right">3.660062</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.1</td>
-<td align="right">-0.0363011</td>
-<td align="right">3.877367</td>
-<td align="right">-7.639430</td>
-<td align="right">7.566834</td>
+<td align="right">-0.0341452</td>
+<td align="right">3.877426</td>
+<td align="right">-7.637391</td>
+<td align="right">7.569107</td>
 </tr>
 <tr class="even">
 <td align="left">station4.2</td>
-<td align="right">0.8913238</td>
-<td align="right">3.875470</td>
-<td align="right">-6.708086</td>
-<td align="right">8.490740</td>
+<td align="right">0.8939494</td>
+<td align="right">3.875508</td>
+<td align="right">-6.705533</td>
+<td align="right">8.493440</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.3</td>
-<td align="right">1.3021372</td>
-<td align="right">3.873443</td>
-<td align="right">-6.293298</td>
-<td align="right">8.897578</td>
+<td align="right">1.3042033</td>
+<td align="right">3.873464</td>
+<td align="right">-6.291272</td>
+<td align="right">8.899686</td>
 </tr>
 <tr class="even">
 <td align="left">station4.4</td>
-<td align="right">-0.3241844</td>
-<td align="right">3.872045</td>
-<td align="right">-7.916877</td>
-<td align="right">7.268514</td>
+<td align="right">-0.3200055</td>
+<td align="right">3.872059</td>
+<td align="right">-7.912726</td>
+<td align="right">7.272723</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.5</td>
-<td align="right">-0.3192354</td>
-<td align="right">3.872263</td>
-<td align="right">-7.912361</td>
-<td align="right">7.273887</td>
+<td align="right">-0.3163861</td>
+<td align="right">3.872267</td>
+<td align="right">-7.909519</td>
+<td align="right">7.276743</td>
 </tr>
 <tr class="even">
 <td align="left">station4.6</td>
-<td align="right">0.7451481</td>
-<td align="right">3.874941</td>
-<td align="right">-6.853231</td>
-<td align="right">8.343518</td>
+<td align="right">0.7475804</td>
+<td align="right">3.874970</td>
+<td align="right">-6.850856</td>
+<td align="right">8.346006</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.7</td>
-<td align="right">-0.0806887</td>
-<td align="right">3.876189</td>
-<td align="right">-7.681514</td>
-<td align="right">7.520129</td>
+<td align="right">-0.0792783</td>
+<td align="right">3.876206</td>
+<td align="right">-7.680139</td>
+<td align="right">7.521573</td>
 </tr>
 <tr class="even">
 <td align="left">station4.8</td>
-<td align="right">-1.3911725</td>
-<td align="right">3.881637</td>
-<td align="right">-9.002684</td>
-<td align="right">6.220328</td>
+<td align="right">-1.3921771</td>
+<td align="right">3.881676</td>
+<td align="right">-9.003764</td>
+<td align="right">6.219397</td>
 </tr>
 <tr class="odd">
 <td align="left">station4.9</td>
-<td align="right">-3.6432707</td>
-<td align="right">3.899064</td>
-<td align="right">-11.288952</td>
-<td align="right">4.002405</td>
+<td align="right">-3.6452672</td>
+<td align="right">3.899073</td>
+<td align="right">-11.290968</td>
+<td align="right">4.000425</td>
 </tr>
 <tr class="even">
 <td align="left">station5.1</td>
-<td align="right">0.7861755</td>
-<td align="right">3.873263</td>
-<td align="right">-6.808909</td>
-<td align="right">8.381262</td>
+<td align="right">0.7885311</td>
+<td align="right">3.873281</td>
+<td align="right">-6.806587</td>
+<td align="right">8.383652</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.2</td>
-<td align="right">0.8075045</td>
-<td align="right">3.872789</td>
-<td align="right">-6.786649</td>
-<td align="right">8.401661</td>
+<td align="right">0.8098053</td>
+<td align="right">3.872794</td>
+<td align="right">-6.784359</td>
+<td align="right">8.403973</td>
 </tr>
 <tr class="even">
 <td align="left">station5.3</td>
-<td align="right">0.6699524</td>
-<td align="right">3.872617</td>
-<td align="right">-6.923868</td>
-<td align="right">8.263768</td>
+<td align="right">0.6727056</td>
+<td align="right">3.872623</td>
+<td align="right">-6.921127</td>
+<td align="right">8.266532</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.4</td>
-<td align="right">0.8945054</td>
-<td align="right">3.872528</td>
-<td align="right">-6.699139</td>
-<td align="right">8.488147</td>
+<td align="right">0.8960998</td>
+<td align="right">3.872523</td>
+<td align="right">-6.697536</td>
+<td align="right">8.489732</td>
 </tr>
 <tr class="even">
 <td align="left">station5.5</td>
-<td align="right">1.2448693</td>
-<td align="right">3.873854</td>
-<td align="right">-6.351374</td>
-<td align="right">8.841111</td>
+<td align="right">1.2452756</td>
+<td align="right">3.873850</td>
+<td align="right">-6.350960</td>
+<td align="right">8.841510</td>
 </tr>
 <tr class="odd">
 <td align="left">station5.6</td>
-<td align="right">-0.4126930</td>
-<td align="right">3.876565</td>
-<td align="right">-8.014258</td>
-<td align="right">7.188861</td>
+<td align="right">-0.4130238</td>
+<td align="right">3.876616</td>
+<td align="right">-8.014691</td>
+<td align="right">7.188629</td>
 </tr>
 <tr class="even">
 <td align="left">station5.7</td>
-<td align="right">-2.2956439</td>
-<td align="right">3.882749</td>
-<td align="right">-9.909336</td>
-<td align="right">5.318037</td>
+<td align="right">-2.2981114</td>
+<td align="right">3.882796</td>
+<td align="right">-9.911896</td>
+<td align="right">5.315660</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.1</td>
-<td align="right">1.3035035</td>
-<td align="right">3.874558</td>
-<td align="right">-6.294120</td>
-<td align="right">8.901129</td>
+<td align="right">1.3063170</td>
+<td align="right">3.874580</td>
+<td align="right">-6.291348</td>
+<td align="right">8.903985</td>
 </tr>
 <tr class="even">
 <td align="left">station6.2</td>
-<td align="right">1.0230841</td>
-<td align="right">3.872430</td>
-<td align="right">-6.570365</td>
-<td align="right">8.616537</td>
+<td align="right">1.0232791</td>
+<td align="right">3.872446</td>
+<td align="right">-6.570201</td>
+<td align="right">8.616764</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.3</td>
-<td align="right">1.1371121</td>
-<td align="right">3.872476</td>
-<td align="right">-6.456428</td>
-<td align="right">8.730653</td>
+<td align="right">1.1387309</td>
+<td align="right">3.872475</td>
+<td align="right">-6.454807</td>
+<td align="right">8.732270</td>
 </tr>
 <tr class="even">
 <td align="left">station6.4</td>
-<td align="right">1.2780889</td>
-<td align="right">3.872816</td>
-<td align="right">-6.316121</td>
-<td align="right">8.872295</td>
+<td align="right">1.2792338</td>
+<td align="right">3.872813</td>
+<td align="right">-6.314972</td>
+<td align="right">8.873435</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.5</td>
-<td align="right">1.2727847</td>
-<td align="right">3.872974</td>
-<td align="right">-6.321734</td>
-<td align="right">8.867301</td>
+<td align="right">1.2723406</td>
+<td align="right">3.872971</td>
+<td align="right">-6.322172</td>
+<td align="right">8.866850</td>
 </tr>
 <tr class="even">
 <td align="left">station6.6</td>
-<td align="right">0.5793381</td>
-<td align="right">3.873510</td>
-<td align="right">-7.016234</td>
-<td align="right">8.174903</td>
+<td align="right">0.5776754</td>
+<td align="right">3.873536</td>
+<td align="right">-7.017949</td>
+<td align="right">8.173291</td>
 </tr>
 <tr class="odd">
 <td align="left">station6.7</td>
-<td align="right">-0.9732939</td>
-<td align="right">3.878615</td>
-<td align="right">-8.578878</td>
-<td align="right">6.632280</td>
+<td align="right">-0.9760439</td>
+<td align="right">3.878686</td>
+<td align="right">-8.581769</td>
+<td align="right">6.629669</td>
 </tr>
 <tr class="even">
 <td align="left">station6.8</td>
-<td align="right">-2.1790730</td>
-<td align="right">3.912769</td>
-<td align="right">-9.851630</td>
-<td align="right">5.493474</td>
+<td align="right">-2.1824602</td>
+<td align="right">3.912805</td>
+<td align="right">-9.855089</td>
+<td align="right">5.490157</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.1</td>
-<td align="right">1.9240100</td>
-<td align="right">3.873079</td>
-<td align="right">-5.670711</td>
-<td align="right">9.518737</td>
+<td align="right">1.9260193</td>
+<td align="right">3.873102</td>
+<td align="right">-5.668745</td>
+<td align="right">9.520792</td>
 </tr>
 <tr class="even">
 <td align="left">station7.2</td>
-<td align="right">1.9088142</td>
-<td align="right">3.872383</td>
-<td align="right">-5.684544</td>
-<td align="right">9.502175</td>
+<td align="right">1.9110443</td>
+<td align="right">3.872391</td>
+<td align="right">-5.682329</td>
+<td align="right">9.504421</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.3</td>
-<td align="right">1.8485551</td>
-<td align="right">3.871967</td>
-<td align="right">-5.743987</td>
-<td align="right">9.441099</td>
+<td align="right">1.8493964</td>
+<td align="right">3.871971</td>
+<td align="right">-5.743152</td>
+<td align="right">9.441948</td>
 </tr>
 <tr class="even">
 <td align="left">station7.4</td>
-<td align="right">1.8676102</td>
-<td align="right">3.872914</td>
-<td align="right">-5.726791</td>
-<td align="right">9.462011</td>
+<td align="right">1.8663391</td>
+<td align="right">3.872917</td>
+<td align="right">-5.728068</td>
+<td align="right">9.460745</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.5</td>
-<td align="right">1.4137880</td>
-<td align="right">3.873350</td>
-<td align="right">-6.181467</td>
-<td align="right">9.009044</td>
+<td align="right">1.4091865</td>
+<td align="right">3.873361</td>
+<td align="right">-6.186089</td>
+<td align="right">9.004463</td>
 </tr>
 <tr class="even">
 <td align="left">station7.6</td>
-<td align="right">0.0819039</td>
-<td align="right">3.876009</td>
-<td align="right">-7.518568</td>
-<td align="right">7.682370</td>
+<td align="right">0.0772050</td>
+<td align="right">3.876051</td>
+<td align="right">-7.523350</td>
+<td align="right">7.677752</td>
 </tr>
 <tr class="odd">
 <td align="left">station7.7</td>
-<td align="right">-1.9837831</td>
-<td align="right">3.881660</td>
-<td align="right">-9.595340</td>
-<td align="right">5.627761</td>
+<td align="right">-1.9888546</td>
+<td align="right">3.881716</td>
+<td align="right">-9.600522</td>
+<td align="right">5.622797</td>
 </tr>
 <tr class="even">
 <td align="left">station8.1</td>
-<td align="right">0.1892879</td>
-<td align="right">3.875526</td>
-<td align="right">-7.410234</td>
-<td align="right">7.788812</td>
+<td align="right">0.1945772</td>
+<td align="right">3.875570</td>
+<td align="right">-7.405030</td>
+<td align="right">7.794187</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.2</td>
-<td align="right">1.8525639</td>
-<td align="right">3.873059</td>
-<td align="right">-5.742117</td>
-<td align="right">9.447253</td>
+<td align="right">1.8541308</td>
+<td align="right">3.873089</td>
+<td align="right">-5.740608</td>
+<td align="right">9.448880</td>
 </tr>
 <tr class="even">
 <td align="left">station8.3</td>
-<td align="right">2.4408060</td>
-<td align="right">3.872780</td>
-<td align="right">-5.153329</td>
-<td align="right">10.034945</td>
+<td align="right">2.4411398</td>
+<td align="right">3.872794</td>
+<td align="right">-5.153022</td>
+<td align="right">10.035306</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.4</td>
-<td align="right">2.5637332</td>
-<td align="right">3.872693</td>
-<td align="right">-5.030229</td>
-<td align="right">10.157703</td>
+<td align="right">2.5692116</td>
+<td align="right">3.872727</td>
+<td align="right">-5.024817</td>
+<td align="right">10.163250</td>
 </tr>
 <tr class="even">
 <td align="left">station8.5</td>
-<td align="right">2.1420004</td>
-<td align="right">3.872895</td>
-<td align="right">-5.452361</td>
-<td align="right">9.736367</td>
+<td align="right">2.1267991</td>
+<td align="right">3.872926</td>
+<td align="right">-5.467621</td>
+<td align="right">9.721227</td>
 </tr>
 <tr class="odd">
 <td align="left">station8.6</td>
-<td align="right">0.7795778</td>
-<td align="right">3.875557</td>
-<td align="right">-6.820006</td>
-<td align="right">8.379161</td>
+<td align="right">0.7732353</td>
+<td align="right">3.875585</td>
+<td align="right">-6.826403</td>
+<td align="right">8.372872</td>
 </tr>
 <tr class="even">
 <td align="left">station8.7</td>
-<td align="right">-0.2503869</td>
-<td align="right">3.878919</td>
-<td align="right">-7.856566</td>
-<td align="right">7.355784</td>
+<td align="right">-0.2567864</td>
+<td align="right">3.878961</td>
+<td align="right">-7.863050</td>
+<td align="right">7.349467</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.1</td>
-<td align="right">1.1460975</td>
-<td align="right">3.875999</td>
-<td align="right">-6.454352</td>
-<td align="right">8.746549</td>
+<td align="right">1.1442412</td>
+<td align="right">3.876044</td>
+<td align="right">-6.456296</td>
+<td align="right">8.744781</td>
 </tr>
 <tr class="even">
 <td align="left">station9.2</td>
-<td align="right">1.4704514</td>
-<td align="right">3.874261</td>
-<td align="right">-6.126587</td>
-<td align="right">9.067494</td>
+<td align="right">1.4716619</td>
+<td align="right">3.874291</td>
+<td align="right">-6.125436</td>
+<td align="right">9.068765</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.3</td>
-<td align="right">2.6779162</td>
-<td align="right">3.873413</td>
-<td align="right">-4.917457</td>
-<td align="right">10.273299</td>
+<td align="right">2.6798184</td>
+<td align="right">3.873451</td>
+<td align="right">-4.915629</td>
+<td align="right">10.275278</td>
 </tr>
 <tr class="even">
 <td align="left">station9.4</td>
-<td align="right">1.4634721</td>
-<td align="right">3.873986</td>
-<td align="right">-6.133028</td>
-<td align="right">9.059977</td>
+<td align="right">1.4406314</td>
+<td align="right">3.873987</td>
+<td align="right">-6.155870</td>
+<td align="right">9.037139</td>
 </tr>
 <tr class="odd">
 <td align="left">station9.5</td>
-<td align="right">2.2070639</td>
-<td align="right">3.874441</td>
-<td align="right">-5.390329</td>
-<td align="right">9.804461</td>
+<td align="right">2.2041760</td>
+<td align="right">3.874461</td>
+<td align="right">-5.393255</td>
+<td align="right">9.801612</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="range" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> Range</h2>
-<pre class="r"><code>
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
   rbern&lt;- myrange(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;binomial&quot;)
 kable(rbern, caption=&quot;Range for the Bernoulli model&quot;)</code></pre>
 <table>
@@ -1491,13 +1493,13 @@ kable(rbern, caption=&quot;Range for the Bernoulli model&quot;)</code></pre>
 <td align="left">Kappa=1.2e-05</td>
 </tr>
 <tr class="even">
-<td align="left">sigmau=2.506</td>
+<td align="left">sigmau=2.519</td>
 </tr>
 <tr class="odd">
-<td align="left">range (km)=239.992</td>
+<td align="left">range (km)=239.132</td>
 </tr>
 <tr class="even">
-<td align="left">erreur around range (km)=181.765-301.612</td>
+<td align="left">erreur around range (km)=180.894-300.428</td>
 </tr>
 </tbody>
 </table>
@@ -1513,23 +1515,23 @@ kable(rbern, caption=&quot;Range for the Bernoulli model&quot;)</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Kappa=1.45e-05</td>
+<td align="left">Kappa=1.46e-05</td>
 </tr>
 <tr class="even">
-<td align="left">sigmau=1.587</td>
+<td align="left">sigmau=1.583</td>
 </tr>
 <tr class="odd">
-<td align="left">range (km)=195.359</td>
+<td align="left">range (km)=195.064</td>
 </tr>
 <tr class="even">
-<td align="left">erreur around range (km)=171.419-220.465</td>
+<td align="left">erreur around range (km)=168.113-222.908</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="validation" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> Validation</h2>
-<pre class="r"><code>
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
 validation_ZAG(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name,
                         rvarpos=2, varpos=5)</code></pre>
 <p><img src="2.0_DEP_files/figure-html/inla%20validation-1.png" width="864" style="display: block; margin: auto;" /></p>
@@ -1537,7 +1539,9 @@ validation_ZAG(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=
 <div id="inla-cross-validation" class="section level2" number="1.6">
 <h2><span class="header-section-number">1.6</span> INLA
 cross-validation</h2>
-<pre class="r"><code>load(file=paste0(&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))
+<pre class="r"><code>
+setwd(rprojroot::find_rstudio_root_file())
+load(file=paste0(&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))
 
 #do not need to do every year.
 if(new) INLA_ZAG_CV(dat = eggcv_all , res_mesh = 150, res_pred = &quot;station&quot;, trajet = 1, year=my.year, Rvar=&quot;DEP&quot;)
@@ -1577,8 +1581,8 @@ pcv + scale_x_continuous(name = &quot;PJO calculées (N/m²/day) | Calculated DE
 </div>
 <div id="dep-maps" class="section level2" number="1.7">
 <h2><span class="header-section-number">1.7</span> DEP MAPs</h2>
-<pre class="r"><code>predt1 &lt;- read.delim(paste0(&quot;results/&quot;,my.year,&quot;/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG&quot;, my.year, &quot;_trajet1.txt&quot;))
-lookup &lt;-  read.delim(&quot;data/lookup_station_egg.txt&quot;)
+<pre class="r"><code>predt1 &lt;- read.delim(paste0(root,&quot;results/&quot;,my.year,&quot;/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG&quot;, my.year, &quot;_trajet1.txt&quot;))
+lookup &lt;-  read.delim(paste0(root,&quot;data/lookup_station_egg.txt&quot;))
 
 
 DEPt1a &lt;- full_join(eggt1 %&gt;%  mutate(station=as.numeric(station),
@@ -1602,9 +1606,9 @@ basemap2 +
 <p><img src="2.0_DEP_files/figure-html/DEP-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>
 
-ggsave(paste0(&quot;img/&quot;,my.year,&quot;/DEP.png&quot;), width=4, height=4.8, dpi=600, units=&quot;in&quot;)
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/DEP.png&quot;), width=4, height=4.8, dpi=600, units=&quot;in&quot;)
 
-save(DEP,  file=paste0(&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
+save(DEP,  file=paste0(root,&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
 
 
 all_years= data.frame(year=seq(1979, my.year, 1))
@@ -1618,7 +1622,7 @@ left_join(all_years,DEP) %&gt;%
   xlab(&quot;Ann\u00E9e\nYear&quot;)</code></pre>
 <p><img src="2.0_DEP_files/figure-html/DEP-2.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>
-ggsave(paste0(&quot;img/&quot;,my.year,&quot;/DEP_trajet1_year.png&quot;),width = 6, height = 4, unit = &quot;in&quot;, dpi = 600)
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/DEP_trajet1_year.png&quot;),width = 6, height = 4, unit = &quot;in&quot;, dpi = 600)
 </code></pre>
 </div>
 </div>

@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-12-12" />
+<meta name="date" content="2025-01-31" />
 
 <title>Read</title>
 
@@ -377,7 +377,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Read</h1>
-<h4 class="date">2024-12-12</h4>
+<h4 class="date">2025-01-31</h4>
 
 </div>
 
@@ -414,30 +414,30 @@ theme_set(theme_mackerel())             # theme_mackerel from catchR
 update_geom_defaults(&quot;line&quot;, list(size = 1))  # no idea why somethimes I get fat lines otherwise
 
 ##### passwords databases #############################################################################
-source(&quot;bdOracle.R&quot;)
+source(&quot;../../bdOracle.R&quot;)
 
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/spatial_projections.R&quot;))#
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_biochem.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/extract_T0_10.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/Mesh.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/utils/nlme_boot.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations.R&quot;))
-source(paste0(&quot;R/&quot;,my.year,&quot;/INLA/INLA_tw_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
+source(paste0(&quot;utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
+source(paste0(&quot;utils/spatial_projections.R&quot;))#
+source(paste0(&quot;utils/extract_biochem.R&quot;))
+source(paste0(&quot;utils/extract_T0_10.R&quot;))
+source(paste0(&quot;INLA/Mesh.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/nlme_boot.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations_CV.R&quot;))
 
 
 
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSpatialFieldCL.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/plotSmoother.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/model_validation.R&#39;))
-source(paste0(&#39;R/&#39;,my.year,&#39;/INLA/get_prediction_grid.R&#39;))
-source(paste0(&#39;R/biochem/PL_Get_SampleID_Batch.R&#39;))
-source(paste0(&#39;R/biochem/PL_Get_Counts_Batch.R&#39;))
-source(paste0(&#39;R/biochem/PL_Read_Filter.R&#39;))
-source(paste0(&#39;R/biochem/PL_Taxonomic_Grouping.R&#39;))
+source(paste0(&#39;INLA/plotSpatialFieldCL.R&#39;))
+source(paste0(&#39;INLA/plotSmoother.R&#39;))
+source(paste0(&#39;INLA/model_validation.R&#39;))
+source(paste0(&#39;INLA/get_prediction_grid.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_SampleID_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Get_Counts_Batch.R&#39;))
+source(paste0(&#39;../biochem/PL_Read_Filter.R&#39;))
+source(paste0(&#39;../biochem/PL_Taxonomic_Grouping.R&#39;))
 
 
 log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
@@ -449,12 +449,13 @@ log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=func
 <div id="biochem" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Biochem</h2>
 <pre class="r"><code>if(new){
-extract_biochem(year=my.year, path_to_file = NULL)
+  setwd(rprojroot::find_rstudio_root_file())
+extract_biochem(year=my.year, path_to_file = NULL) # if warning about maqytr then probably wrong locale Rstart R
 extract_T0_10(year=my.year)
 }</code></pre>
-<pre class="r"><code>lookup &lt;- read.delim(&quot;data/lookup_station_egg.txt&quot;) # position and depth of stations.
+<pre class="r"><code>lookup &lt;- read.delim(paste0(root,&quot;data/lookup_station_egg.txt&quot;)) # position and depth of stations.
 
-bat &lt;- getNOAA.bathy(-70,-58,40,52, res = 4, keep = TRUE)
+bat &lt;- getNOAA.bathy(-70,-58,40,52, res = 4, keep = F)
 bat_xyz &lt;- as.xyz(bat) # %&gt;%  filter(V3 &lt; -90 &amp; V3 &gt; -110)
 
 basemap2 +
@@ -472,11 +473,11 @@ basemap2 +
   geom_label(data = lookup, aes(x = longitude, y = latitude, label = station), size = 3, label.padding = unit(0.1, &quot;lines&quot;)) + coord_sf(xlim=c(-66.5,-60),ylim=c(45.5,49.5))</code></pre>
 <p><img src="1.0_read_files/figure-html/filter-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>
-ggsave(paste0(&quot;img/&quot;,my.year,&quot;/area_of_interest.png&quot;), width = 6, height = 6, units = &quot;in&quot;, dpi = 600)
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/area_of_interest.png&quot;), width = 6, height = 6, units = &quot;in&quot;, dpi = 600)
 
 
 
-egg &lt;- readRDS(paste0(&quot;data/&quot;,my.year,&quot;/PL_Bongo_Scomber_eggs_larvae_Counts_L2_&quot;, my.year, &quot;.RDS&quot;))# %&gt;%
+egg &lt;- readRDS(paste0(root,&quot;data/&quot;,my.year,&quot;/PL_Bongo_Scomber_eggs_larvae_Counts_L2_&quot;, my.year, &quot;.RDS&quot;))# %&gt;%
 egg &lt;- egg %&gt;%  dplyr::filter(!grepl(station, pattern=&quot;4R&quot;),
                               !grepl(station, pattern=&quot;3P&quot;),
                               !grepl(station, pattern=&quot;SP&quot;)) %&gt;%  dplyr::arrange(year,station)
@@ -718,7 +719,7 @@ kable(tableN %&gt;%  dplyr::arrange(desc(year)))</code></pre>
 </tbody>
 </table>
 <pre class="r"><code>
-write.table(tableN, paste0(&quot;results/&quot;,my.year,&quot;/tableN_trajets.txt&quot;), sep = &quot;\t&quot;, dec = &quot;.&quot;, row.names = F)
+write.table(tableN, paste0(root,&quot;results/&quot;,my.year,&quot;/tableN_trajets.txt&quot;), sep = &quot;\t&quot;, dec = &quot;.&quot;, row.names = F)
 
 all_years= data.frame(year=seq(1979, my.year, 1))
 
@@ -737,11 +738,11 @@ eggcv &lt;- eggt1 %&gt;%
 eggcv_to_fit &lt;- eggt1 %&gt;% dplyr::filter(!sample_id %in% eggcv$sample_id)
 eggcv_all &lt;- as.data.frame(bind_rows(eggcv, eggcv_to_fit))
 
-if(!file.exists(paste0(&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))){ #prevent overwriting
-save(eggcv_to_fit, eggcv_all, file=paste0(&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))
+if(!file.exists(paste0(root,&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))){ #prevent overwriting
+save(eggcv_to_fit, eggcv_all, file=paste0(root,&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))
 }
 
-save(eggt1,  file=paste0(&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
+save(eggt1,  file=paste0(root,&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
 </code></pre>
 </div>
 <div id="incubation-time" class="section level2" number="2.2">
@@ -769,7 +770,7 @@ p1&lt;- Temp %&gt;% mutate(`Incubation` = I_lockwood(Temp)) %&gt;%
 p1 +ggtitle(expression(Incubation~time~&quot;=&quot;~e^(-1.61~log(T10[y][,][i])~+~7.76))) +theme(plot.title=element_text(hjust=0.5))</code></pre>
 <p><img src="1.0_read_files/figure-html/incub-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>
-ggsave(paste0(&quot;img/&quot;,my.year,&quot;/Incubation_timeBI.png&quot;), width=6, height=4, dpi=600, units=&quot;in&quot;)  </code></pre>
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/Incubation_timeBI.png&quot;), width=6, height=4, dpi=600, units=&quot;in&quot;)  </code></pre>
 </div>
 <div id="map-of-last-2-yearss-coverage" class="section level2"
 number="2.3">
@@ -783,18 +784,21 @@ egg2&lt;- plyr::join(eggmap, look2 , type=&quot;full&quot;) %&gt;%  st_as_sf(coo
 emap&lt;- eggmap %&gt;% st_as_sf(coords=c(&quot;longitude&quot;, &quot;latitude&quot;), crs=4326, remove=F) %&gt;% mutate(consecutive=as.numeric(as.character(consecutive))) %&gt;% ungroup() %&gt;% dplyr::arrange(year,consecutive)  %&gt;% mutate(ID=1:nrow(eggmap)) %&gt;%  st_drop_geometry() #%&gt;% st_coordinates() %&gt;% st_linestring() %&gt;%  as.matrix()
 
 lab_dates &lt;- seq(min(egg2$doy, na.rm=T), max(egg2$doy, na.rm=T),1)
+
 Sys.setlocale(&quot;LC_ALL&quot;, &quot;English_Canada.utf8&quot;)
 ## [1] &quot;LC_COLLATE=English_Canada.utf8;LC_CTYPE=English_Canada.utf8;LC_MONETARY=English_Canada.utf8;LC_NUMERIC=C;LC_TIME=English_Canada.utf8&quot;
 basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=egg2 %&gt;%  filter(!is.na(doy)), aes(fill= doy), size=3, shape=21) + 
    geom_sf(data=egg2 %&gt;%  filter(is.na(doy)),  size=3, shape=3, col=&quot;black&quot;, stroke=1.1) +coord_sf(xlim=c(-66.5,-60), ylim=c(45.5,49.5)) +
-  scale_fill_viridis_b(name=&quot;Date d&#39;échantillonnage\n Sampling date&quot;, breaks=lab_dates, labels=paste(lab_dates, format(as.Date(lab_dates, origin = paste0(my.year,&quot;-01-01&quot;)),&#39;%B-%d&#39;), sep=&quot;\n&quot;)) +facet_wrap(~year) +
-  theme(legend.position = &quot;bottom&quot;, legend.key.width = unit(2.5, &quot;cm&quot;), plot.background = element_blank())</code></pre>
+  scale_fill_viridis_b(name=&quot;Date d&#39;échantillonnage\n Sampling date&quot;, breaks=lab_dates, labels=format(as.Date(lab_dates, origin = paste0(my.year,&quot;-01-01&quot;)),&#39;%B-%d&#39;)) +facet_wrap(~year) +
+  theme(legend.position = &quot;bottom&quot;, legend.key.width = unit(2.5, &quot;cm&quot;),
+        legend.text=element_text(angle=90),
+        plot.background = element_blank())</code></pre>
 <p><img src="1.0_read_files/figure-html/covarage-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>
 Sys.setlocale(&quot;LC_ALL&quot;,&quot;French_Canada.utf8&quot;)
 ## [1] &quot;LC_COLLATE=French_Canada.utf8;LC_CTYPE=French_Canada.utf8;LC_MONETARY=French_Canada.utf8;LC_NUMERIC=C;LC_TIME=French_Canada.utf8&quot;
 
-ggsave(paste0(&quot;img/&quot;, my.year,&quot;/MAP_egg_cover.png&quot;), width=8, height=5, dpi=600, units=&quot;in&quot;)
+ggsave(paste0(root,&quot;img/&quot;, my.year,&quot;/MAP_egg_cover.png&quot;), width=9, height=5, dpi=600, units=&quot;in&quot;)
 
 basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(data=egg2 %&gt;%  filter(!is.na(doy)), aes(fill= temperature0_10), size=3, shape=21) + 
    geom_sf(data=egg2 %&gt;%  filter(is.na(doy)),  size=3, shape=3, col=&quot;black&quot;, stroke=1.1) +coord_sf(xlim=c(-66.5,-60), ylim=c(45.5,49.5)) +
@@ -815,8 +819,9 @@ pf&lt;- basemap2 + geom_path(data=emap, aes(x=longitude, y=latitude)) + geom_sf(
         legend.text = element_text(size=14),
         plot.background = element_blank(),
         strip.placement = &quot;outside&quot;)
+saveRDS(pf, file=paste0(root,&quot;img/&quot;, my.year,&quot;/MAP_egg_temperature_flip.RDS&quot;))
 
-ggsave(paste0(&quot;img/&quot;, my.year,&quot;/MAP_egg_temperature_flip.png&quot;), width=6, height=7, dpi=600, units=&quot;in&quot;, bg=&quot;transparent&quot;)
+ggsave(paste0(root,&quot;img/&quot;, my.year,&quot;/MAP_egg_temperature_flip.png&quot;), width=6, height=7, dpi=600, units=&quot;in&quot;, bg=&quot;transparent&quot;)
 </code></pre>
 <div id="checks" class="section level3 tabset" number="2.3.1">
 <h3 class="tabset"><span class="header-section-number">2.3.1</span>
@@ -1126,7 +1131,7 @@ po&lt;- ggplot(eggt1 %&gt;%  filter(set_duration &lt; 2000), aes(y = volume, x =
     geom_point(data=eggt1 %&gt;%  filter(year %in% (my.year-1): my.year,set_duration &lt; 2000), aes(col = as.factor(year)), size=0.8) +
   scale_color_manual(values=c(&quot;blue&quot;,&quot;black&quot;), name=&quot;&quot;)  +
   scale_fill_manual(values=c( &quot;blue&quot;,&quot;black&quot;), name=&quot;&quot;) +theme(legend.position = &quot;none&quot;)
-ggsave(paste0(&quot;img/&quot;, my.year,&quot;/Volume_validation.png&quot;), width=6, height=4, dpi=600, units=&quot;in&quot;)
+ggsave(paste0(root,&quot;img/&quot;, my.year,&quot;/Volume_validation.png&quot;), width=6, height=4, dpi=600, units=&quot;in&quot;)
 </code></pre>
 </div>
 <div id="mapdepth-sampled" class="section level4" number="2.3.1.3">
@@ -1154,7 +1159,7 @@ eggt1filter&lt;-eggt1filter%&gt;%  dplyr::mutate(outliers_depth = if_else(DEP==0
                                      outliers_depth= recode_factor(outliers_depth, `No egg`=&quot;No egg&quot;, `Depth within CI`=&quot;Depth within CI&quot;,`Depth &lt; CI`=&quot;Depth &lt; CI&quot;, `Depth &gt; CI`=&quot;Depth &gt; CI&quot;),
                                      outliers_depthFR= recode_factor(outliers_depth, `Sans oeuf`=&quot;Sans oeuf&quot;,`Depth within CI` = &quot;Profondeur à l&#39;intérieur des IC&quot;, 
                                                                      `Depth &lt; CI` = &quot;Profondeur &lt; IC&quot;,
-                                                                     `Depth &gt; CI` = &quot;Profondeur &gt; IC&quot;)) %&gt;%  as_tibble() %&gt;% dplyr::filter(year %in% c(1996,(as.numeric(as.character(my.year))-1): as.numeric(as.character(my.year)))) 
+                                                                     `Depth &gt; CI` = &quot;Profondeur &gt; IC&quot;)) %&gt;%  as_tibble() %&gt;% dplyr::filter(year %in% c((as.numeric(as.character(my.year))-1): as.numeric(as.character(my.year)))) 
 
 
 
@@ -1183,7 +1188,7 @@ eggt1filter %&gt;% filter(!is.na(outliers_depth)) %&gt;%
   facet_wrap(~year)</code></pre>
 <p><img src="1.0_read_files/figure-html/depth2-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>                          
-ggsave(paste0(&quot;img/&quot;, my.year,&quot;/Depth_validation.png&quot;), width=7, height=4, dpi=600, units=&quot;in&quot;)
+ggsave(paste0(root,&quot;img/&quot;, my.year,&quot;/Depth_validation.png&quot;), width=7, height=4, dpi=600, units=&quot;in&quot;)
 
          </code></pre>
 </div>

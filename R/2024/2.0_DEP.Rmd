@@ -15,15 +15,17 @@ output:
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6, message=F, warning=F)
 options(width = 200)
-knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 my.year <- 2024 
 
-new=F
+new=T
+root<- "../../"
+
 
 ```    
 
-```{r code=readLines(paste0('R/',my.year,'/0.0_settings.R'))}
+```{r code=readLines(paste0('0.0_settings.R'))}
 ```
 
 
@@ -32,6 +34,7 @@ new=F
 
 ```{r inlamesh, message = F}
 ###INLA mesh###
+setwd(rprojroot::find_rstudio_root_file())
 load(file=paste0("data/",my.year,"/eggt1.RData"))
 
 loc_egg1 <- make_boundary(dat = eggt1, year=my.year, trajet = 1)
@@ -51,6 +54,7 @@ saveRDS(predstation, paste0("data/",my.year,"/INLA/prediction_grid_station", my.
 
 ## Spatial field 
 ```{r inla analysis, message = F, fig.width = 12, fig.height = 4}
+setwd(rprojroot::find_rstudio_root_file())
 if(new) INLA_ZAG(dat = eggt1, res_mesh = 150, res_pred = "station", year=my.year, Rvar = "DEP", trajet = 1)
 
 res_mesh = 150
@@ -75,7 +79,7 @@ annotate_figure(spfield[[2]],"Gamma")
   
 ## Coefficients 
 ```{r inla smoothers, message = F}
- 
+ setwd(rprojroot::find_rstudio_root_file())
   plotSmoother(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="binomial",smoother=smoother)
   plotSmoother(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="gamma",smoother=smoother)
   
@@ -91,7 +95,7 @@ kable(fixed_effect2, caption="fixed effect Gamma model")
   
 ## Range  
 ```{r inla range, message = F}
-
+setwd(rprojroot::find_rstudio_root_file())
   rbern<- myrange(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="binomial")
 kable(rbern, caption="Range for the Bernoulli model")
   rgamma<- myrange(dir=paste0("results/",my.year,"/INLA/"),name=name, subfamily="gamma")
@@ -102,7 +106,7 @@ kable(rbern, caption="Range for the Bernoulli model")
  
 ## Validation
 ```{r inla validation, message = F, fig.height=4}
-
+setwd(rprojroot::find_rstudio_root_file())
 validation_ZAG(dir=paste0("results/",my.year,"/INLA/"),name=name,
                         rvarpos=2, varpos=5)
 
@@ -111,6 +115,8 @@ validation_ZAG(dir=paste0("results/",my.year,"/INLA/"),name=name,
 
 ## INLA cross-validation
 ```{r inla crvalidation, message = F, fig.height=4, fig.width=6}
+
+setwd(rprojroot::find_rstudio_root_file())
 load(file=paste0("data/",my.year,"/INLA/INLA_CV_eggdata.RData"))
 
 #do not need to do every year.
@@ -151,8 +157,8 @@ pcv + scale_x_continuous(name = "PJO calculées (N/m²/day) | Calculated DEP (N/
 
 ## DEP MAPs
 ```{r DEP, message = F}
-predt1 <- read.delim(paste0("results/",my.year,"/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG", my.year, "_trajet1.txt"))
-lookup <-  read.delim("data/lookup_station_egg.txt")
+predt1 <- read.delim(paste0(root,"results/",my.year,"/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG", my.year, "_trajet1.txt"))
+lookup <-  read.delim(paste0(root,"data/lookup_station_egg.txt"))
 
 
 DEPt1a <- full_join(eggt1 %>%  mutate(station=as.numeric(station),
@@ -175,9 +181,9 @@ basemap2 +
   scale_size_continuous(name="",breaks=c(seq(0, ceiling(max(DEP$DEP)), 50)),range=c(0.25,5)) 
 
 
-ggsave(paste0("img/",my.year,"/DEP.png"), width=4, height=4.8, dpi=600, units="in")
+ggsave(paste0(root,"img/",my.year,"/DEP.png"), width=4, height=4.8, dpi=600, units="in")
 
-save(DEP,  file=paste0("data/",my.year,"/DEP.RData"))
+save(DEP,  file=paste0(root,"data/",my.year,"/DEP.RData"))
 
 
 all_years= data.frame(year=seq(1979, my.year, 1))
@@ -190,7 +196,7 @@ left_join(all_years,DEP) %>%
   ylab("Production journalière d'oeufs (N/m²/jour)\nDaily egg production (N/m²/day)")+
   xlab("Ann\u00E9e\nYear")
 
-ggsave(paste0("img/",my.year,"/DEP_trajet1_year.png"),width = 6, height = 4, unit = "in", dpi = 600)
+ggsave(paste0(root,"img/",my.year,"/DEP_trajet1_year.png"),width = 6, height = 4, unit = "in", dpi = 600)
 
 ```
 
