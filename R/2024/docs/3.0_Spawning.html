@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2025-01-31" />
+<meta name="date" content="2025-02-13" />
 
 <title>Spawning</title>
 
@@ -377,7 +377,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Spawning</h1>
-<h4 class="date">2025-01-31</h4>
+<h4 class="date">2025-02-13</h4>
 
 </div>
 
@@ -444,7 +444,7 @@ log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=func
 #source(paste0(&quot;R/&quot;,year_to_report,&quot;/INLA/getvar.R&quot;)) # needs to be retought</code></pre>
 <pre class="r"><code>root&lt;- &quot;../../&quot;
 
-new=T
+new=F
 N=100
 load(file=paste0(root,&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
 load(file=paste0(root,&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
@@ -1711,7 +1711,7 @@ wa&lt;- list(newprop %&gt;% group_by(year) %&gt;%  summarize(maxstage6 =weighted
                           ifelse(year %in% c(2022, 2023), &quot;uncertain&quot;, &quot;OK&quot;))))
 
 sd_diff&lt;- wa %&gt;%  filter(year!=2022)%&gt;%  reframe(meandiff_xmid6= sd(xmid-maxstage6, na.rm=T) )
- bias&lt;-  ggplot(data=wa,aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col=&quot;red&quot;, lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
+ bias&lt;-  ggplot(data=wa %&gt;%  filter(year !=2022),aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col=&quot;red&quot;, lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col=&quot;black&quot;, lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
     scale_fill_manual(values=c(&quot;#ff6a6a&quot;,&quot;white&quot;, &quot;dodgerblue&quot;, &quot;seagreen3&quot;), guide=&quot;none&quot;) +theme_few()
   
  
@@ -1754,6 +1754,8 @@ larvae</h5>
   
   pl1EN&lt;- pl1 + scale_x_continuous(name=&quot;Year&quot;, breaks=seq(1980, my.year, 5)) + ylab(&quot;Proportion of larvae&quot;)
   pl2EN&lt;- pl2 + scale_x_continuous(name=&quot;Proportion of spawning before median date&quot;) + ylab(&quot;Proportion of larvae&quot;)
+  ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/spawning/Valdiation_spawning_larvesEN2.png&quot;), width=6, height=5)
+
   
   ggarrange(pl1EN, pl2EN, common.legend=T, legend=&quot;bottom&quot;, ncol=1)</code></pre>
 <p><img src="3.0_Spawning_files/figure-html/spawn%20larvae-1.png" width="864" style="display: block; margin: auto;" /></p>

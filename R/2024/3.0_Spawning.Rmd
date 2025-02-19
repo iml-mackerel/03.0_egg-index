@@ -31,7 +31,7 @@ year_to_plot= (my.year-5) : my.year
 ```{r settings}
 root<- "../../"
 
-new=T
+new=F
 N=100
 load(file=paste0(root,"data/",my.year,"/DEP.RData"))
 load(file=paste0(root,"data/",my.year,"/eggt1.RData"))
@@ -425,7 +425,7 @@ wa<- list(newprop %>% group_by(year) %>%  summarize(maxstage6 =weighted.mean(doy
                           ifelse(year %in% c(2022, 2023), "uncertain", "OK"))))
 
 sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstage6, na.rm=T) )
- bias<-  ggplot(data=wa,aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col="red", lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
+ bias<-  ggplot(data=wa %>%  filter(year !=2022),aes(x=xmid, y=maxstage6)) +geom_abline(intercept=0,slope=1, col="red", lty=2)+geom_abline(intercept=-1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_abline(intercept=1.96*sd_diff$meandiff_xmid6,slope=1, col="black", lty=2)+geom_label(aes(label=year, fill=for_fill), alpha=0.5)+
     scale_fill_manual(values=c("#ff6a6a","white", "dodgerblue", "seagreen3"), guide="none") +theme_few()
   
  
@@ -466,6 +466,8 @@ sd_diff<- wa %>%  filter(year!=2022)%>%  reframe(meandiff_xmid6= sd(xmid-maxstag
   
   pl1EN<- pl1 + scale_x_continuous(name="Year", breaks=seq(1980, my.year, 5)) + ylab("Proportion of larvae")
   pl2EN<- pl2 + scale_x_continuous(name="Proportion of spawning before median date") + ylab("Proportion of larvae")
+  ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesEN2.png"), width=6, height=5)
+
   
   ggarrange(pl1EN, pl2EN, common.legend=T, legend="bottom", ncol=1)
   ggsave(paste0(root,"img/",my.year,"/spawning/Valdiation_spawning_larvesEN.png"), width=9, height=8)
