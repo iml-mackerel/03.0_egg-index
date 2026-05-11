@@ -1,8 +1,5 @@
 PL_Taxonomic_Grouping <- function(df.data, df.filter) {
 
-  ## required packages
-  library(dplyr)
-  library(tidyr)
 
   ## subset input data to taxonomic_name appearing in filter
   target_names <- base::unique(df.filter$taxonomic_name)

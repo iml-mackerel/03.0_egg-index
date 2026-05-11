@@ -15,8 +15,6 @@ PL_Biochem_Data <- function(sql_file, output_file, host, port, sid, username, pa
   # Benoit.Casault
   
   # source custom functions
-  source("R/biochem/Run_Database_Query.R")
-  
   # get the data
   data <- Run_Database_Query(sql_file, host, port, sid, username, password)
 
@@ -90,7 +88,7 @@ PL_Biochem_Data <- function(sql_file, output_file, host, port, sid, username, pa
   
     # print to tsv (tab seperated values) file
  
-  write.table(df, file=gsub(output_file, pattern="RData", replacement="tsv"), dec=".", sep="\t")
+  write.table(df, file=gsub(output_file, pattern="RDS", replacement="tsv"), dec=".", sep="\t", row.names=F)
   write_rds(df, file=output_file)
   
   return()

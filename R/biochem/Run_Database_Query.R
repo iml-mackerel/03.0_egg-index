@@ -16,12 +16,8 @@ Run_Database_Query <- function(sql_file, host, port, sid, username, password) {
   # Last update: 20141015
   # Benoit.Casault@dfo-mpo.gc.ca
   
-  # load odbc library
-  library(ROracle)
-  
   # source custom functions
-  source("R/biochem/Read_SQL.R")
-  
+
   # declare empty list to store outputs
   data <- list()
   
