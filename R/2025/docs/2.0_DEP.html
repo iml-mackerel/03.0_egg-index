@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2026-04-29" />
+
+<title>Read</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel Egg production</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fa fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Read</a>
+</li>
+<li>
+  <a href="2.0_DEP.html">DEP</a>
+</li>
+<li>
+  <a href="3.0_Spawning.html">Spawning</a>
+</li>
+<li>
+  <a href="3.0_Spawning_female_sensitivity.html">Spawning female sensitivity</a>
+</li>
+<li>
+  <a href="4.0_TEP.html">TEP</a>
+</li>
+<li>
+  <a href="5.0_Exploration.html">Exploration</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Read</h1>
+<h4 class="date">2026-04-29</h4>
+
+</div>
+
+
+<pre><code>## Warning: le package &#39;knitr&#39; a été compilé avec la version R 4.4.3</code></pre>
+<pre class="r"><code>##### my packages ################################################################################
+## CRAN
+cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,&#39;nngeo&#39;,
+                   &#39;fields&#39;, &#39;inlabru&#39;, &#39;sf&#39;, &#39;PresenceAbsence&#39;, &#39;verification&#39;, &#39;raster&#39;,
+                   &#39;scales&#39;, &#39;nlme&#39;,&#39;nls.multstart&#39;, &#39;stringr&#39;, &#39;ggforce&#39;,&quot;readxl&quot;, &quot;marmap&quot;)
+
+
+install.this &lt;- cran.packages[!(cran.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(length(install.this)&gt;=1) install.packages(install.this)
+dummy &lt;- lapply(cran.packages, require, character.only = TRUE)
+
+## github
+git.packages &lt;- c(&#39;catchR&#39;,&#39;DFOdata&#39;,&#39;CCAM&#39;, &#39;INLA&#39;)
+install.this &lt;- git.packages[!(git.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
+if(&#39;catchR&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/catchR@eli_parallel&quot;)
+if(&#39;DFOdata&#39; %in% install.this)  devtools::install_github(&quot;iml-assess/DFOdata&quot;)
+if(&#39;CCAM&#39; %in% install.this)  devtools::install_github(&quot;elisvb/CCAM&quot;)
+if(&#39;INLA&#39; %in% install.this)install.packages(&quot;INLA&quot;,repos=c(getOption(&quot;repos&quot;),INLA=&quot;https://inla.r-inla-download.org/R/stable&quot;), dep=TRUE)
+
+dummy &lt;- lapply(git.packages, require, character.only = TRUE)
+
+##### source R directory  ############################################################################
+#invisible(sapply(list.files(pattern=&quot;[.]R$&quot;, path=&quot;R/&quot;, full.names=TRUE), source))
+
+##### my ggplot theme ################################################################################
+theme_set(theme_mackerel())             # theme_mackerel from catchR
+update_geom_defaults(&quot;line&quot;, list(size = 1))  # no idea why somethimes I get fat lines otherwise
+
+##### passwords databases #############################################################################
+source(&quot;../../bdOracle.R&quot;)
+
+source(paste0(&quot;utils/basemap.R&quot;)) #if error &quot;plot new has not been call&quot;, restart R, package compatibility issues
+source(paste0(&quot;utils/mackerel_fun_incubation.R&quot;)) # Mackerel incubation .
+source(paste0(&quot;utils/spatial_projections.R&quot;))#
+source(paste0(&quot;utils/extract_biochem.R&quot;))
+source(paste0(&quot;utils/extract_T0_10.R&quot;))
+source(paste0(&quot;INLA/Mesh.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_ZAG_covar_Stations_CV.R&quot;))
+source(paste0(&quot;utils/nlme_boot.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations.R&quot;))
+source(paste0(&quot;INLA/INLA_tw_covar_Stations_CV.R&quot;))
+
+source(paste0(&#39;INLA/plotSpatialFieldCL.R&#39;))
+source(paste0(&#39;INLA/plotSmoother.R&#39;))
+source(paste0(&#39;INLA/model_validation.R&#39;))
+source(paste0(&#39;INLA/get_prediction_grid.R&#39;))
+# load odbc library
+library(ROracle)
+folder &lt;- &quot;../biochem&quot;
+r_files &lt;- list.files(folder, pattern = &quot;\\.[rR]$&quot;, full.names = TRUE, recursive = TRUE)
+invisible(lapply(r_files, function(f) source(f)))
+
+log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
+
+#source(paste0(&quot;R/&quot;,year_to_report,&quot;/INLA/getvar.R&quot;)) # needs to be retought</code></pre>
+<div id="dep" class="section level1 tabset" number="1">
+<h1 class="tabset"><span class="header-section-number">1</span> DEP</h1>
+<div id="inla-mesh" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> INLA Mesh</h2>
+<pre class="r"><code>###INLA mesh###
+setwd(rprojroot::find_rstudio_root_file())
+load(file=paste0(&quot;data/&quot;,my.year,&quot;/eggt1.RData&quot;))
+
+loc_egg1 &lt;- make_boundary(dat = eggt1, year=my.year, trajet = 1)
+## Deleting source `data/2025/INLA/prediction_grid_area2025_trajet1.shp&#39; using driver `ESRI Shapefile&#39;
+## Writing layer `prediction_grid_area2025_trajet1&#39; to data source `data/2025/INLA/prediction_grid_area2025_trajet1.shp&#39; using driver `ESRI Shapefile&#39;
+## Writing 1 features with 0 fields and geometry type Polygon.
+make_mesh(range = 150, Loc = loc_egg1, year=my.year, trajet = 1)
+## Reading layer `prediction_grid_area2025_trajet1&#39; from data source `C:\LEHOUX\Maquereau\iml-mackerel\03.0_egg-index\data\2025\INLA\prediction_grid_area2025_trajet1.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 1 feature and 1 field
+## Geometry type: POLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 154156.8 ymin: 207793.2 xmax: 606003.4 ymax: 569285.9
+## Projected CRS: NAD83 / Quebec Lambert
+
+# prediction grid for INLA
+predstation &lt;- expand_grid(distinct(eggt1 %&gt;% dplyr::select(year)), eggt1 %&gt;% group_by(station) %&gt;% dplyr::summarise(x = mean(longitude, na.rm = T), y = mean(latitude, na.rm = T)) %&gt;% mutate(station = as.factor(station))) %&gt;%  
+  st_as_sf(coords=c(&quot;x&quot;, &quot;y&quot;), crs=4326, remove=F) %&gt;%  st_transform(lcc)
+
+predstation&lt;- bind_cols(predstation, st_coordinates(predstation) %&gt;%  as.data.frame() %&gt;%  dplyr::rename(X.m=X, Y.m=Y)) %&gt;%  st_drop_geometry()
+
+saveRDS(predstation, paste0(&quot;data/&quot;,my.year,&quot;/INLA/prediction_grid_station&quot;, my.year, &quot;.RDS&quot;))
+</code></pre>
+</div>
+<div id="spatial-field" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Spatial field</h2>
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
+if(new) INLA_ZAG(dat = eggt1, res_mesh = 150, res_pred = &quot;station&quot;, year=my.year, Rvar = &quot;DEP&quot;, trajet = 1)
+
+res_mesh = 150
+res_pred = &quot;station&quot;
+myfamily = &quot;ZAG&quot;
+minw = -10
+maxw = 10
+smoother = F
+Rvar = &quot;DEP&quot;
+trajet=1
+name = paste0(Rvar, &quot;_INLA_mesh&quot;, res_mesh,&quot;km_pred_&quot;,res_pred,&quot;_&quot;,myfamily,my.year,&quot;_trajet&quot;,trajet)
+ 
+  #extract predictions#
+get_prediction_grid(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;), dir.out=paste0(&quot;results/&quot;,my.year,&quot;/INLA/predictions/&quot;),name=name, trans=&quot;&quot;)
+
+  #plot random field#
+spfield&lt;-  plotSpatialFieldCL(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name ,minw=minw, maxw=maxw, my.year=my.year)
+ 
+annotate_figure(spfield[[1]], &quot;Bernouilli&quot;)</code></pre>
+<p><img src="2.0_DEP_files/figure-html/inla%20analysis-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>annotate_figure(spfield[[2]],&quot;Gamma&quot;)</code></pre>
+<p><img src="2.0_DEP_files/figure-html/inla%20analysis-2.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="coefficients" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Coefficients</h2>
+<pre class="r"><code> setwd(rprojroot::find_rstudio_root_file())
+  plotSmoother(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;binomial&quot;,smoother=smoother)
+  plotSmoother(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;gamma&quot;,smoother=smoother)
+  
+  
+  fixed_effect1 &lt;-  read.delim(paste0(&quot;results/&quot;,my.year,&quot;/INLA/fixed_effects_&quot;,name,&quot;binomial&quot;, &quot;.txt&quot;))
+kable(fixed_effect1, caption=&quot;fixed effect Bernoulli model&quot;)</code></pre>
+<table>
+<caption>fixed effect Bernoulli model</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">X0.025quant</th>
+<th align="right">X0.975quant</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Intercept</td>
+<td align="right">4.3599015</td>
+<td align="right">4.357369</td>
+<td align="right">-3.931294</td>
+<td align="right">13.161261</td>
+</tr>
+<tr class="even">
+<td align="left">station1.1</td>
+<td align="right">-0.0290114</td>
+<td align="right">4.231933</td>
+<td align="right">-8.400045</td>
+<td align="right">8.194456</td>
+</tr>
+<tr class="odd">
+<td align="left">station1.2</td>
+<td align="right">-1.1266358</td>
+<td align="right">4.267413</td>
+<td align="right">-9.619468</td>
+<td align="right">7.112257</td>
+</tr>
+<tr class="even">
+<td align="left">station1.3</td>
+<td align="right">-4.6884330</td>
+<td align="right">4.400880</td>
+<td align="right">-13.586304</td>
+<td align="right">3.677920</td>
+</tr>
+<tr class="odd">
+<td align="left">station1.4</td>
+<td align="right">-6.2931591</td>
+<td align="right">4.485275</td>
+<td align="right">-15.415852</td>
+<td align="right">2.180250</td>
+</tr>
+<tr class="even">
+<td align="left">station1.5</td>
+<td align="right">-6.9433002</td>
+<td align="right">4.549357</td>
+<td align="right">-16.229817</td>
+<td align="right">1.618132</td>
+</tr>
+<tr class="odd">
+<td align="left">station10.1</td>
+<td align="right">12.1237472</td>
+<td align="right">15.743335</td>
+<td align="right">-15.802630</td>
+<td align="right">45.431360</td>
+</tr>
+<tr class="even">
+<td align="left">station11.1</td>
+<td align="right">12.1734303</td>
+<td align="right">15.692767</td>
+<td align="right">-15.672016</td>
+<td align="right">45.376312</td>
+</tr>
+<tr class="odd">
+<td align="left">station12.1</td>
+<td align="right">0.7498267</td>
+<td align="right">4.232806</td>
+<td align="right">-7.556678</td>
+<td align="right">9.043093</td>
+</tr>
+<tr class="even">
+<td align="left">station2.1</td>
+<td align="right">1.0204634</td>
+<td align="right">4.178285</td>
+<td align="right">-7.189906</td>
+<td align="right">9.196479</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.2</td>
+<td align="right">0.8852152</td>
+<td align="right">4.198229</td>
+<td align="right">-7.380638</td>
+<td align="right">9.082928</td>
+</tr>
+<tr class="even">
+<td align="left">station2.3</td>
+<td align="right">-2.0224913</td>
+<td align="right">4.311025</td>
+<td align="right">-10.657413</td>
+<td align="right">6.248400</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.4</td>
+<td align="right">-2.9976051</td>
+<td align="right">4.340571</td>
+<td align="right">-11.722449</td>
+<td align="right">5.300423</td>
+</tr>
+<tr class="even">
+<td align="left">station2.5</td>
+<td align="right">-4.7397538</td>
+<td align="right">4.393157</td>
+<td align="right">-13.619955</td>
+<td align="right">3.613637</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.6</td>
+<td align="right">-6.2901797</td>
+<td align="right">4.478951</td>
+<td align="right">-15.398502</td>
+<td align="right">2.172459</td>
+</tr>
+<tr class="even">
+<td align="left">station3.1</td>
+<td align="right">0.2195219</td>
+<td align="right">4.229811</td>
+<td align="right">-8.106497</td>
+<td align="right">8.483175</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.2</td>
+<td align="right">0.1323706</td>
+<td align="right">4.223658</td>
+<td align="right">-8.190441</td>
+<td align="right">8.375949</td>
+</tr>
+<tr class="even">
+<td align="left">station3.3</td>
+<td align="right">1.0674373</td>
+<td align="right">4.201594</td>
+<td align="right">-7.181648</td>
+<td align="right">9.297718</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.4</td>
+<td align="right">-1.2503092</td>
+<td align="right">4.236983</td>
+<td align="right">-9.671248</td>
+<td align="right">6.941606</td>
+</tr>
+<tr class="even">
+<td align="left">station3.5</td>
+<td align="right">-0.1052663</td>
+<td align="right">4.224946</td>
+<td align="right">-8.480904</td>
+<td align="right">8.087538</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.6</td>
+<td align="right">-3.0078151</td>
+<td align="right">4.346715</td>
+<td align="right">-11.748015</td>
+<td align="right">5.297952</td>
+</tr>
+<tr class="even">
+<td align="left">station3.7</td>
+<td align="right">-3.9847994</td>
+<td align="right">4.367496</td>
+<td align="right">-12.785740</td>
+<td align="right">4.343800</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.8</td>
+<td align="right">-6.0241849</td>
+<td align="right">4.450439</td>
+<td align="right">-15.055188</td>
+<td align="right">2.403650</td>
+</tr>
+<tr class="even">
+<td align="left">station3.9</td>
+<td align="right">-6.4300260</td>
+<td align="right">4.486038</td>
+<td align="right">-15.550870</td>
+<td align="right">2.048034</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.1</td>
+<td align="right">0.1006798</td>
+<td align="right">4.200782</td>
+<td align="right">-8.182946</td>
+<td align="right">8.289809</td>
+</tr>
+<tr class="even">
+<td align="left">station4.2</td>
+<td align="right">0.0750967</td>
+<td align="right">4.242131</td>
+<td align="right">-8.274181</td>
+<td align="right">8.368342</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.3</td>
+<td align="right">1.0163817</td>
+<td align="right">4.264693</td>
+<td align="right">-7.293721</td>
+<td align="right">9.386729</td>
+</tr>
+<tr class="even">
+<td align="left">station4.4</td>
+<td align="right">0.8734104</td>
+<td align="right">4.197707</td>
+<td align="right">-7.395778</td>
+<td align="right">9.065924</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.5</td>
+<td align="right">-0.4950665</td>
+<td align="right">4.256698</td>
+<td align="right">-8.959743</td>
+<td align="right">7.730179</td>
+</tr>
+<tr class="even">
+<td align="left">station4.6</td>
+<td align="right">-2.8328689</td>
+<td align="right">4.332505</td>
+<td align="right">-11.533819</td>
+<td align="right">5.456460</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.7</td>
+<td align="right">-3.4697366</td>
+<td align="right">4.352064</td>
+<td align="right">-12.226594</td>
+<td align="right">4.841309</td>
+</tr>
+<tr class="even">
+<td align="left">station4.8</td>
+<td align="right">-4.7426388</td>
+<td align="right">4.397835</td>
+<td align="right">-13.630247</td>
+<td align="right">3.619925</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.9</td>
+<td align="right">-6.5475134</td>
+<td align="right">4.476794</td>
+<td align="right">-15.645857</td>
+<td align="right">1.917091</td>
+</tr>
+<tr class="even">
+<td align="left">station5.1</td>
+<td align="right">12.1494271</td>
+<td align="right">16.517949</td>
+<td align="right">-16.577279</td>
+<td align="right">47.220391</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.2</td>
+<td align="right">-1.4406774</td>
+<td align="right">4.284084</td>
+<td align="right">-9.990358</td>
+<td align="right">6.807085</td>
+</tr>
+<tr class="even">
+<td align="left">station5.3</td>
+<td align="right">-1.2171285</td>
+<td align="right">4.281030</td>
+<td align="right">-9.752671</td>
+<td align="right">7.031486</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.4</td>
+<td align="right">-1.6006175</td>
+<td align="right">4.302332</td>
+<td align="right">-10.201903</td>
+<td align="right">6.666233</td>
+</tr>
+<tr class="even">
+<td align="left">station5.5</td>
+<td align="right">-2.5622606</td>
+<td align="right">4.325649</td>
+<td align="right">-11.242069</td>
+<td align="right">5.721019</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.6</td>
+<td align="right">-3.4881004</td>
+<td align="right">4.354833</td>
+<td align="right">-12.255573</td>
+<td align="right">4.824439</td>
+</tr>
+<tr class="even">
+<td align="left">station5.7</td>
+<td align="right">-5.1462274</td>
+<td align="right">4.408765</td>
+<td align="right">-14.064258</td>
+<td align="right">3.230214</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.1</td>
+<td align="right">0.6012246</td>
+<td align="right">4.204210</td>
+<td align="right">-7.675574</td>
+<td align="right">8.812188</td>
+</tr>
+<tr class="even">
+<td align="left">station6.2</td>
+<td align="right">-0.1451027</td>
+<td align="right">4.234288</td>
+<td align="right">-8.534294</td>
+<td align="right">8.068792</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.3</td>
+<td align="right">-0.3909327</td>
+<td align="right">4.275975</td>
+<td align="right">-8.892718</td>
+<td align="right">7.871558</td>
+</tr>
+<tr class="even">
+<td align="left">station6.4</td>
+<td align="right">-1.7687155</td>
+<td align="right">4.305096</td>
+<td align="right">-10.384024</td>
+<td align="right">6.498755</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.5</td>
+<td align="right">-1.6501484</td>
+<td align="right">4.308953</td>
+<td align="right">-10.276199</td>
+<td align="right">6.621004</td>
+</tr>
+<tr class="even">
+<td align="left">station6.6</td>
+<td align="right">-1.3807908</td>
+<td align="right">4.299029</td>
+<td align="right">-9.978182</td>
+<td align="right">6.879317</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.7</td>
+<td align="right">-3.4090610</td>
+<td align="right">4.346805</td>
+<td align="right">-12.150657</td>
+<td align="right">4.897147</td>
+</tr>
+<tr class="even">
+<td align="left">station6.8</td>
+<td align="right">-4.8905299</td>
+<td align="right">4.438762</td>
+<td align="right">-13.851275</td>
+<td align="right">3.559456</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.1</td>
+<td align="right">12.1494717</td>
+<td align="right">15.904256</td>
+<td align="right">-15.967856</td>
+<td align="right">45.873006</td>
+</tr>
+<tr class="even">
+<td align="left">station7.2</td>
+<td align="right">12.3170571</td>
+<td align="right">15.220179</td>
+<td align="right">-14.762185</td>
+<td align="right">44.544512</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.3</td>
+<td align="right">0.3881489</td>
+<td align="right">4.305057</td>
+<td align="right">-8.154406</td>
+<td align="right">8.723447</td>
+</tr>
+<tr class="even">
+<td align="left">station7.4</td>
+<td align="right">-0.2440834</td>
+<td align="right">4.286992</td>
+<td align="right">-8.770902</td>
+<td align="right">8.036896</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.5</td>
+<td align="right">-1.1347289</td>
+<td align="right">4.287985</td>
+<td align="right">-9.692386</td>
+<td align="right">7.121140</td>
+</tr>
+<tr class="even">
+<td align="left">station7.6</td>
+<td align="right">-2.4428124</td>
+<td align="right">4.327155</td>
+<td align="right">-11.125417</td>
+<td align="right">5.844844</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.7</td>
+<td align="right">-3.7865964</td>
+<td align="right">4.362165</td>
+<td align="right">-12.565209</td>
+<td align="right">4.544167</td>
+</tr>
+<tr class="even">
+<td align="left">station8.1</td>
+<td align="right">-0.4057475</td>
+<td align="right">4.227265</td>
+<td align="right">-8.771190</td>
+<td align="right">7.804866</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.2</td>
+<td align="right">0.6848522</td>
+<td align="right">4.235418</td>
+<td align="right">-7.670352</td>
+<td align="right">8.938192</td>
+</tr>
+<tr class="even">
+<td align="left">station8.3</td>
+<td align="right">1.1174983</td>
+<td align="right">4.290876</td>
+<td align="right">-7.348818</td>
+<td align="right">9.475649</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.4</td>
+<td align="right">12.4039744</td>
+<td align="right">14.965862</td>
+<td align="right">-14.293087</td>
+<td align="right">44.054260</td>
+</tr>
+<tr class="even">
+<td align="left">station8.5</td>
+<td align="right">12.3578325</td>
+<td align="right">15.099571</td>
+<td align="right">-14.549298</td>
+<td align="right">44.273152</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.6</td>
+<td align="right">-1.7522470</td>
+<td align="right">4.318219</td>
+<td align="right">-10.401289</td>
+<td align="right">6.532952</td>
+</tr>
+<tr class="even">
+<td align="left">station8.7</td>
+<td align="right">-2.4316072</td>
+<td align="right">4.331812</td>
+<td align="right">-11.118166</td>
+<td align="right">5.869472</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.1</td>
+<td align="right">-0.0754905</td>
+<td align="right">4.236430</td>
+<td align="right">-8.447177</td>
+<td align="right">8.163552</td>
+</tr>
+<tr class="even">
+<td align="left">station9.2</td>
+<td align="right">12.1542423</td>
+<td align="right">15.894776</td>
+<td align="right">-15.948678</td>
+<td align="right">45.859094</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.3</td>
+<td align="right">12.1967427</td>
+<td align="right">15.655455</td>
+<td align="right">-15.558112</td>
+<td align="right">45.352013</td>
+</tr>
+<tr class="even">
+<td align="left">station9.4</td>
+<td align="right">-0.0787219</td>
+<td align="right">4.237130</td>
+<td align="right">-8.468364</td>
+<td align="right">8.146076</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.5</td>
+<td align="right">0.8502266</td>
+<td align="right">4.251519</td>
+<td align="right">-7.537247</td>
+<td align="right">9.134434</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>
+
+ fixed_effect2 &lt;-  read.delim(paste0(&quot;results/&quot;,my.year,&quot;/INLA/fixed_effects_&quot;,name,&quot;gamma&quot;, &quot;.txt&quot;))
+kable(fixed_effect2, caption=&quot;fixed effect Gamma model&quot;)</code></pre>
+<table>
+<caption>fixed effect Gamma model</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">X0.025quant</th>
+<th align="right">X0.975quant</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Intercept</td>
+<td align="right">2.0430186</td>
+<td align="right">3.866331</td>
+<td align="right">-5.538474</td>
+<td align="right">9.624510</td>
+</tr>
+<tr class="even">
+<td align="left">station1.1</td>
+<td align="right">-0.3057156</td>
+<td align="right">3.877032</td>
+<td align="right">-7.908188</td>
+<td align="right">7.296763</td>
+</tr>
+<tr class="odd">
+<td align="left">station1.2</td>
+<td align="right">-0.4637338</td>
+<td align="right">3.875681</td>
+<td align="right">-8.063553</td>
+<td align="right">7.136100</td>
+</tr>
+<tr class="even">
+<td align="left">station1.3</td>
+<td align="right">-2.0974976</td>
+<td align="right">3.884886</td>
+<td align="right">-9.715367</td>
+<td align="right">5.520384</td>
+</tr>
+<tr class="odd">
+<td align="left">station1.4</td>
+<td align="right">-3.3746263</td>
+<td align="right">3.907407</td>
+<td align="right">-11.036663</td>
+<td align="right">4.287414</td>
+</tr>
+<tr class="even">
+<td align="left">station1.5</td>
+<td align="right">-4.8470803</td>
+<td align="right">3.923379</td>
+<td align="right">-12.540451</td>
+<td align="right">2.846265</td>
+</tr>
+<tr class="odd">
+<td align="left">station10.1</td>
+<td align="right">1.3806188</td>
+<td align="right">3.874361</td>
+<td align="right">-6.216616</td>
+<td align="right">8.977860</td>
+</tr>
+<tr class="even">
+<td align="left">station11.1</td>
+<td align="right">2.4046926</td>
+<td align="right">3.876513</td>
+<td align="right">-5.196759</td>
+<td align="right">10.006155</td>
+</tr>
+<tr class="odd">
+<td align="left">station12.1</td>
+<td align="right">0.5461721</td>
+<td align="right">3.880167</td>
+<td align="right">-7.062459</td>
+<td align="right">8.154788</td>
+</tr>
+<tr class="even">
+<td align="left">station2.1</td>
+<td align="right">-0.2102380</td>
+<td align="right">3.874823</td>
+<td align="right">-7.808375</td>
+<td align="right">7.387910</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.2</td>
+<td align="right">-0.6997133</td>
+<td align="right">3.873925</td>
+<td align="right">-8.296090</td>
+<td align="right">6.896675</td>
+</tr>
+<tr class="even">
+<td align="left">station2.3</td>
+<td align="right">-0.9902063</td>
+<td align="right">3.874264</td>
+<td align="right">-8.587251</td>
+<td align="right">6.606845</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.4</td>
+<td align="right">-1.9323441</td>
+<td align="right">3.875745</td>
+<td align="right">-9.532296</td>
+<td align="right">5.667605</td>
+</tr>
+<tr class="even">
+<td align="left">station2.5</td>
+<td align="right">-2.5197487</td>
+<td align="right">3.882181</td>
+<td align="right">-10.132324</td>
+<td align="right">5.092818</td>
+</tr>
+<tr class="odd">
+<td align="left">station2.6</td>
+<td align="right">-3.0674793</td>
+<td align="right">3.898743</td>
+<td align="right">-10.712518</td>
+<td align="right">4.577578</td>
+</tr>
+<tr class="even">
+<td align="left">station3.1</td>
+<td align="right">0.8971264</td>
+<td align="right">3.877743</td>
+<td align="right">-6.706734</td>
+<td align="right">8.501005</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.2</td>
+<td align="right">0.0544537</td>
+<td align="right">3.875306</td>
+<td align="right">-7.544634</td>
+<td align="right">7.653548</td>
+</tr>
+<tr class="even">
+<td align="left">station3.3</td>
+<td align="right">0.2544848</td>
+<td align="right">3.873737</td>
+<td align="right">-7.341524</td>
+<td align="right">7.850503</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.4</td>
+<td align="right">-0.5988866</td>
+<td align="right">3.873109</td>
+<td align="right">-8.193663</td>
+<td align="right">6.995900</td>
+</tr>
+<tr class="even">
+<td align="left">station3.5</td>
+<td align="right">-0.8191304</td>
+<td align="right">3.872079</td>
+<td align="right">-8.411893</td>
+<td align="right">6.773634</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.6</td>
+<td align="right">-1.1544019</td>
+<td align="right">3.876062</td>
+<td align="right">-8.754978</td>
+<td align="right">6.446167</td>
+</tr>
+<tr class="even">
+<td align="left">station3.7</td>
+<td align="right">-1.2584439</td>
+<td align="right">3.880962</td>
+<td align="right">-8.868626</td>
+<td align="right">6.351737</td>
+</tr>
+<tr class="odd">
+<td align="left">station3.8</td>
+<td align="right">-2.5393098</td>
+<td align="right">3.894814</td>
+<td align="right">-10.176660</td>
+<td align="right">5.098030</td>
+</tr>
+<tr class="even">
+<td align="left">station3.9</td>
+<td align="right">-3.9706812</td>
+<td align="right">3.905004</td>
+<td align="right">-11.628018</td>
+<td align="right">3.686635</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.1</td>
+<td align="right">0.0070138</td>
+<td align="right">3.877120</td>
+<td align="right">-7.595632</td>
+<td align="right">7.609665</td>
+</tr>
+<tr class="even">
+<td align="left">station4.2</td>
+<td align="right">0.9159826</td>
+<td align="right">3.875023</td>
+<td align="right">-6.682548</td>
+<td align="right">8.514522</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.3</td>
+<td align="right">1.2500328</td>
+<td align="right">3.873247</td>
+<td align="right">-6.345018</td>
+<td align="right">8.845090</td>
+</tr>
+<tr class="even">
+<td align="left">station4.4</td>
+<td align="right">-0.3694886</td>
+<td align="right">3.872089</td>
+<td align="right">-7.962267</td>
+<td align="right">7.223297</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.5</td>
+<td align="right">-0.3978995</td>
+<td align="right">3.872201</td>
+<td align="right">-7.990903</td>
+<td align="right">7.195100</td>
+</tr>
+<tr class="even">
+<td align="left">station4.6</td>
+<td align="right">0.6683075</td>
+<td align="right">3.874771</td>
+<td align="right">-6.929740</td>
+<td align="right">8.266345</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.7</td>
+<td align="right">-0.0793640</td>
+<td align="right">3.876211</td>
+<td align="right">-7.680233</td>
+<td align="right">7.521497</td>
+</tr>
+<tr class="even">
+<td align="left">station4.8</td>
+<td align="right">-1.4074904</td>
+<td align="right">3.882208</td>
+<td align="right">-9.020122</td>
+<td align="right">6.205129</td>
+</tr>
+<tr class="odd">
+<td align="left">station4.9</td>
+<td align="right">-3.6178223</td>
+<td align="right">3.898634</td>
+<td align="right">-11.262659</td>
+<td align="right">4.027009</td>
+</tr>
+<tr class="even">
+<td align="left">station5.1</td>
+<td align="right">0.8577402</td>
+<td align="right">3.873047</td>
+<td align="right">-6.736920</td>
+<td align="right">8.452403</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.2</td>
+<td align="right">0.7346664</td>
+<td align="right">3.872662</td>
+<td align="right">-6.859239</td>
+<td align="right">8.328575</td>
+</tr>
+<tr class="even">
+<td align="left">station5.3</td>
+<td align="right">0.5765063</td>
+<td align="right">3.872744</td>
+<td align="right">-7.017563</td>
+<td align="right">8.170570</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.4</td>
+<td align="right">0.9044688</td>
+<td align="right">3.872420</td>
+<td align="right">-6.688965</td>
+<td align="right">8.497899</td>
+</tr>
+<tr class="even">
+<td align="left">station5.5</td>
+<td align="right">1.1834583</td>
+<td align="right">3.873801</td>
+<td align="right">-6.412681</td>
+<td align="right">8.779597</td>
+</tr>
+<tr class="odd">
+<td align="left">station5.6</td>
+<td align="right">-0.4676847</td>
+<td align="right">3.876949</td>
+<td align="right">-8.070004</td>
+<td align="right">7.134620</td>
+</tr>
+<tr class="even">
+<td align="left">station5.7</td>
+<td align="right">-2.2739796</td>
+<td align="right">3.882563</td>
+<td align="right">-9.887305</td>
+<td align="right">5.339335</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.1</td>
+<td align="right">1.3281521</td>
+<td align="right">3.874103</td>
+<td align="right">-6.268578</td>
+<td align="right">8.924885</td>
+</tr>
+<tr class="even">
+<td align="left">station6.2</td>
+<td align="right">0.9635137</td>
+<td align="right">3.872589</td>
+<td align="right">-6.630248</td>
+<td align="right">8.557279</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.3</td>
+<td align="right">1.0932110</td>
+<td align="right">3.871992</td>
+<td align="right">-6.499380</td>
+<td align="right">8.685804</td>
+</tr>
+<tr class="even">
+<td align="left">station6.4</td>
+<td align="right">1.3126723</td>
+<td align="right">3.872529</td>
+<td align="right">-6.280974</td>
+<td align="right">8.906315</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.5</td>
+<td align="right">1.2245436</td>
+<td align="right">3.872756</td>
+<td align="right">-6.369548</td>
+<td align="right">8.818633</td>
+</tr>
+<tr class="even">
+<td align="left">station6.6</td>
+<td align="right">0.5247971</td>
+<td align="right">3.873140</td>
+<td align="right">-7.070049</td>
+<td align="right">8.119636</td>
+</tr>
+<tr class="odd">
+<td align="left">station6.7</td>
+<td align="right">-0.9953868</td>
+<td align="right">3.878478</td>
+<td align="right">-8.600701</td>
+<td align="right">6.609919</td>
+</tr>
+<tr class="even">
+<td align="left">station6.8</td>
+<td align="right">-2.1985502</td>
+<td align="right">3.914407</td>
+<td align="right">-9.874321</td>
+<td align="right">5.477209</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.1</td>
+<td align="right">1.9339447</td>
+<td align="right">3.872597</td>
+<td align="right">-5.659831</td>
+<td align="right">9.527728</td>
+</tr>
+<tr class="even">
+<td align="left">station7.2</td>
+<td align="right">1.8496242</td>
+<td align="right">3.872182</td>
+<td align="right">-5.743339</td>
+<td align="right">9.442590</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.3</td>
+<td align="right">1.8065438</td>
+<td align="right">3.871903</td>
+<td align="right">-5.785872</td>
+<td align="right">9.398963</td>
+</tr>
+<tr class="even">
+<td align="left">station7.4</td>
+<td align="right">1.7879832</td>
+<td align="right">3.872842</td>
+<td align="right">-5.806277</td>
+<td align="right">9.382243</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.5</td>
+<td align="right">1.3651165</td>
+<td align="right">3.873278</td>
+<td align="right">-6.229996</td>
+<td align="right">8.960231</td>
+</tr>
+<tr class="even">
+<td align="left">station7.6</td>
+<td align="right">0.0741041</td>
+<td align="right">3.875519</td>
+<td align="right">-7.525408</td>
+<td align="right">7.673610</td>
+</tr>
+<tr class="odd">
+<td align="left">station7.7</td>
+<td align="right">-1.9976630</td>
+<td align="right">3.881671</td>
+<td align="right">-9.609241</td>
+<td align="right">5.613901</td>
+</tr>
+<tr class="even">
+<td align="left">station8.1</td>
+<td align="right">0.2345792</td>
+<td align="right">3.874984</td>
+<td align="right">-7.363878</td>
+<td align="right">7.833039</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.2</td>
+<td align="right">1.8565554</td>
+<td align="right">3.873142</td>
+<td align="right">-5.738287</td>
+<td align="right">9.451407</td>
+</tr>
+<tr class="even">
+<td align="left">station8.3</td>
+<td align="right">2.3898111</td>
+<td align="right">3.872789</td>
+<td align="right">-5.204342</td>
+<td align="right">9.983968</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.4</td>
+<td align="right">2.6218386</td>
+<td align="right">3.872578</td>
+<td align="right">-4.971899</td>
+<td align="right">10.215585</td>
+</tr>
+<tr class="even">
+<td align="left">station8.5</td>
+<td align="right">2.0770847</td>
+<td align="right">3.872905</td>
+<td align="right">-5.517295</td>
+<td align="right">9.671472</td>
+</tr>
+<tr class="odd">
+<td align="left">station8.6</td>
+<td align="right">0.7319894</td>
+<td align="right">3.875139</td>
+<td align="right">-6.866774</td>
+<td align="right">8.330751</td>
+</tr>
+<tr class="even">
+<td align="left">station8.7</td>
+<td align="right">-0.2040736</td>
+<td align="right">3.878217</td>
+<td align="right">-7.808878</td>
+<td align="right">7.400721</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.1</td>
+<td align="right">1.1543364</td>
+<td align="right">3.875899</td>
+<td align="right">-6.445916</td>
+<td align="right">8.754592</td>
+</tr>
+<tr class="even">
+<td align="left">station9.2</td>
+<td align="right">1.5606023</td>
+<td align="right">3.873865</td>
+<td align="right">-6.035661</td>
+<td align="right">9.156869</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.3</td>
+<td align="right">2.7006157</td>
+<td align="right">3.873088</td>
+<td align="right">-4.894120</td>
+<td align="right">10.295363</td>
+</tr>
+<tr class="even">
+<td align="left">station9.4</td>
+<td align="right">1.5016528</td>
+<td align="right">3.873802</td>
+<td align="right">-6.094486</td>
+<td align="right">9.097797</td>
+</tr>
+<tr class="odd">
+<td align="left">station9.5</td>
+<td align="right">2.1726618</td>
+<td align="right">3.874027</td>
+<td align="right">-5.423920</td>
+<td align="right">9.769248</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="range" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Range</h2>
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
+  rbern&lt;- myrange(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;binomial&quot;)
+kable(rbern, caption=&quot;Range for the Bernoulli model&quot;)</code></pre>
+<table>
+<caption>Range for the Bernoulli model</caption>
+<thead>
+<tr class="header">
+<th align="left">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Kappa=1.2e-05</td>
+</tr>
+<tr class="even">
+<td align="left">sigmau=2.467</td>
+</tr>
+<tr class="odd">
+<td align="left">range (km)=238.952</td>
+</tr>
+<tr class="even">
+<td align="left">erreur around range (km)=180.835-300.222</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>  rgamma&lt;- myrange(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name, subfamily=&quot;gamma&quot;)
+  
+ kable(rgamma, caption=&quot;Range for the Gamma model&quot;)</code></pre>
+<table>
+<caption>Range for the Gamma model</caption>
+<thead>
+<tr class="header">
+<th align="left">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Kappa=1.43e-05</td>
+</tr>
+<tr class="even">
+<td align="left">sigmau=1.559</td>
+</tr>
+<tr class="odd">
+<td align="left">range (km)=198.499</td>
+</tr>
+<tr class="even">
+<td align="left">erreur around range (km)=172.332-225.382</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="validation" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Validation</h2>
+<pre class="r"><code>setwd(rprojroot::find_rstudio_root_file())
+validation_ZAG(dir=paste0(&quot;results/&quot;,my.year,&quot;/INLA/&quot;),name=name,
+                        rvarpos=2, varpos=5)</code></pre>
+<p><img src="2.0_DEP_files/figure-html/inla%20validation-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="inla-cross-validation" class="section level2" number="1.6">
+<h2><span class="header-section-number">1.6</span> INLA
+cross-validation</h2>
+<pre class="r"><code>
+setwd(rprojroot::find_rstudio_root_file())
+load(file=paste0(&quot;data/&quot;,my.year,&quot;/INLA/INLA_CV_eggdata.RData&quot;))
+
+#do not need to do every year.
+if(new) INLA_ZAG_CV(dat = eggcv_all , res_mesh = 150, res_pred = &quot;station&quot;, trajet = 1, year=my.year, Rvar=&quot;DEP&quot;)
+# to get result use summary fitted values
+load(paste0(&quot;results/&quot;,my.year,&quot;/INLA/DEP_INLA_mesh150km_pred_station_ZAG_&quot;,my.year,&quot;_CV_trajet1.RData&quot;))
+# Extract mean from fitted values
+idb.prd &lt;- inla.stack.index(stkallBern, &quot;BernFit&quot;)$data
+Pi &lt;- Gbern$summary.fitted.values$mean[idb.prd] # il n&#39;y a pas d&#39;index pour prediction, j&#39;ai setté à NA.
+# sd.prd   &lt;- I$summary.fitted.values$sd[id.prd]
+mu &lt;- Ggamma$summary.fitted.values$mean[idb.prd]
+eggcv_all$Fit &lt;- Pi * mu
+my.formula &lt;- y ~ x # for smooth in ggplot
+
+inlastation1 &lt;- eggcv_all %&gt;%
+  ungroup() %&gt;%
+  filter(!sample_id %in% eggcv_to_fit$sample_id) %&gt;%
+  dplyr::rename(inlastation = Fit) %&gt;%
+  dplyr::select(sample_id, inlastation)
+
+
+pcv &lt;- full_join(eggt1 %&gt;% dplyr::select(sample_id, year, DEP) %&gt;% filter(sample_id %in% inlastation1$sample_id), inlastation1) %&gt;%
+  ggplot(aes(x = DEP, y = inlastation)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  basetheme+
+  stat_poly_eq(
+    formula = my.formula,
+    aes(label = paste(after_stat(eq.label), after_stat(rr.label), sep = &quot;~~~&quot;)),
+    parse = TRUE, vstep = 0.08
+  ) +geom_abline(slope=1, intercept=0, col=&quot;red&quot;, lty=2)
+##attention il faut sauvegarder eggcv pour que cette figure soit reproductible.
+
+mybreaks=c(0,10,30,100,300,1000,2000)
+
+pcv + scale_x_continuous(name = &quot;PJO calculées (N/m²/day) | Calculated DEP (N/m²/day)&quot;, trans = &quot;log10p1&quot;, breaks=mybreaks) + scale_y_continuous(name = &quot;PJO prédite (N/m²/day)\nPredicted DEP (N/m²/day)&quot;, trans = &quot;log10p1&quot;, breaks=mybreaks)</code></pre>
+<p><img src="2.0_DEP_files/figure-html/inla%20crvalidation-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dep-maps" class="section level2" number="1.7">
+<h2><span class="header-section-number">1.7</span> DEP MAPs</h2>
+<pre class="r"><code>predt1 &lt;- read.delim(paste0(root,&quot;results/&quot;,my.year,&quot;/INLA/predictions/predictions_DEP_INLA_mesh150km_pred_station_ZAG&quot;, my.year, &quot;_trajet1.txt&quot;))
+lookup &lt;-  read.delim(paste0(root,&quot;data/lookup_station_egg.txt&quot;))
+
+
+DEPt1a &lt;- full_join(eggt1 %&gt;%  mutate(station=as.numeric(station),
+                                      stratum=as.numeric(stratum)), left_join(predt1, lookup %&gt;% dplyr::select(-c(depth, latitude, longitude)))) %&gt;% mutate(DEP = coalesce(DEPbackup, Fit))
+
+
+DEP &lt;- full_join(lookup %&gt;%  dplyr::rename(lat=latitude, lon=longitude) %&gt;% dplyr::select(station, lat, lon),
+                 DEPt1a %&gt;% mutate(estimated = ifelse(is.na(DEPbackup) &amp; !is.na(DEP), &quot;estimated&quot;, &quot;observed&quot;))) %&gt;% 
+     mutate(latitude=coalesce(latitude, lat),
+                          longitude=coalesce(longitude,lon))
+year_to_plot=  my.year
+
+basemap2 + 
+  geom_point(data = DEP %&gt;%  filter(year %in% year_to_plot,DEP &gt; 0), aes(x = longitude, y = latitude, size = DEP, col = estimated), shape = 21, stroke=0.5) + 
+  geom_point(data = DEP %&gt;%  filter(year %in% year_to_plot,DEP == 0), aes(x = longitude, y = latitude), shape = 21, size=0.8, stroke=0.5) + 
+  facet_wrap(~year) + 
+  scale_color_manual(values = c(&quot;red&quot;, &quot;black&quot;), guide = &quot;none&quot;) + 
+  theme_few()+ theme(legend.position=&quot;bottom&quot;, 
+                     legend.key.width = unit(15, &quot;pt&quot;),
+                     plot.background = element_blank())+
+  scale_x_continuous(breaks=seq(-66,-60,2))+
+  scale_size_continuous(name=&quot;&quot;,breaks=c(seq(0, ceiling(max(DEP$DEP)), 50)),range=c(0.25,5)) </code></pre>
+<p><img src="2.0_DEP_files/figure-html/DEP-1.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/DEP.png&quot;), width=4, height=4, dpi=600, units=&quot;in&quot;, bg=&quot;white&quot;)
+
+save(DEP,  file=paste0(root,&quot;data/&quot;,my.year,&quot;/DEP.RData&quot;))
+
+
+all_years= data.frame(year=seq(1979, my.year, 1))
+
+left_join(all_years,DEP) %&gt;% 
+ group_by(year) %&gt;%
+  dplyr::summarize(
+    DEP.p = mean(DEP, na.rm = T)) %&gt;% 
+  ggplot(aes(x=year, y=DEP.p)) +geom_point()+geom_line() +
+  ylab(&quot;Production journalière d&#39;oeufs (N/m²/jour)\nDaily egg production (N/m²/day)&quot;)+
+  xlab(&quot;Ann\u00E9e\nYear&quot;)</code></pre>
+<p><img src="2.0_DEP_files/figure-html/DEP-2.png" width="864" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>
+ggsave(paste0(root,&quot;img/&quot;,my.year,&quot;/DEP_trajet1_year.png&quot;),width = 6, height = 4, unit = &quot;in&quot;, dpi = 600)
+</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
