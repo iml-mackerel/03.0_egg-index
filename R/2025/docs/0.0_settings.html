@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2026-02-27" />
+<meta name="date" content="2026-05-13" />
 
 <title>Settings</title>
 
@@ -348,13 +348,13 @@ div.tocify {
   <a href="3.0_Spawning.html">Spawning</a>
 </li>
 <li>
+  <a href="3.0_Spawning_female_sensitivity.html">Spawning female sensitivity</a>
+</li>
+<li>
   <a href="4.0_TEP.html">TEP</a>
 </li>
 <li>
   <a href="5.0_Exploration.html">Exploration</a>
-</li>
-<li>
-  <a href="6.0_NL.html">NL</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -377,7 +377,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Settings</h1>
-<h4 class="date">2026-02-27</h4>
+<h4 class="date">2026-05-13</h4>
 
 </div>
 
@@ -385,10 +385,9 @@ div.tocify {
 <pre><code>## Warning: le package &#39;knitr&#39; a été compilé avec la version R 4.4.3</code></pre>
 <pre class="r"><code>##### my packages ################################################################################
 ## CRAN
-cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,
+cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,&#39;nngeo&#39;,
                    &#39;fields&#39;, &#39;inlabru&#39;, &#39;sf&#39;, &#39;PresenceAbsence&#39;, &#39;verification&#39;, &#39;raster&#39;,
                    &#39;scales&#39;, &#39;nlme&#39;,&#39;nls.multstart&#39;, &#39;stringr&#39;, &#39;ggforce&#39;,&quot;readxl&quot;, &quot;marmap&quot;)
-
 
 
 install.this &lt;- cran.packages[!(cran.packages %in% utils::installed.packages()[,&quot;Package&quot;])]
@@ -427,17 +426,15 @@ source(paste0(&quot;utils/nlme_boot.R&quot;))
 source(paste0(&quot;INLA/INLA_tw_covar_Stations.R&quot;))
 source(paste0(&quot;INLA/INLA_tw_covar_Stations_CV.R&quot;))
 
-
-
 source(paste0(&#39;INLA/plotSpatialFieldCL.R&#39;))
 source(paste0(&#39;INLA/plotSmoother.R&#39;))
 source(paste0(&#39;INLA/model_validation.R&#39;))
 source(paste0(&#39;INLA/get_prediction_grid.R&#39;))
-source(paste0(&#39;../biochem/PL_Get_SampleID_Batch.R&#39;))
-source(paste0(&#39;../biochem/PL_Get_Counts_Batch.R&#39;))
-source(paste0(&#39;../biochem/PL_Read_Filter.R&#39;))
-source(paste0(&#39;../biochem/PL_Taxonomic_Grouping.R&#39;))
-
+# load odbc library
+library(ROracle)
+folder &lt;- &quot;../biochem&quot;
+r_files &lt;- list.files(folder, pattern = &quot;\\.[rR]$&quot;, full.names = TRUE, recursive = TRUE)
+invisible(lapply(r_files, function(f) source(f)))
 
 log10p1_trans = function() scales::trans_new(&quot;log10p1&quot;, transform=function(x) log10(x+1), inverse=function(x) (10^x)-1)#inverse function is necessary for legend
 

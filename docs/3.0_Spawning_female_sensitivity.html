@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2026-03-17" />
+<meta name="date" content="2026-05-13" />
 
 <title>Spawning</title>
 
@@ -348,13 +348,13 @@ div.tocify {
   <a href="3.0_Spawning.html">Spawning</a>
 </li>
 <li>
+  <a href="3.0_Spawning_female_sensitivity.html">Spawning female sensitivity</a>
+</li>
+<li>
   <a href="4.0_TEP.html">TEP</a>
 </li>
 <li>
   <a href="5.0_Exploration.html">Exploration</a>
-</li>
-<li>
-  <a href="6.0_NL.html">NL</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -377,13 +377,12 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Spawning</h1>
-<h4 class="date">2026-03-17</h4>
+<h4 class="date">2026-05-13</h4>
 
 </div>
 
 
 <pre><code># SET-UP</code></pre>
-<pre><code>## Warning: le package &#39;knitr&#39; a été compilé avec la version R 4.4.3</code></pre>
 <pre class="r"><code>##### my packages ################################################################################
 ## CRAN
 cran.packages &lt;- c(&#39;tidyverse&#39;,&#39;boot&#39;,&#39;magrittr&#39;,&#39;ggpmisc&#39;,&#39;ggpubr&#39;,&#39;ggthemes&#39;,&#39;mgcv&#39;,&#39;nngeo&#39;,
@@ -747,9 +746,9 @@ kable(tabl_out)</code></pre>
 <tbody>
 <tr class="odd">
 <td align="right">1979</td>
-<td align="right">19.37354</td>
-<td align="right">171.1374</td>
-<td align="right">-11.943068</td>
+<td align="right">19.37558</td>
+<td align="right">171.1343</td>
+<td align="right">-11.944481</td>
 <td align="right">171</td>
 <td align="right">127</td>
 <td align="right">214</td>
@@ -765,9 +764,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="even">
 <td align="right">1980</td>
-<td align="right">17.20244</td>
-<td align="right">177.2850</td>
-<td align="right">-12.737594</td>
+<td align="right">17.20332</td>
+<td align="right">177.2840</td>
+<td align="right">-12.738505</td>
 <td align="right">177</td>
 <td align="right">131</td>
 <td align="right">223</td>
@@ -783,9 +782,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="odd">
 <td align="right">1981</td>
-<td align="right">13.45902</td>
-<td align="right">184.6009</td>
-<td align="right">-6.840150</td>
+<td align="right">13.45862</td>
+<td align="right">184.6028</td>
+<td align="right">-6.839145</td>
 <td align="right">185</td>
 <td align="right">160</td>
 <td align="right">209</td>
@@ -801,9 +800,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="even">
 <td align="right">1982</td>
-<td align="right">15.80543</td>
-<td align="right">176.8752</td>
-<td align="right">-14.731132</td>
+<td align="right">15.80833</td>
+<td align="right">176.8702</td>
+<td align="right">-14.732923</td>
 <td align="right">177</td>
 <td align="right">123</td>
 <td align="right">230</td>
@@ -819,9 +818,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="odd">
 <td align="right">1983</td>
-<td align="right">13.99865</td>
-<td align="right">174.4673</td>
-<td align="right">-6.138061</td>
+<td align="right">14.05526</td>
+<td align="right">174.4126</td>
+<td align="right">-6.164700</td>
 <td align="right">174</td>
 <td align="right">152</td>
 <td align="right">196</td>
@@ -829,35 +828,35 @@ kable(tabl_out)</code></pre>
 <td align="right">184</td>
 <td align="right">44</td>
 <td align="right">178</td>
-<td align="right">0.0375185</td>
-<td align="right">0.0334510</td>
-<td align="right">0.0389896</td>
-<td align="right">0.0020089</td>
+<td align="right">0.0372897</td>
+<td align="right">0.0320051</td>
+<td align="right">0.0384186</td>
+<td align="right">0.0020531</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1984</td>
-<td align="right">18.07452</td>
-<td align="right">173.2276</td>
-<td align="right">-15.085015</td>
+<td align="right">18.08905</td>
+<td align="right">173.2002</td>
+<td align="right">-15.107575</td>
 <td align="right">173</td>
 <td align="right">118</td>
-<td align="right">227</td>
+<td align="right">228</td>
 <td align="right">147</td>
 <td align="right">198</td>
-<td align="right">109</td>
+<td align="right">110</td>
 <td align="right">176</td>
-<td align="right">0.0164323</td>
-<td align="right">0.0147876</td>
-<td align="right">0.0161783</td>
-<td align="right">0.0004555</td>
+<td align="right">0.0164055</td>
+<td align="right">0.0146785</td>
+<td align="right">0.0156499</td>
+<td align="right">0.0003567</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1985</td>
-<td align="right">22.59129</td>
-<td align="right">165.5168</td>
-<td align="right">-16.313205</td>
+<td align="right">22.59991</td>
+<td align="right">165.5037</td>
+<td align="right">-16.317313</td>
 <td align="right">166</td>
 <td align="right">106</td>
 <td align="right">224</td>
@@ -865,17 +864,17 @@ kable(tabl_out)</code></pre>
 <td align="right">193</td>
 <td align="right">118</td>
 <td align="right">178</td>
-<td align="right">0.0132836</td>
-<td align="right">0.0120073</td>
-<td align="right">0.0135290</td>
-<td align="right">0.0005472</td>
+<td align="right">0.0132773</td>
+<td align="right">0.0115417</td>
+<td align="right">0.0140298</td>
+<td align="right">0.0007997</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1986</td>
-<td align="right">16.88174</td>
-<td align="right">175.3532</td>
-<td align="right">-13.905167</td>
+<td align="right">16.99071</td>
+<td align="right">175.2239</td>
+<td align="right">-13.899161</td>
 <td align="right">175</td>
 <td align="right">124</td>
 <td align="right">225</td>
@@ -883,17 +882,17 @@ kable(tabl_out)</code></pre>
 <td align="right">198</td>
 <td align="right">101</td>
 <td align="right">175</td>
-<td align="right">0.0179742</td>
-<td align="right">0.0154086</td>
-<td align="right">0.0177385</td>
-<td align="right">0.0007976</td>
+<td align="right">0.0179837</td>
+<td align="right">0.0161438</td>
+<td align="right">0.0182482</td>
+<td align="right">0.0006457</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1987</td>
-<td align="right">13.90904</td>
-<td align="right">174.7477</td>
-<td align="right">-10.807116</td>
+<td align="right">13.90868</td>
+<td align="right">174.7484</td>
+<td align="right">-10.806137</td>
 <td align="right">175</td>
 <td align="right">135</td>
 <td align="right">213</td>
@@ -901,17 +900,17 @@ kable(tabl_out)</code></pre>
 <td align="right">192</td>
 <td align="right">78</td>
 <td align="right">172</td>
-<td align="right">0.0227592</td>
-<td align="right">0.0206473</td>
-<td align="right">0.0226366</td>
-<td align="right">0.0006419</td>
+<td align="right">0.0227610</td>
+<td align="right">0.0212813</td>
+<td align="right">0.0239875</td>
+<td align="right">0.0009255</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1988</td>
-<td align="right">14.02930</td>
-<td align="right">177.5400</td>
-<td align="right">-5.797201</td>
+<td align="right">14.02925</td>
+<td align="right">177.5401</td>
+<td align="right">-5.797011</td>
 <td align="right">178</td>
 <td align="right">156</td>
 <td align="right">198</td>
@@ -919,17 +918,17 @@ kable(tabl_out)</code></pre>
 <td align="right">187</td>
 <td align="right">42</td>
 <td align="right">173</td>
-<td align="right">0.0371202</td>
-<td align="right">0.0345276</td>
-<td align="right">0.0401970</td>
-<td align="right">0.0019289</td>
+<td align="right">0.0371208</td>
+<td align="right">0.0359939</td>
+<td align="right">0.0399069</td>
+<td align="right">0.0013336</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1989</td>
-<td align="right">23.00960</td>
-<td align="right">160.8017</td>
-<td align="right">-16.265088</td>
+<td align="right">23.02183</td>
+<td align="right">160.7841</td>
+<td align="right">-16.270774</td>
 <td align="right">161</td>
 <td align="right">101</td>
 <td align="right">219</td>
@@ -937,17 +936,17 @@ kable(tabl_out)</code></pre>
 <td align="right">188</td>
 <td align="right">118</td>
 <td align="right">174</td>
-<td align="right">0.0130942</td>
-<td align="right">0.0119056</td>
-<td align="right">0.0133691</td>
-<td align="right">0.0004684</td>
+<td align="right">0.0130856</td>
+<td align="right">0.0112886</td>
+<td align="right">0.0136881</td>
+<td align="right">0.0007624</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1990</td>
-<td align="right">14.35326</td>
-<td align="right">179.0201</td>
-<td align="right">-9.777299</td>
+<td align="right">14.35319</td>
+<td align="right">179.0203</td>
+<td align="right">-9.776925</td>
 <td align="right">179</td>
 <td align="right">143</td>
 <td align="right">214</td>
@@ -955,17 +954,17 @@ kable(tabl_out)</code></pre>
 <td align="right">195</td>
 <td align="right">71</td>
 <td align="right">170</td>
-<td align="right">0.0208149</td>
-<td align="right">0.0201464</td>
-<td align="right">0.0212594</td>
-<td align="right">0.0004113</td>
+<td align="right">0.0208152</td>
+<td align="right">0.0199749</td>
+<td align="right">0.0212701</td>
+<td align="right">0.0004326</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1991</td>
-<td align="right">20.65612</td>
-<td align="right">167.7825</td>
-<td align="right">-17.885313</td>
+<td align="right">20.66993</td>
+<td align="right">167.7581</td>
+<td align="right">-17.893619</td>
 <td align="right">168</td>
 <td align="right">102</td>
 <td align="right">232</td>
@@ -973,17 +972,17 @@ kable(tabl_out)</code></pre>
 <td align="right">198</td>
 <td align="right">130</td>
 <td align="right">171</td>
-<td align="right">0.0138660</td>
-<td align="right">0.0124927</td>
-<td align="right">0.0147831</td>
-<td align="right">0.0008172</td>
+<td align="right">0.0138580</td>
+<td align="right">0.0120460</td>
+<td align="right">0.0147543</td>
+<td align="right">0.0009083</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1992</td>
-<td align="right">14.52945</td>
-<td align="right">179.2069</td>
-<td align="right">-10.638453</td>
+<td align="right">14.52900</td>
+<td align="right">179.2079</td>
+<td align="right">-10.637416</td>
 <td align="right">179</td>
 <td align="right">140</td>
 <td align="right">217</td>
@@ -991,17 +990,17 @@ kable(tabl_out)</code></pre>
 <td align="right">197</td>
 <td align="right">77</td>
 <td align="right">173</td>
-<td align="right">0.0216050</td>
-<td align="right">0.0201383</td>
-<td align="right">0.0224012</td>
-<td align="right">0.0007752</td>
+<td align="right">0.0216062</td>
+<td align="right">0.0204231</td>
+<td align="right">0.0212101</td>
+<td align="right">0.0002918</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1993</td>
-<td align="right">19.29102</td>
-<td align="right">174.0607</td>
-<td align="right">-13.929350</td>
+<td align="right">19.29515</td>
+<td align="right">174.0539</td>
+<td align="right">-13.933137</td>
 <td align="right">174</td>
 <td align="right">123</td>
 <td align="right">224</td>
@@ -1009,17 +1008,17 @@ kable(tabl_out)</code></pre>
 <td align="right">197</td>
 <td align="right">101</td>
 <td align="right">170</td>
-<td align="right">0.0175700</td>
-<td align="right">0.0164055</td>
-<td align="right">0.0181134</td>
-<td align="right">0.0005934</td>
+<td align="right">0.0175667</td>
+<td align="right">0.0158454</td>
+<td align="right">0.0185091</td>
+<td align="right">0.0008136</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">1994</td>
-<td align="right">15.55498</td>
-<td align="right">175.8680</td>
-<td align="right">-13.709884</td>
+<td align="right">15.55503</td>
+<td align="right">175.8681</td>
+<td align="right">-13.709353</td>
 <td align="right">176</td>
 <td align="right">126</td>
 <td align="right">225</td>
@@ -1027,17 +1026,17 @@ kable(tabl_out)</code></pre>
 <td align="right">199</td>
 <td align="right">99</td>
 <td align="right">168</td>
-<td align="right">0.0168109</td>
-<td align="right">0.0155217</td>
-<td align="right">0.0172644</td>
-<td align="right">0.0006618</td>
+<td align="right">0.0168115</td>
+<td align="right">0.0158709</td>
+<td align="right">0.0168810</td>
+<td align="right">0.0003873</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1995</td>
-<td align="right">14.61353</td>
-<td align="right">179.0951</td>
-<td align="right">-8.636689</td>
+<td align="right">14.61339</td>
+<td align="right">179.0955</td>
+<td align="right">-8.636390</td>
 <td align="right">179</td>
 <td align="right">147</td>
 <td align="right">210</td>
@@ -1053,9 +1052,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="even">
 <td align="right">1996</td>
-<td align="right">17.22271</td>
-<td align="right">171.8478</td>
-<td align="right">-10.537227</td>
+<td align="right">17.22557</td>
+<td align="right">171.8438</td>
+<td align="right">-10.539483</td>
 <td align="right">172</td>
 <td align="right">133</td>
 <td align="right">209</td>
@@ -1063,17 +1062,17 @@ kable(tabl_out)</code></pre>
 <td align="right">189</td>
 <td align="right">76</td>
 <td align="right">173</td>
-<td align="right">0.0236502</td>
-<td align="right">0.0201457</td>
-<td align="right">0.0238768</td>
-<td align="right">0.0015030</td>
+<td align="right">0.0236447</td>
+<td align="right">0.0212430</td>
+<td align="right">0.0238014</td>
+<td align="right">0.0008542</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1997</td>
-<td align="right">15.58353</td>
-<td align="right">178.1569</td>
-<td align="right">-9.240291</td>
+<td align="right">15.58398</td>
+<td align="right">178.1564</td>
+<td align="right">-9.240572</td>
 <td align="right">178</td>
 <td align="right">144</td>
 <td align="right">211</td>
@@ -1089,9 +1088,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="even">
 <td align="right">1998</td>
-<td align="right">16.41970</td>
-<td align="right">169.4058</td>
-<td align="right">-11.294371</td>
+<td align="right">16.42297</td>
+<td align="right">169.4006</td>
+<td align="right">-11.296157</td>
 <td align="right">169</td>
 <td align="right">128</td>
 <td align="right">210</td>
@@ -1099,17 +1098,17 @@ kable(tabl_out)</code></pre>
 <td align="right">188</td>
 <td align="right">82</td>
 <td align="right">167</td>
-<td align="right">0.0218823</td>
-<td align="right">0.0195614</td>
-<td align="right">0.0219519</td>
-<td align="right">0.0009498</td>
+<td align="right">0.0218800</td>
+<td align="right">0.0200659</td>
+<td align="right">0.0214582</td>
+<td align="right">0.0005476</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">1999</td>
-<td align="right">24.27939</td>
-<td align="right">148.0675</td>
-<td align="right">-15.135282</td>
+<td align="right">24.29862</td>
+<td align="right">148.0445</td>
+<td align="right">-15.140560</td>
 <td align="right">148</td>
 <td align="right">93</td>
 <td align="right">203</td>
@@ -1117,17 +1116,17 @@ kable(tabl_out)</code></pre>
 <td align="right">173</td>
 <td align="right">110</td>
 <td align="right">173</td>
-<td align="right">0.0089468</td>
-<td align="right">0.0081151</td>
-<td align="right">0.0095830</td>
-<td align="right">0.0005468</td>
+<td align="right">0.0089379</td>
+<td align="right">0.0078672</td>
+<td align="right">0.0099715</td>
+<td align="right">0.0006556</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2000</td>
-<td align="right">15.49710</td>
+<td align="right">15.49714</td>
 <td align="right">173.5999</td>
-<td align="right">-12.164794</td>
+<td align="right">-12.164613</td>
 <td align="right">174</td>
 <td align="right">129</td>
 <td align="right">217</td>
@@ -1135,17 +1134,17 @@ kable(tabl_out)</code></pre>
 <td align="right">194</td>
 <td align="right">88</td>
 <td align="right">173</td>
-<td align="right">0.0205357</td>
-<td align="right">0.0190584</td>
-<td align="right">0.0221943</td>
-<td align="right">0.0010631</td>
+<td align="right">0.0205361</td>
+<td align="right">0.0179129</td>
+<td align="right">0.0206308</td>
+<td align="right">0.0010754</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2001</td>
-<td align="right">13.86182</td>
+<td align="right">13.86169</td>
 <td align="right">172.3947</td>
-<td align="right">-4.734894</td>
+<td align="right">-4.734543</td>
 <td align="right">172</td>
 <td align="right">155</td>
 <td align="right">189</td>
@@ -1153,17 +1152,17 @@ kable(tabl_out)</code></pre>
 <td align="right">180</td>
 <td align="right">34</td>
 <td align="right">166</td>
-<td align="right">0.0345184</td>
-<td align="right">0.0353591</td>
-<td align="right">0.0366694</td>
-<td align="right">0.0004580</td>
+<td align="right">0.0345187</td>
+<td align="right">0.0349868</td>
+<td align="right">0.0365082</td>
+<td align="right">0.0005933</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2002</td>
-<td align="right">14.87016</td>
-<td align="right">176.8855</td>
-<td align="right">-11.468324</td>
+<td align="right">14.86998</td>
+<td align="right">176.8859</td>
+<td align="right">-11.467825</td>
 <td align="right">177</td>
 <td align="right">135</td>
 <td align="right">218</td>
@@ -1171,17 +1170,17 @@ kable(tabl_out)</code></pre>
 <td align="right">196</td>
 <td align="right">83</td>
 <td align="right">170</td>
-<td align="right">0.0199446</td>
-<td align="right">0.0186937</td>
-<td align="right">0.0202410</td>
-<td align="right">0.0005110</td>
+<td align="right">0.0199451</td>
+<td align="right">0.0184468</td>
+<td align="right">0.0206364</td>
+<td align="right">0.0006569</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2003</td>
-<td align="right">17.08018</td>
-<td align="right">171.9642</td>
-<td align="right">-8.548785</td>
+<td align="right">17.08147</td>
+<td align="right">171.9626</td>
+<td align="right">-8.549502</td>
 <td align="right">172</td>
 <td align="right">141</td>
 <td align="right">202</td>
@@ -1189,17 +1188,17 @@ kable(tabl_out)</code></pre>
 <td align="right">186</td>
 <td align="right">61</td>
 <td align="right">171</td>
-<td align="right">0.0291429</td>
-<td align="right">0.0258186</td>
-<td align="right">0.0295861</td>
-<td align="right">0.0013142</td>
+<td align="right">0.0291408</td>
+<td align="right">0.0272015</td>
+<td align="right">0.0299016</td>
+<td align="right">0.0010586</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2004</td>
-<td align="right">15.36697</td>
-<td align="right">178.0871</td>
-<td align="right">-10.123624</td>
+<td align="right">15.34538</td>
+<td align="right">178.1209</td>
+<td align="right">-10.108193</td>
 <td align="right">178</td>
 <td align="right">141</td>
 <td align="right">214</td>
@@ -1207,17 +1206,17 @@ kable(tabl_out)</code></pre>
 <td align="right">195</td>
 <td align="right">73</td>
 <td align="right">171</td>
-<td align="right">0.0218972</td>
-<td align="right">0.0210151</td>
-<td align="right">0.0225244</td>
-<td align="right">0.0005816</td>
+<td align="right">0.0218980</td>
+<td align="right">0.0205701</td>
+<td align="right">0.0229149</td>
+<td align="right">0.0007390</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2005</td>
-<td align="right">20.03572</td>
-<td align="right">174.3869</td>
-<td align="right">-10.253619</td>
+<td align="right">20.03786</td>
+<td align="right">174.3844</td>
+<td align="right">-10.254945</td>
 <td align="right">174</td>
 <td align="right">137</td>
 <td align="right">211</td>
@@ -1225,17 +1224,17 @@ kable(tabl_out)</code></pre>
 <td align="right">191</td>
 <td align="right">74</td>
 <td align="right">170</td>
-<td align="right">0.0232951</td>
-<td align="right">0.0223645</td>
-<td align="right">0.0235017</td>
-<td align="right">0.0003772</td>
+<td align="right">0.0232935</td>
+<td align="right">0.0224460</td>
+<td align="right">0.0238584</td>
+<td align="right">0.0004950</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2006</td>
-<td align="right">18.94251</td>
-<td align="right">166.7048</td>
-<td align="right">-8.937888</td>
+<td align="right">18.94343</td>
+<td align="right">166.7038</td>
+<td align="right">-8.938434</td>
 <td align="right">167</td>
 <td align="right">134</td>
 <td align="right">198</td>
@@ -1243,17 +1242,17 @@ kable(tabl_out)</code></pre>
 <td align="right">181</td>
 <td align="right">64</td>
 <td align="right">186</td>
-<td align="right">0.0103848</td>
-<td align="right">0.0100046</td>
-<td align="right">0.0104445</td>
-<td align="right">0.0001539</td>
+<td align="right">0.0103843</td>
+<td align="right">0.0099981</td>
+<td align="right">0.0103166</td>
+<td align="right">0.0001130</td>
 <td align="left">Late survey</td>
 </tr>
 <tr class="odd">
 <td align="right">2007</td>
-<td align="right">15.72335</td>
+<td align="right">15.72338</td>
 <td align="right">178.3851</td>
-<td align="right">-7.344585</td>
+<td align="right">-7.344535</td>
 <td align="right">178</td>
 <td align="right">151</td>
 <td align="right">204</td>
@@ -1261,17 +1260,17 @@ kable(tabl_out)</code></pre>
 <td align="right">190</td>
 <td align="right">53</td>
 <td align="right">177</td>
-<td align="right">0.0337251</td>
-<td align="right">0.0312662</td>
-<td align="right">0.0342693</td>
-<td align="right">0.0009213</td>
+<td align="right">0.0337254</td>
+<td align="right">0.0306981</td>
+<td align="right">0.0344202</td>
+<td align="right">0.0014187</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2008</td>
-<td align="right">13.98239</td>
+<td align="right">13.98225</td>
 <td align="right">176.2851</td>
-<td align="right">-5.482358</td>
+<td align="right">-5.482038</td>
 <td align="right">176</td>
 <td align="right">156</td>
 <td align="right">195</td>
@@ -1279,17 +1278,17 @@ kable(tabl_out)</code></pre>
 <td align="right">185</td>
 <td align="right">39</td>
 <td align="right">177</td>
-<td align="right">0.0453764</td>
-<td align="right">0.0409983</td>
-<td align="right">0.0470099</td>
-<td align="right">0.0020310</td>
+<td align="right">0.0453791</td>
+<td align="right">0.0419565</td>
+<td align="right">0.0480033</td>
+<td align="right">0.0020172</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2009</td>
-<td align="right">12.55016</td>
+<td align="right">12.54983</td>
 <td align="right">174.0627</td>
-<td align="right">-5.483400</td>
+<td align="right">-5.482488</td>
 <td align="right">174</td>
 <td align="right">154</td>
 <td align="right">193</td>
@@ -1297,17 +1296,17 @@ kable(tabl_out)</code></pre>
 <td align="right">183</td>
 <td align="right">39</td>
 <td align="right">168</td>
-<td align="right">0.0340682</td>
-<td align="right">0.0333544</td>
-<td align="right">0.0366709</td>
-<td align="right">0.0010936</td>
+<td align="right">0.0340705</td>
+<td align="right">0.0323005</td>
+<td align="right">0.0371109</td>
+<td align="right">0.0018328</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2010</td>
-<td align="right">15.74657</td>
-<td align="right">171.2358</td>
-<td align="right">-8.522792</td>
+<td align="right">15.74711</td>
+<td align="right">171.2372</td>
+<td align="right">-8.525048</td>
 <td align="right">171</td>
 <td align="right">140</td>
 <td align="right">201</td>
@@ -1315,17 +1314,17 @@ kable(tabl_out)</code></pre>
 <td align="right">185</td>
 <td align="right">61</td>
 <td align="right">166</td>
-<td align="right">0.0267251</td>
-<td align="right">0.0255729</td>
-<td align="right">0.0276003</td>
-<td align="right">0.0007415</td>
+<td align="right">0.0267180</td>
+<td align="right">0.0251012</td>
+<td align="right">0.0277059</td>
+<td align="right">0.0008889</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2011</td>
-<td align="right">18.22230</td>
-<td align="right">168.6751</td>
-<td align="right">-6.884795</td>
+<td align="right">18.22392</td>
+<td align="right">168.6738</td>
+<td align="right">-6.885943</td>
 <td align="right">169</td>
 <td align="right">143</td>
 <td align="right">193</td>
@@ -1333,17 +1332,17 @@ kable(tabl_out)</code></pre>
 <td align="right">180</td>
 <td align="right">50</td>
 <td align="right">166</td>
-<td align="right">0.0349615</td>
-<td align="right">0.0315999</td>
-<td align="right">0.0374948</td>
-<td align="right">0.0019981</td>
+<td align="right">0.0349574</td>
+<td align="right">0.0327715</td>
+<td align="right">0.0363373</td>
+<td align="right">0.0011380</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
-<td align="right">19.63850</td>
-<td align="right">159.4092</td>
-<td align="right">-9.385744</td>
+<td align="right">19.64694</td>
+<td align="right">159.4002</td>
+<td align="right">-9.389612</td>
 <td align="right">159</td>
 <td align="right">125</td>
 <td align="right">193</td>
@@ -1351,17 +1350,17 @@ kable(tabl_out)</code></pre>
 <td align="right">175</td>
 <td align="right">68</td>
 <td align="right">168</td>
-<td align="right">0.0217506</td>
-<td align="right">0.0179637</td>
-<td align="right">0.0260401</td>
-<td align="right">0.0028727</td>
+<td align="right">0.0217363</td>
+<td align="right">0.0191000</td>
+<td align="right">0.0243182</td>
+<td align="right">0.0017146</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2013</td>
-<td align="right">15.87554</td>
-<td align="right">170.1242</td>
-<td align="right">-8.097834</td>
+<td align="right">15.87580</td>
+<td align="right">170.1238</td>
+<td align="right">-8.097626</td>
 <td align="right">170</td>
 <td align="right">140</td>
 <td align="right">199</td>
@@ -1369,17 +1368,17 @@ kable(tabl_out)</code></pre>
 <td align="right">183</td>
 <td align="right">59</td>
 <td align="right">167</td>
-<td align="right">0.0297431</td>
-<td align="right">0.0278659</td>
-<td align="right">0.0303198</td>
-<td align="right">0.0008506</td>
+<td align="right">0.0297441</td>
+<td align="right">0.0271941</td>
+<td align="right">0.0302980</td>
+<td align="right">0.0011385</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2014</td>
-<td align="right">17.72795</td>
-<td align="right">168.1232</td>
-<td align="right">-7.802138</td>
+<td align="right">17.72881</td>
+<td align="right">168.1223</td>
+<td align="right">-7.802873</td>
 <td align="right">168</td>
 <td align="right">140</td>
 <td align="right">196</td>
@@ -1387,17 +1386,17 @@ kable(tabl_out)</code></pre>
 <td align="right">181</td>
 <td align="right">56</td>
 <td align="right">166</td>
-<td align="right">0.0314464</td>
-<td align="right">0.0276303</td>
-<td align="right">0.0335105</td>
-<td align="right">0.0019669</td>
+<td align="right">0.0314440</td>
+<td align="right">0.0281874</td>
+<td align="right">0.0331549</td>
+<td align="right">0.0018229</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2015</td>
-<td align="right">18.36861</td>
-<td align="right">172.0550</td>
-<td align="right">-7.607923</td>
+<td align="right">18.37086</td>
+<td align="right">172.0534</td>
+<td align="right">-7.610159</td>
 <td align="right">172</td>
 <td align="right">144</td>
 <td align="right">199</td>
@@ -1405,17 +1404,17 @@ kable(tabl_out)</code></pre>
 <td align="right">184</td>
 <td align="right">55</td>
 <td align="right">167</td>
-<td align="right">0.0294774</td>
-<td align="right">0.0283733</td>
-<td align="right">0.0309533</td>
-<td align="right">0.0009645</td>
+<td align="right">0.0294726</td>
+<td align="right">0.0277009</td>
+<td align="right">0.0310655</td>
+<td align="right">0.0011666</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2016</td>
-<td align="right">21.10441</td>
-<td align="right">166.2645</td>
-<td align="right">-10.946564</td>
+<td align="right">21.10852</td>
+<td align="right">166.2596</td>
+<td align="right">-10.949102</td>
 <td align="right">166</td>
 <td align="right">126</td>
 <td align="right">205</td>
@@ -1423,17 +1422,17 @@ kable(tabl_out)</code></pre>
 <td align="right">184</td>
 <td align="right">79</td>
 <td align="right">169</td>
-<td align="right">0.0224816</td>
-<td align="right">0.0211582</td>
-<td align="right">0.0232816</td>
-<td align="right">0.0006747</td>
+<td align="right">0.0224753</td>
+<td align="right">0.0200578</td>
+<td align="right">0.0234252</td>
+<td align="right">0.0010408</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2017</td>
-<td align="right">14.96250</td>
+<td align="right">14.96238</td>
 <td align="right">174.8782</td>
-<td align="right">-4.788587</td>
+<td align="right">-4.788331</td>
 <td align="right">175</td>
 <td align="right">157</td>
 <td align="right">191</td>
@@ -1441,17 +1440,17 @@ kable(tabl_out)</code></pre>
 <td align="right">182</td>
 <td align="right">34</td>
 <td align="right">164</td>
-<td align="right">0.0177148</td>
-<td align="right">0.0180111</td>
-<td align="right">0.0209970</td>
-<td align="right">0.0010692</td>
+<td align="right">0.0177140</td>
+<td align="right">0.0182630</td>
+<td align="right">0.0207217</td>
+<td align="right">0.0007600</td>
 <td align="left">Early survey</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
-<td align="right">14.23954</td>
+<td align="right">14.23936</td>
 <td align="right">175.9960</td>
-<td align="right">-6.100333</td>
+<td align="right">-6.099885</td>
 <td align="right">176</td>
 <td align="right">154</td>
 <td align="right">197</td>
@@ -1459,17 +1458,17 @@ kable(tabl_out)</code></pre>
 <td align="right">186</td>
 <td align="right">43</td>
 <td align="right">172</td>
-<td align="right">0.0368671</td>
-<td align="right">0.0334702</td>
-<td align="right">0.0397020</td>
-<td align="right">0.0020220</td>
+<td align="right">0.0368693</td>
+<td align="right">0.0312105</td>
+<td align="right">0.0400077</td>
+<td align="right">0.0029011</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2019</td>
-<td align="right">16.36441</td>
-<td align="right">177.9632</td>
-<td align="right">-7.017974</td>
+<td align="right">16.36459</td>
+<td align="right">177.9631</td>
+<td align="right">-7.018038</td>
 <td align="right">178</td>
 <td align="right">152</td>
 <td align="right">203</td>
@@ -1477,17 +1476,17 @@ kable(tabl_out)</code></pre>
 <td align="right">189</td>
 <td align="right">51</td>
 <td align="right">162</td>
-<td align="right">0.0120529</td>
-<td align="right">0.0121681</td>
-<td align="right">0.0138999</td>
-<td align="right">0.0005815</td>
+<td align="right">0.0120532</td>
+<td align="right">0.0121285</td>
+<td align="right">0.0145007</td>
+<td align="right">0.0008035</td>
 <td align="left">Early survey</td>
 </tr>
 <tr class="even">
 <td align="right">2020</td>
-<td align="right">17.61794</td>
-<td align="right">172.4675</td>
-<td align="right">-3.015269</td>
+<td align="right">17.61811</td>
+<td align="right">172.4674</td>
+<td align="right">-3.015305</td>
 <td align="right">172</td>
 <td align="right">161</td>
 <td align="right">183</td>
@@ -1503,9 +1502,9 @@ kable(tabl_out)</code></pre>
 </tr>
 <tr class="odd">
 <td align="right">2021</td>
-<td align="right">15.76063</td>
-<td align="right">167.1766</td>
-<td align="right">-7.429397</td>
+<td align="right">15.76075</td>
+<td align="right">167.1764</td>
+<td align="right">-7.429226</td>
 <td align="right">167</td>
 <td align="right">140</td>
 <td align="right">193</td>
@@ -1513,35 +1512,35 @@ kable(tabl_out)</code></pre>
 <td align="right">179</td>
 <td align="right">53</td>
 <td align="right">169</td>
-<td align="right">0.0331365</td>
-<td align="right">0.0273313</td>
-<td align="right">0.0355587</td>
-<td align="right">0.0025874</td>
+<td align="right">0.0331371</td>
+<td align="right">0.0294410</td>
+<td align="right">0.0346606</td>
+<td align="right">0.0018366</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2022</td>
-<td align="right">19.07267</td>
-<td align="right">163.2944</td>
-<td align="right">-10.312264</td>
+<td align="right">19.08391</td>
+<td align="right">163.2796</td>
+<td align="right">-10.316290</td>
 <td align="right">163</td>
-<td align="right">126</td>
+<td align="right">125</td>
 <td align="right">200</td>
 <td align="right">145</td>
 <td align="right">180</td>
-<td align="right">74</td>
+<td align="right">75</td>
 <td align="right">171</td>
-<td align="right">0.0211481</td>
-<td align="right">0.0168050</td>
-<td align="right">0.0227836</td>
-<td align="right">0.0022605</td>
+<td align="right">0.0211312</td>
+<td align="right">0.0174316</td>
+<td align="right">0.0263577</td>
+<td align="right">0.0030715</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="odd">
 <td align="right">2023</td>
-<td align="right">18.53297</td>
-<td align="right">164.9590</td>
-<td align="right">-10.435324</td>
+<td align="right">18.54219</td>
+<td align="right">164.9475</td>
+<td align="right">-10.438477</td>
 <td align="right">165</td>
 <td align="right">127</td>
 <td align="right">202</td>
@@ -1549,17 +1548,17 @@ kable(tabl_out)</code></pre>
 <td align="right">182</td>
 <td align="right">75</td>
 <td align="right">172</td>
-<td align="right">0.0214219</td>
-<td align="right">0.0177750</td>
-<td align="right">0.0222791</td>
-<td align="right">0.0016302</td>
+<td align="right">0.0214092</td>
+<td align="right">0.0177538</td>
+<td align="right">0.0226939</td>
+<td align="right">0.0017188</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 <tr class="even">
 <td align="right">2024</td>
-<td align="right">13.61403</td>
+<td align="right">13.61396</td>
 <td align="right">164.4825</td>
-<td align="right">-4.082111</td>
+<td align="right">-4.081859</td>
 <td align="right">164</td>
 <td align="right">150</td>
 <td align="right">178</td>
@@ -1567,28 +1566,28 @@ kable(tabl_out)</code></pre>
 <td align="right">171</td>
 <td align="right">28</td>
 <td align="right">174</td>
-<td align="right">0.0197961</td>
-<td align="right">0.0171901</td>
-<td align="right">0.0195041</td>
-<td align="right">0.0007517</td>
+<td align="right">0.0197951</td>
+<td align="right">0.0181267</td>
+<td align="right">0.0202886</td>
+<td align="right">0.0007865</td>
 <td align="left">Late survey</td>
 </tr>
 <tr class="odd">
 <td align="right">2025</td>
-<td align="right">20.76346</td>
-<td align="right">158.7056</td>
-<td align="right">-8.435340</td>
+<td align="right">20.78483</td>
+<td align="right">158.7034</td>
+<td align="right">-8.409888</td>
 <td align="right">159</td>
 <td align="right">128</td>
 <td align="right">189</td>
 <td align="right">144</td>
 <td align="right">172</td>
 <td align="right">61</td>
-<td align="right">168</td>
-<td align="right">0.0221905</td>
-<td align="right">0.0186844</td>
-<td align="right">0.0233801</td>
-<td align="right">0.0016867</td>
+<td align="right">169</td>
+<td align="right">0.0208754</td>
+<td align="right">0.0180224</td>
+<td align="right">0.0220999</td>
+<td align="right">0.0014606</td>
 <td align="left">During 70 % of spawning</td>
 </tr>
 </tbody>

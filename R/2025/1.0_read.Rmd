@@ -19,7 +19,7 @@ opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.
 options(width = 200)
 #knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 my.year=2025
-new=T
+new=F
 root<- "../../"
 year_to_plot= my.year # can be changed to (my.year-1) : my.year when 2 years are reported
 
